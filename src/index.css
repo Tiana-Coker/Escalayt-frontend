@@ -1,0 +1,63 @@
+
+/* Custom Styles for the project */
+
+:root {
+
+  /* Colors */
+  --primary-color: #0070FF;
+  --secondary-color: #D1EDF5;
+
+  /* Font sizes */
+  --xlarge-text:64px;
+  --large-text: 42px;
+  --medium-text: 20px;
+  --normal-text: 16px;
+  --small-text: 14px;
+  --tiny-text: 12px
+
+}
+
+/* Primary Color Classes */
+.p_color{  /* for text color */
+  color: var(--primary-color);
+}
+
+.bg_p_color{ /* for background color */
+  background-color:var(--primary-color) ;
+}
+
+/* Secondary Color Classes */
+.s_color{ /* for text color */
+  color: var(--secondary-color);
+}
+.bg_s_color{ /* for background color */
+  background-color:var(--secondary-color) ;
+}
+
+
+/* Font size classes */
+.xl_text{
+  font-size: var(--xlarge-text);
+}
+.lg_text{
+  font-size: var(--large-text);
+}
+.md_text{
+  font-size: var(--medium-text);
+}
+.no_text{
+  font-size: var(--normal-text);
+}
+.sm_text{
+  font-size: var(--small-text);
+}
+.tn_text{
+  font-size: var(--tiny-text);
+}
+
+
+
+
+
+
+
