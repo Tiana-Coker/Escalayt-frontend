@@ -1,37 +1,43 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+
+import './App.css';
+
+import LandingPage from './routes/landingPage/LandingPage';
+import ForgotPassword from './routes/forgotPassword/ForgotPassword';
+import Login from './routes/login/Login';
+import ResetPassword from './routes/resetPassword/ResetPassword';
+import Signup from './routes/signup/Signup';
+
+import AdminDashboard from './routes/admin/dashboard/Dashboard';
+import AdminTicket from './routes/admin/tickets/Ticket';
+
+import UserDashboard from './routes/user/dashboard/Dashboard';
+import UserTicket from './routes/user/tickets/Ticket';
 
 
+import {BrowserRouter, Routes, Route} from 'react-router-dom'
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-  
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+   <BrowserRouter>
+      <Routes>
+
+        <Route path='/' element={<LandingPage />}/>
+        <Route path='/forgot-password' element = {<ForgotPassword />}/>
+        <Route path='/login' element = {<Login />}/>
+        <Route path='/reset-password' element = {<ResetPassword />}/>
+        <Route path='/signup' element = {<Signup />}/>
+      
+
+        <Route path='/admin/dashboard' element={<AdminDashboard />}/>
+        <Route path='/admin/ticket' element = {<AdminTicket />}/>
+
+        <Route path='/user/dashboard' element={<UserDashboard />}/>
+        <Route path='/user/ticket' element = {<UserTicket />}/>
+
+      </Routes>
+   </BrowserRouter>
   )
 }
 
