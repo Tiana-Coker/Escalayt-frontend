@@ -3,6 +3,8 @@
 
 :root {
 
+  font-family: "Inter", sans-serif;
+
   /* Colors */
   --primary-color: #0070FF;
   --secondary-color: #D1EDF5;
@@ -53,6 +55,13 @@
 }
 .tn_text{
   font-size: var(--tiny-text);
+}
+
+/* Custom button class */
+.p_btn{
+  background-color: var(--primary-color);
+  border: unset;
+  color: white;
 }
 
 
