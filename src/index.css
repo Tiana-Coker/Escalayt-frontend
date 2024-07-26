@@ -19,6 +19,10 @@
 
 }
 
+@media(max-width:575px){
+
+}
+
 /* Primary Color Classes */
 .p_color{  /* for text color */
   color: var(--primary-color);
