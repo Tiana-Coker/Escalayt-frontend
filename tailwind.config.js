@@ -9,6 +9,16 @@ export default {
       filter: {
         blurred: "blur(5px)",
       },
+      fontFamily: {
+        montserrat: ['Montserrat', 'sans-serif'],
+      },
+      zIndex: {
+        '-1': '-1',
+        '50': '50',
+      },
+      colors: {
+        overlay: 'rgba(0, 0, 0, 0.5)',
+      },
     },
   },
   plugins: [],
