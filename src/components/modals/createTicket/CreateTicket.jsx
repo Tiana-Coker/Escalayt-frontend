@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import CreateTicketIcon from "../../../assets/CreateTicketIcon";
 import Confirm from "./Confirm";
 import Dropdown from "./Dropdown";
@@ -14,6 +14,40 @@ export default function CreateTicket({ onClose }) {
   const [description, setDescription] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const [categoryOptions, setCategoryOptions] = useState([]);
+
+  useEffect(() => {
+    const fetchCategoryOptions = async () => {
+
+      const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorage OR
+      // const token = sessionStorage.getItem("jwtToken"); // Retrieve the token from sessionStorage
+
+      try {
+        const response = await fetch(
+          "http://localhost:8080/api/v1/ticket/category/name",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.ok) {
+          const data = await response.json();
+          const options = data.map((name, index) => ({
+            value: String(index + 1),
+            label: name,
+          }));
+          setCategoryOptions(options);
+        } else {
+          alert("Failed to fetch category options. Please try again.");
+        }
+      } catch (error) {
+        alert("An error occurred. Please try again.");
+      }
+    };
+
+    fetchCategoryOptions();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission behavior
@@ -27,7 +61,7 @@ export default function CreateTicket({ onClose }) {
 
     const categoryId = category;
 
-     const token = localStorage.getItem("jwtToken"); // Retrieve the token from localSTorage OR
+    const token = localStorage.getItem("jwtToken"); // Retrieve the token from localSTorage OR
     // const token = sessionStorage.getItem("jwtToken"); // Retrieve the token from sessionStorage
 
     try {
@@ -56,12 +90,6 @@ export default function CreateTicket({ onClose }) {
       alert("An error occurred. Please try again.");
     }
   };
-
-  const categoryOptions = [
-    { value: "1", label: "Electrical" },
-    { value: "2", label: "Plumbing" },
-    { value: "3", label: "General Maintenance" },
-  ];
 
   const priorityLevelOptions = [
     { value: "HIGH", label: "High" },
