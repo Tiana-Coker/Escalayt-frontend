@@ -16,62 +16,12 @@ import orangeellipse from '../../../assets/images/orangellipse.png';
 //   { id: 7, ticketNumber: '001', title: 'Fix leaking pipe', priority: 'Medium', assignee: 'Abdul Ahmed', status: 'In-Progress', category: 'Plumbing', dateCreated: '4 days ago', location: 'Building B', checked: false },
 // ];
 
-const TicketTable = () => {
-  const [tickets, setTickets] = useState([]);
-  const [page, setPage] = useState(0); 
-  const [hasMore, setHasMore] = useState(true);
+const TicketTable = ({tickets, setTickets, setPage, page}) => {
 
-  useEffect(() => { 
 
-    const fetchTickets = async () => { 
-      
-      try { 
 
-      // const token = localStorage.getItem('jwtToken'); 
-      const token = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJBRE1JTiJdLCJzdWIiOiJNdWdpZG8xIiwiaWF0IjoxNzIyMjcxMjg2LCJleHAiOjE3MjIzNTc2ODZ9.UFQyj8DhPYqtHovlE--gqkV2t7mkNtlIVOwSe_DpfyA";
 
-      const response = await axios.get('http://localhost:8080/api/v1/ticket/view-all-tickets', {
-         params: {page},
-         headers: { 
-          Authorization: `Bearer ${token}` 
-         } 
-        });
-
-        const {data} = response;
-
-        const formattedTickets = data.map(ticket => ({ 
-          ...ticket,
-          ticketNumber: ticket.id,
-          assignee: ticket.assigneeFullName || 'Unassigned', 
-          dateCreated: formatDate(ticket.createdAt) 
-        })); 
-
-        setTickets(formattedTickets); 
-
-        setHasMore(fetchTickets.length > 0);
-
-      } catch (error) { 
-        console.error('Error fetching tickets:', error); 
-      } 
-    }; 
-
-    fetchTickets(); 
-  }, [page]);
-
-  const formatDate = (dateString) => { 
-    const date = new Date(dateString);
-    const today = new Date(); 
-    const timeDiff = today - date; 
-    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24)); 
-    
-    if (daysDiff === 0) { 
-      return 'Today'; 
-    } else if(daysDiff === 1) { 
-      return '1 day ago'; 
-    } else { 
-      return `${daysDiff} days ago`; 
-    } 
-  };
+ 
 
   function handleDelete(id) {
     setTickets(tickets.filter(ticket => ticket.id !== id));
