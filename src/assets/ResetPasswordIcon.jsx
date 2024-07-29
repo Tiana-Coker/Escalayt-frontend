@@ -1,7 +1,11 @@
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable no-unused-vars */
 import React from "react";
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> main
 const ResetPasswordIcon = () => (
   <div>
     <svg
@@ -68,5 +72,10 @@ const ResetPasswordIcon = () => (
     </svg>
   </div>
 );
+<<<<<<< HEAD
  
 export default ResetPasswordIcon;
+=======
+
+export default ResetPasswordIcon;
+>>>>>>> main
