@@ -19,8 +19,11 @@ export default function CreateTicket({ onClose }) {
   useEffect(() => {
     const fetchCategoryOptions = async () => {
 
-      const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorage OR
-      // const token = sessionStorage.getItem("jwtToken"); // Retrieve the token from sessionStorage
+      // const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorage OR
+      // // const token = sessionStorage.getItem("jwtToken"); // Retrieve the token from sessionStorage
+
+      const token =
+    "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJBRE1JTiJdLCJzdWIiOiJzdHJpbmciLCJpYXQiOjE3MjIyNjEyODQsImV4cCI6MTcyMjM0NzY4NH0.8Rm9DcDgSA0cFZ_lFfUyuAkkXYRRL7zucfIWxc5G5FE";
 
       try {
         const response = await fetch(
