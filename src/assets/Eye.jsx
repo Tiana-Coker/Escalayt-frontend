@@ -1,11 +1,6 @@
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable no-unused-vars */
 import React from "react";
-<<<<<<< HEAD
- 
-=======
-
->>>>>>> main
 const Eye = () => (
   <div>
     <svg
@@ -30,10 +25,5 @@ const Eye = () => (
     </svg>
   </div>
 );
-<<<<<<< HEAD
- 
 export default Eye;
-=======
 
-export default Eye;
->>>>>>> main
