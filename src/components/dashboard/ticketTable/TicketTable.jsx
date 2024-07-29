@@ -6,15 +6,7 @@ import thcell from '../../../assets/images/thcell.png';
 import redellipse from '../../../assets/images/redellipse.png';
 import orangeellipse from '../../../assets/images/orangellipse.png';
 
-// const initialTickets = [
-//   { id: 1, ticketNumber: '001', title: 'Fix leaking pipe', priority: 'High', assignee: 'Abdul Ahmed', status: 'In-Progress', category: 'Plumbing', dateCreated: '2 days ago', location: 'Building B', checked: false },
-//   { id: 2, ticketNumber: '001', title: 'Fix leaking pipe', priority: 'High', assignee: 'Abdul Ahmed', status: 'Open', category: 'Plumbing', dateCreated: '2 days ago', location: 'Building B', checked: false },
-//   { id: 3, ticketNumber: '001', title: 'Fix leaking pipe', priority: 'Medium', assignee: 'Abdul Ahmed', status: 'Resolved', category: 'Plumbing', dateCreated: '2 days ago', location: 'Building B', checked: false },
-//   { id: 4, ticketNumber: '001', title: 'Fix leaking pipe', priority: 'Medium', assignee: 'Abdul Ahmed', status: 'In-Progress', category: 'Plumbing', dateCreated: '2 days ago', location: 'Building B', checked: false },
-//   { id: 5, ticketNumber: '001', title: 'Fix leaking pipe', priority: 'High', assignee: 'Abdul Ahmed', status: 'In-Progress', category: 'Plumbing', dateCreated: '2 days ago', location: 'Building B', checked: false },
-//   { id: 6, ticketNumber: '001', title: 'Fix leaking pipe', priority: 'Medium', assignee: 'Abdul Ahmed', status: 'Open', category: 'Plumbing', dateCreated: '4 days ago', location: 'Building B', checked: false },
-//   { id: 7, ticketNumber: '001', title: 'Fix leaking pipe', priority: 'Medium', assignee: 'Abdul Ahmed', status: 'In-Progress', category: 'Plumbing', dateCreated: '4 days ago', location: 'Building B', checked: false },
-// ];
+
 
 const TicketTable = ({tickets, setTickets, setPage, page}) => {
 
