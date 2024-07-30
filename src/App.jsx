@@ -17,7 +17,6 @@ import UserTicket from "./routes/user/tickets/Ticket";
 import TicketTable from './components/dashboard/ticketTable/TicketTable';
 
 import {BrowserRouter, Routes, Route} from 'react-router-dom'
-import RateTicket from './components/modals/rateTicket/RateTicket';
 // import axios from 'axios'
 
 
