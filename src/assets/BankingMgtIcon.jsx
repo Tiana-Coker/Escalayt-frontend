@@ -1,10 +1,5 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
-<<<<<<< HEAD
- 
-=======
-
->>>>>>> main
 const BankingMgtIcon = () => (
   <div>
     <svg
@@ -41,10 +36,4 @@ const BankingMgtIcon = () => (
     </svg>
   </div>
 );
-<<<<<<< HEAD
- 
 export default BankingMgtIcon;
-=======
-
-export default BankingMgtIcon;
->>>>>>> main
