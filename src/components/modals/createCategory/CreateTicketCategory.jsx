@@ -13,12 +13,10 @@ export default function CreateCategory({ onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
 
-    //  const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
+      const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
     // // const token = sessionStorage.getItem("jwtToken"); // Retrieve the token from sessionStorage
 
-    const token =
-      "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJBRE1JTiJdLCJzdWIiOiJzdHJpbmciLCJpYXQiOjE3MjIyNjEyODQsImV4cCI6MTcyMjM0NzY4NH0.8Rm9DcDgSA0cFZ_lFfUyuAkkXYRRL7zucfIWxc5G5FE";
-
+   
     if (!token) {
       alert("You are not logged in. Please log in first.");
       return;
