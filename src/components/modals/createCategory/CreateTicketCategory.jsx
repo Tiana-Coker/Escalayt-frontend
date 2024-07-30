@@ -14,8 +14,7 @@ export default function CreateCategory({ onClose }) {
     e.preventDefault(); // Prevent the default form submission behavior
 
       const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
-    // // const token = sessionStorage.getItem("jwtToken"); // Retrieve the token from sessionStorage
-
+   
    
     if (!token) {
       alert("You are not logged in. Please log in first.");
