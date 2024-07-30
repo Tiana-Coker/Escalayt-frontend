@@ -13,8 +13,6 @@ import Confirm from "../createTicket/Confirm";
 // departments drop down
 
 //testing token
-const token =
-  "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJBRE1JTiJdLCJzdWIiOiJzdHJpbmciLCJpYXQiOjE3MjIzMTUwMDYsImV4cCI6MTcyMjQwMTQwNn0.6J_HLwVUiOhiivAx6WpUsm6_KVrRFNrlf-6G_NRnGKk";
 
 // Testing url
 const URLS = {
@@ -88,7 +86,7 @@ const CreateUser = ({ onClose }) => {
       jobTitle: usernameRef.current.value, //username
     };
 
-    //const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
+    const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
 
     // check that the person is logged in
     if (!token) {
