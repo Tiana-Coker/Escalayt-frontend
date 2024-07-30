@@ -14,7 +14,7 @@ const CreateDepartment = ({ onClose }) => {
     e.preventDefault(); // Prevent the default form submission behavior
 
      const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
-    // const token = sessionStorage.getItem("jwtToken"); // Retrieve the token from sessionStorage
+   
 
     // check that the person is logged in
     if (!token) {
@@ -22,11 +22,6 @@ const CreateDepartment = ({ onClose }) => {
       return;
     }
 
-    
-    // const token =
-    //   "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJBRE1JTiJdLCJzdWIiOiJzdHJpbmciLCJpYXQiOjE3MjIyNjEyODQsImV4cCI6MTcyMjM0NzY4NH0.8Rm9DcDgSA0cFZ_lFfUyuAkkXYRRL7zucfIWxc5G5FE";
-
-    // try and catch
     try {
       // using fetch to connect with the response
       const response = await fetch(
@@ -162,10 +157,8 @@ const CategoryComponent = ({
             />
           </div>
         </div>
-
         {/* button to complete the process */}
         <Confirm />
-
         {/* <button type="submit">submit</button> */}
       </form>
     </div>
