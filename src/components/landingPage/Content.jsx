@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import focusedManUsingLaptop from "../../assets/landingPage/Image1.png";
 
 function Content() {
@@ -7,8 +8,8 @@ function Content() {
       <section className="py-2 border-1 mb-16 pt-0 md:space-x-16 mr-2">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between pt-0">
           <div className="max-w-md mx-auto text-center md:text-left mb-8 md:mb-0 md:mr-8">
-          <br />
-          <br />
+            <br />
+            <br />
             <h1 className="text-4xl font-bold mb-6">
               Your Comprehensive Facility Management Solution
             </h1>
@@ -27,10 +28,10 @@ function Content() {
               </button>
             </div>
             <p className="mt-2 text-sm">
-              Already have an account?{' '}
-              <a href="#" className="text-black underline">
+              Already have an account?{" "}
+              <Link to="/login" className="text-black underline"> {/* Use Link component here */}
                 Log In now
-              </a>
+              </Link>
             </p>
             <br />
           </div>
