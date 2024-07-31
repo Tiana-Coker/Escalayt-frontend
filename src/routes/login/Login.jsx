@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 import { useFormik } from 'formik';
 import { Eye, EyeOff } from 'react-feather';
 import axios from 'axios';
@@ -118,7 +118,7 @@ export default function Login() {
 
                 </div>
 
-                <div className='text-right mb-8 sm_text p_color'>Forgot password</div>
+                <Link to className='text-right mb-8 sm_text p_color'>Forgot password</Link>
                 <div>
                   <button disabled={isSubmitting} type='submit' className='p_btn w-full py-2 sm_text '>Confirm</button>
                 </div>

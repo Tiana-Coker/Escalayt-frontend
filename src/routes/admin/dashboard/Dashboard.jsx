@@ -67,7 +67,6 @@ export default function Dashboard() {
 
     // Method to fetch the latest 3 Open tickets
     const fetchNewTickets = () => {
-      console.log('Fetching new tickets...');
       fetchLatestThreeOpenTickets(setTickets, setLoadingTickets, setTicketsError);
       // Update styles and reset others to default
       setButtonStyles({
@@ -78,7 +77,6 @@ export default function Dashboard() {
     }
   
     const fetchOngoingTickets = () => {
-      console.log('Fetching ongoing tickets...');
       fetchLatestThreeInprogressTickets(setTickets, setLoadingTickets, setTicketsError);
       // Update styles and reset others to default
       setButtonStyles({
@@ -89,7 +87,6 @@ export default function Dashboard() {
     };
   
     const fetchResolvedTickets = () => {
-      console.log('Fetching resolved tickets...');
       fetchLatestThreeResolvedTickets(setTickets, setLoadingTickets, setTicketsError);
       // Update styles and reset others to default
       setButtonStyles({
@@ -150,6 +147,7 @@ export default function Dashboard() {
           dateCreated: formatDate(ticket.createdAt),
         }));
 
+        console.log("Fetched tickets:", formattedTickets);
         setActivities(formattedTickets);
 
         setHasMore(fetchTickets.length > 0);

@@ -47,6 +47,7 @@ export default function Ticket() {
 
   useEffect(() => {
     setSortedTickets(sortTickets(tickets));
+    console.log(tickets);
   }, [sort, tickets]);
 
   const fetchFilteredTickets = async () => {
@@ -119,7 +120,6 @@ export default function Ticket() {
   const handleSortChange = (e) => {
     const { value } = e.target;
     setSort(value);
-    console.log(e.target.value);
   };
 
   const handlePageChange = (newPage) => {

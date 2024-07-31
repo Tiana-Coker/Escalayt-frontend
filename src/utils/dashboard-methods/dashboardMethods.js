@@ -13,7 +13,6 @@ export const fetchLatestThreeOpenTickets = async (setTickets, setLoading, setErr
     });
 
     setTickets(response.data);
-    console.log(response);
   } catch (error) {
     console.error('Error fetching latest three open tickets:', error);
     setError(error);
