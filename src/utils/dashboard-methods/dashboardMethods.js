@@ -61,7 +61,6 @@ export const fetchLatestThreeInprogressTickets = async (setTickets, setLoading, 
 };
 
 export const fetchTicketCount = async (setTicketTotalCount, setOpenTicketCount, setResolvedTicketCount, setOngoingTicketCount) => {
-  console.log('Fetching ticket count...');
   try {
     const response = await axios.get(`${apiUrl}/count`, {
       headers: {
@@ -70,7 +69,6 @@ export const fetchTicketCount = async (setTicketTotalCount, setOpenTicketCount, 
       },
     });
  
-    console.log("ticket count",response);
     setTicketTotalCount(response.data.totalTickets);
     setOpenTicketCount(response.data.openTickets);
     setResolvedTicketCount(response.data.resolvedTickets);
