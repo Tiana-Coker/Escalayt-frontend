@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import RateTicket from "../../../components/modals/rateTicket/RateTicket";
-
+ 
 export default function Ticket() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [ticketId, setTickets] = useState(1);
