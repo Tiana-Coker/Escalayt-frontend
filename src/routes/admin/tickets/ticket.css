@@ -1,0 +1,37 @@
+.ticket-management {
+    display: flex;
+}
+
+.filters {
+    width: 20%;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+}
+
+.filters h3, .filters h4 {
+    margin-top: 0;
+}
+
+.filters label {
+    display: block;
+    margin: 5px 0;
+}
+
+.ticket-table {
+    width: 80%;
+    padding: 20px;
+}
+
+.ticket-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.ticket-table th, .ticket-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.ticket-table th {
+    background-color: #f4f4f4;
+}

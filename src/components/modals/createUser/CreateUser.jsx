@@ -6,37 +6,42 @@ import CreateUserIcon from "../../../assets/CreateUserIcon";
 import Confirm from "../createTicket/Confirm";
 import TicketSuccessIcon from "../../../assets/TicketSuccessIcon";
 
+
+ // import url from .env file
+ const apiUrl = import.meta.env.VITE_APP_API_URL;
+
 // Testing url
 const URLS = {
   DEPARTMENT: "http://localhost:8080/api/v1/admin/get-all-department",
   CREATE_USER: "http://localhost:8080/api/v1/admin/register-user/",
 };
 
-const token = localStorage.getItem("jwtToken");
 
-// const token =
-//       "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJBRE1JTiJdLCJzdWIiOiJzdHJpbmciLCJpYXQiOjE3MjIzMTUwMDYsImV4cCI6MTcyMjQwMTQwNn0.6J_HLwVUiOhiivAx6WpUsm6_KVrRFNrlf-6G_NRnGKk";
+
+// // this is to handle post request
+//     // post request header
+
+const CreateUser = ({ isOpen, onClose}) => {
+  if (!isOpen) return null;
+
+  const token = localStorage.getItem("token");
 
 //second parameter for setting header
 const option = {
-  // method
   method: "GET",
-  // header
   headers: {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
   },
 };
-
-// // this is to handle post request
-//     // post request header
-
-const CreateUser = ({ onClose }) => {
+  
   // fetch info
   const { data, isLoading, isError } = useFetchDepartment(
     URLS.DEPARTMENT,
     option
   );
+
+  console.log(data);
 
   //full name ref
   const fullNameRef = useRef();
@@ -80,8 +85,6 @@ const CreateUser = ({ onClose }) => {
       phoneNumber: passwordRef.current.value,
       jobTitle: usernameRef.current.value, //username
     };
-
-    // const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
 
     // check that the person is logged in
     if (!token) {

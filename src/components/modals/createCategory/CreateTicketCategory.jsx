@@ -5,7 +5,8 @@ import CreateCategoryIcon from "../../../assets/CreateCategoryIcon";
 import Confirm from "../createTicket/Confirm";
 import TicketCategorySuccess from "./TicketCategorySuccess";
 
-export default function CreateCategory({ onClose }) {
+export default function CreateCategory({ isOpen, onClose}) {
+  if (!isOpen) return null;
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isConfirmed, setIsConfirmed] = useState(false);
