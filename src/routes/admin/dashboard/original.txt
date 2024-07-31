@@ -50,11 +50,6 @@ export default function Dashboard() {
     const [loadingTickets, setLoadingTickets] = useState(true);
     const [ticketsError, setTicketsError] = useState(null);
 
-    // State for sorting
-    const [sort, setSort] = useState('priority');
-    const [sortedActivities, setSortedActivities] = useState([]);
-
-
 
       // values for the style of ticket card titles - New, Ongoing, Resolved
       const defaultStyle = { color: '#BDBDBD' };
@@ -159,7 +154,6 @@ export default function Dashboard() {
     };
 
     fetchTickets();
-    fetchNewTickets();
   }, [page]);
 
   // Fetch Ticket Count
@@ -173,39 +167,9 @@ export default function Dashboard() {
     );
   }, []);
 
-   // Sorting function
-   const sortTickets = (tickets) => {
-    const priorityOrder = ['HIGH', 'MEDIUM', 'LOW'];
-    const statusOrder = ['OPEN', 'IN_PROGRESS', 'RESOLVE'];
-
-    return [...tickets].sort((a, b) => {
-      if (sort === 'priority') {
-        return priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority);
-      }
-      if (sort === 'status') {
-        return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
-      }
-      if (sort === 'assigneeId') {
-        return a.assignee.localeCompare(b.assignee);
-      }
-      if (sort === 'categoryId') {
-        return a.ticketCategoryName.localeCompare(b.ticketCategoryName);
-      }
-      return 0;
-    });
+  const handleButtonClick = (type) => {
+    navigate(`/tickets/${type}`);
   };
-
-  // Sort activities whenever `sort` or `activities` change
-  useEffect(() => {
-    setSortedActivities(sortTickets(activities));
-  }, [sort, activities]);
-
-  // Handle sort change
-  const handleSortChange = (e) => {
-    const { value } = e.target;
-    setSort(value);
-  };
-
 
   return (
     <>
@@ -218,14 +182,7 @@ export default function Dashboard() {
         <div className='flex border'>
           <div>
             <div>Sort by</div>
-            <div>
-              <select value={sort} onChange={handleSortChange}>
-                <option value="priority">Priority</option>
-                <option value="status">Status</option>
-                <option value="assigneeId">Assignee</option>
-                <option value="categoryId">Category</option>
-              </select>
-            </div>
+            <div><input type="text" placeholder='This year' /></div>
           </div>
           
           <button onClick={() => openModalHandler('createUser')} className="bg-blue-500 text-white px-4 py-2 rounded">
@@ -285,7 +242,7 @@ export default function Dashboard() {
         
         {/* Ticket Table */}
         <TicketTable
-              activities={sortedActivities} 
+              activities={activities}
               setActivities={setActivities}
               setPage={setPage}
               page={page}

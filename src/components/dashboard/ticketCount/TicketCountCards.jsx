@@ -3,6 +3,7 @@ import React from 'react';
 import styles from './TicketCountCards.module.css';
 
 export default function TicketCountCards({totalTicketCount, openTicketCount, ongoingTicketCount, resolvedTicketCount}) {
+  console.log("called");
   return (
  
    
