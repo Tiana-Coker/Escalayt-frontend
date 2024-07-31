@@ -10,11 +10,6 @@ import orangeellipse from '../../../assets/images/orangellipse.png';
 
 const TicketTable = ({tickets, setTickets, setPage, page}) => {
 
-
-
-
- 
-
   function handleDelete(id) {
     setTickets(tickets.filter(ticket => ticket.id !== id));
   }
