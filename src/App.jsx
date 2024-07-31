@@ -10,6 +10,7 @@ import Signup from "./routes/signup/Signup";
 
 import AdminDashboard from "./routes/admin/dashboard/Dashboard";
 import AdminTicket from "./routes/admin/tickets/Ticket";
+import AdminTicketPreview from "./routes/admin/ticketPreview/TicketPreview";
 
 import UserDashboard from "./routes/user/dashboard/Dashboard";
 import UserTicket from "./routes/user/tickets/Ticket";
@@ -32,7 +33,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
 
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/ticket" element={<AdminTicket />} />
+        <Route path="/admin/tickets" element={<AdminTicket />} />
+        <Route path="/admin/tickets/:id" element={<AdminTicketPreview />} />
 
         <Route path="/user/dashboard" element={<UserDashboard />} />
         <Route path="/user/ticket" element={<UserTicket />} />

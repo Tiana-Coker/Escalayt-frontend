@@ -1,40 +1,50 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+
 import styles from './TicketTable.module.css';
 import updown from '../../../assets/images/updown.png';
 import thcell from '../../../assets/images/thcell.png';
 import redellipse from '../../../assets/images/redellipse.png';
 import orangeellipse from '../../../assets/images/orangellipse.png';
 
-
-
-const TicketTable = ({tickets, setTickets, setPage, page}) => {
-
-
-
-
- 
+const TicketTable = ({ activities, setActivities, setPage, page }) => {
+  // State to track which dropdown is open
+  const [openDropdownId, setOpenDropdownId] = useState(null);
 
   function handleDelete(id) {
-    setTickets(tickets.filter(ticket => ticket.id !== id));
+    setActivities(activities.filter(ticket => ticket.id !== id));
   }
 
   function handleCheckboxChange(id) {
-    setTickets(tickets.map(ticket =>
+    setActivities(activities.map(ticket =>
       ticket.id === id ? { ...ticket, checked: !ticket.checked } : ticket
     ));
   }
 
-  const handleNextPage = () => { 
-    if (hasMore) { 
-      setPage(prevPage => prevPage + 1); 
-    } 
-  }; 
-  
-  const handlePreviousPage = () => { 
-    if (page > 0) { 
-      setPage(prevPage => prevPage - 1); 
+  const handleNextPage = () => {
+    if (hasMore) {
+      setPage(prevPage => prevPage + 1);
     }
+  };
+
+  const handlePreviousPage = () => {
+    if (page > 0) {
+      setPage(prevPage => prevPage - 1);
+    }
+  };
+
+  const handleTableDropdown = (id) => {
+    setOpenDropdownId(openDropdownId === id ? null : id);
+  };
+
+  const handleView = (id) => {
+    console.log("View ticket", id);
+    // Your logic for viewing the ticket
+  };
+
+  const handleResolve = (id) => {
+    console.log("Resolve ticket", id);
+    // Your logic for resolving the ticket
   };
 
   return (
@@ -76,7 +86,7 @@ const TicketTable = ({tickets, setTickets, setPage, page}) => {
           </tr>
         </thead>
         <tbody>
-          {tickets.map(ticket => (
+          {activities.map(ticket => (
             <tr key={ticket.id}>
               <td>
                 <input
@@ -102,18 +112,27 @@ const TicketTable = ({tickets, setTickets, setPage, page}) => {
               <td>{ticket.ticketCategoryName}</td>
               <td>{ticket.dateCreated}</td>
               <td>{ticket.location}</td>
-              <td>⋮</td>
+              <td>
+                <button onClick={() => handleTableDropdown(ticket.id)}>⋮</button>
+                {openDropdownId === ticket.id && (
+                  <div className={`${styles.dropdown} border absolute`}>
+                    <Link to={`/admin/tickets/${ticket.id}`}>View</Link>
+                    <div onClick={() => handleResolve(ticket.id)}>Resolve</div>
+                    <div onClick={() => handleDelete(ticket.id)}>Delete</div>
+                  </div>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
       <div className={styles.pagination}>
-        <button onClick={handlePreviousPage} disabled={page === 0}> 
+        <button onClick={handlePreviousPage} disabled={page === 0}>
           Previous
-        </button> 
-        <button onClick={handleNextPage}> 
-          Next 
-        </button> 
+        </button>
+        <button onClick={handleNextPage}>
+          Next
+        </button>
       </div>
     </div>
   );
