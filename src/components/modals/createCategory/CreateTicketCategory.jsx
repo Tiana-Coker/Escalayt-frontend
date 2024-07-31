@@ -14,7 +14,7 @@ export default function CreateCategory({ isOpen, onClose}) {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
 
-      const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
+      const token = localStorage.getItem("token"); // Retrieve the token from localStorge Or
    
    
     if (!token) {

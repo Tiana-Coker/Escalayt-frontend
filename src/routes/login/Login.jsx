@@ -1,20 +1,23 @@
 import React, {useState} from 'react';
-import { useNavigate, Link } from 'react-router';
+import { useNavigate, Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { Eye, EyeOff } from 'react-feather';
 import axios from 'axios';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 import styles from './Login.module.css';
 import { basicSCHEMA } from '../../schemas';
 import IMAGES from '../../assets';
 
-
+ // import url from .env file
+ const apiUrl = import.meta.env.VITE_APP_API_URL;
+ 
 export default function Login() {
 
-  // import url from .env file
-  const apiUrl = import.meta.env.VITE_APP_API_URL;
-
   const navigate = useNavigate();
+  
   
   const [showPassword, setShowPassword] = useState(false);
   
@@ -46,6 +49,11 @@ export default function Login() {
     } catch (error) {
       // console.error('Failed to login user', error);
       console.error('Failed to login user');
+      console.log(error.response.data);
+      // const notify = () => toast(error.response.data);
+
+      // notify();
+      toast.error(error.response.data)
       if (error.response) {
         console.error('Error response data:', error.response.data);
       }
@@ -68,14 +76,13 @@ export default function Login() {
     validationSchema: basicSCHEMA,
     onSubmit  
   });
-  console.log(errors);
   return (
     <div>
 
-        <div className='px-4 py-4'><img src={IMAGES.ESCALAYT_LOGO} alt="" /></div>
+        <div className='px-4 py-4 mb-10 md:mb-20'><img src={IMAGES.ESCALAYT_LOGO} alt="" /></div>
 
-        <div className='flex flex-wrap px-8'>
-            <form onSubmit={handleSubmit} className={`${styles.formContainer} w-4/12  h-fit px-4 py-4`}>
+        <div className='flex flex-wrap justify-between px-8 sm:px-16'>
+            <form onSubmit={handleSubmit} className={`${styles.formContainer} md:w-5/12 lg:w-4/12  h-fit px-4 py-4`}>
                 <div className='flex flex-wrap  justify-center'><img src={IMAGES.AUTH_ICON} alt="" /></div>
                 <div className='text-lg text-center font-semibold' style={{color:"#101828"}}>Log in to your account</div>
                 <div className = "sm_text text-center mb-6" style={{color:"#475467"}}>Welcome back! Please enter your details.</div>
@@ -118,7 +125,7 @@ export default function Login() {
 
                 </div>
 
-                <Link to className='text-right mb-8 sm_text p_color'>Forgot password</Link>
+                <Link to = "/forgot-password" className='text-right mb-8 sm_text p_color'>Forgot password</Link>
                 <div>
                   <button disabled={isSubmitting} type='submit' className='p_btn w-full py-2 sm_text '>Confirm</button>
                 </div>
@@ -126,15 +133,16 @@ export default function Login() {
 
             </form>
 
-            <div className='w-8/12 flex flex-wrap'>
-                <div className='mx-auto'>
-                  <img src={IMAGES.LOGIN_IMAGE} className='' alt="" />
+            <div className={`${styles.loginImgDiv} hidden md:block md:w-7/12 lg:w-8/12 flex flex-wrap lg:h-[600px] items-center`}>
+                <div className=''>
+                  <img src={IMAGES.LOGIN_IMAGE} className='mx-auto' alt="" />
                 </div>
 
             </div>
 
         </div>
 
+        <ToastContainer />
 
     </div>
   )
