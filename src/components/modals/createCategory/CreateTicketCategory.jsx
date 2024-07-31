@@ -13,24 +13,26 @@ export default function CreateCategory({ onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
 
-     const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
-    // const token = sessionStorage.getItem("jwtToken"); // Retrieve the token from sessionStorage
-
-
+      const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
+   
+   
     if (!token) {
       alert("You are not logged in. Please log in first.");
       return;
     }
 
-    try{
-      const response = await fetch("http://localhost:8080/api/v1/ticket/category/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ name, description })
-      });
+    try {
+      const response = await fetch(
+        "http://localhost:8080/api/v1/ticket/category/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ name, description }),
+        }
+      );
 
       if (response.ok) {
         setIsConfirmed(true);
@@ -39,8 +41,7 @@ export default function CreateCategory({ onClose }) {
         alert("Error creating category");
         console.log("Error:", response.statusText);
       }
-
-    }catch (error) {
+    } catch (error) {
       alert("Error creating category");
     }
 
