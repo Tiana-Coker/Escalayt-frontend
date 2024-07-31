@@ -3,7 +3,8 @@ import Confirm from "../createTicket/Confirm";
 import CreateUserIcon from "../../../assets/CreateUserIcon";
 import CreateDepartmentSuccess from "./CreateDepartmentSuccess";
 
-const CreateDepartment = ({ onClose }) => {
+const CreateDepartment = ({ isOpen, onClose}) => {
+  if (!isOpen) return null;
   const [newDepartment, setNewDepartment] = useState({
     department: "",
   });
@@ -13,7 +14,7 @@ const CreateDepartment = ({ onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
 
-     const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
+     const token = localStorage.getItem("token"); // Retrieve the token from localStorge Or
    
 
     // check that the person is logged in

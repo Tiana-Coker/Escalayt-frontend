@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import BankingMgtIcon from "../../assets/BankingMgtIcon";
 import EscalaytImage from "../../assets/EscalaytImage";
 import ResetPasswordIcon from "../../assets/ResetPasswordIcon";
@@ -7,6 +8,12 @@ import Eye from "../../assets/Eye";
 import SignupSuccess from "./SignupSuccess";
  
 export default function Signup() {
+
+  // import url from .env file
+  const apiUrl = import.meta.env.VITE_APP_API_URL;
+
+  const navigate = useNavigate();
+
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -45,7 +52,7 @@ export default function Signup() {
     };
  
     try {
-      const response = await fetch("http://localhost:8080/api/v1/auth/register", {
+      const response = await fetch(`${apiUrl}/api/v1/auth/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -55,6 +62,8 @@ export default function Signup() {
  
       if (response.ok) {
         setIsSignupSucessful(true);
+        alert("Registration successful!");
+        navigate("/login");
       } else {
         const errorText = await response.text();
         alert(`Registration failed: ${errorText}`);

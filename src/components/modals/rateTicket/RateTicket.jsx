@@ -13,9 +13,8 @@ const RateTicket = ({ onClose, ticketId }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
-    // // const token = sessionStorage.getItem("jwtToken"); // Retrieve the token from sessionStorage
-
+    const token = localStorage.getItem("token"); // Retrieve the token from localStorge Or
+  
     
 
     if (!token) {
