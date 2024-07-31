@@ -16,8 +16,6 @@ const URLS = {
   CREATE_USER: "http://localhost:8080/api/v1/admin/register-user/",
 };
 
-const token = localStorage.getItem("jwtToken");
-
 
 
 // // this is to handle post request
