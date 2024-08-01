@@ -1,9 +1,16 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import TicketSuccessIcon from "../../assets/TicketSuccessIcon";
 
 function ResetPasswordSuccess({ onClose }) {
+  const navigate = useNavigate();
+
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
+
   return (
     <>
       <div className="bg-white w-[400px] h-[280px] rounded-[12px] shadow-lg p-6 flex flex-col items-center justify-center">
@@ -46,7 +53,7 @@ function ResetPasswordSuccess({ onClose }) {
         </div>
         <div className="w-[352px] h-[44px] flex items-center justify-center mt-6">
           <button
-            onClick={onClose} // Ensure this function closes the modal
+            onClick={handleLoginClick}
             className="bg-custom-blue text-white text-[20px] font-semibold leading-[24px] py-2 px-4 w-full h-full border border-custom-blue"
           >
             Login
