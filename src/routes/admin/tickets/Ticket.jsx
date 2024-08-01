@@ -138,6 +138,8 @@ export default function Ticket() {
           Create Department
        </button>
     </div>
+
+    
     <div className="ticket-management">
       <div className="filters">
         <h3>Filters</h3>
