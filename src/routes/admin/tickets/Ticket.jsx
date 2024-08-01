@@ -240,7 +240,7 @@ export default function Ticket() {
     
                   <div className="h-[auto] ">
                   <TicketTable activities={sortedTickets} setActivities = {setTickets} setPage = {setPage} page={page}/>
-              
+              {/*
                     <div className="pagination">
                       <button onClick={() => handlePageChange(page - 1)} disabled={page === 0}>
                         Previous
@@ -250,6 +250,7 @@ export default function Ticket() {
                         Next
                       </button>
                     </div>
+                    */}
                   
                   </div>
           </div>

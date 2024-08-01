@@ -230,26 +230,26 @@ export default function Dashboard() {
 
   return (
     <>
-
+<div className='p-2 pt-5 px-24'>
       {/* Navbar */}
       <Navbar setProfileDropdown={setProfileDropdown} profileDropdown={profileDropdown}/>
 
       {/* Sort and Add user row */}
-      <div className='flex flex-wrap mt-10 mb-20 justify-end'>
-        <div className='flex border'>
-          <div>
-            <div>Sort by</div>
+      <div className='flex flex-wrap mt-10 mb-10 justify-end'>
+        <div className='flex flex-row '>
+          <div className='flex flex-col mr-8'>
+            <div className='text-gray-500'>Sort by</div>
             <div>
-              <select value={sort} onChange={handleSortChange}>
-                <option value="priority">Priority</option>
-                <option value="status">Status</option>
-                <option value="assigneeId">Assignee</option>
-                <option value="categoryId">Category</option>
+              <select className='px-9 py-1 bg-white border border-blue-500' value={sort} onChange={handleSortChange}>
+                <option value="priority">Priority </option>
+                <option value="status">Status </option>
+                <option value="assigneeId">Assignee </option>
+                <option value="categoryId">Category </option>
               </select>
             </div>
           </div>
           
-          <button onClick={() => openModalHandler('createUser')} className="bg-blue-500 text-white px-4 py-2 rounded">
+          <button onClick={() => openModalHandler('createUser')} className="bg-blue-500 text-white px-4 text-sm h-9 mr-20 ">
               Add New User
           </button>
          
@@ -270,7 +270,7 @@ export default function Dashboard() {
 
        {/* Ticket Card title widget */}
 
-       <div style={{backgroundColor:"#F2F2F2"}} className='flex flex-wrap mb-2 px-3 py-2 border-radius'>
+       <div style={{backgroundColor:"#F2F2F2"}} className='flex flex-wrap mb-5 px-3 py-2 border-radius'>
          <div className='flex flex-wrap w-full lg:w-8/12 gap-x-9 justify-between lg:justify-start'>
           <button className={`focus:outline-none border-none sm_text px-4`} style={buttonStyles.newTickets} onClick={fetchNewTickets}>New Tickets</button>
           <button className={`focus:outline-none border-none sm_text px-4`} style={buttonStyles.ongoingTickets} onClick={fetchOngoingTickets}>Ongoing Tickets</button>
@@ -286,7 +286,7 @@ export default function Dashboard() {
 
       </div>
            {/* Ticket Cards */}
-        <div className='flex flex-wrap'>
+        <div className='flex flex-wrap mb-8 justify-around'>
               {
               tickets.map((ticket)=>{
                 return <TicketCard  key = {ticket.id} ticket ={ticket} button = {true}/>
@@ -323,7 +323,7 @@ export default function Dashboard() {
        
     
 
-       {/* Profile Dropdown */}
+       {/* Profile Dropdown 
        {
         profileDropdown && 
          <div className='position-absolute sm_text bg-white border w-40'>
@@ -333,7 +333,8 @@ export default function Dashboard() {
             <div className='mb-4' style={{color:"#1F2937"}}>Profile</div>
             <div className='mb-4' style={{color:"#1F2937"}} >Logout</div>
          </div>
-      }
+      }*/}
+     </div> 
     </>
   );
 }
