@@ -6,6 +6,8 @@ import TicketCountCards from '../../../components/dashboard/ticketCount/TicketCo
 import CreateUser from "../../../components/modals/createUser/CreateUser";
 import TicketCard from '../../../components/dashboard/ticketCard/TicketCard';
 import IMAGES from "../../../assets";
+import Notification from '../../../components/modals/notification/Notification';
+
 
 // utility methods
 import {  fetchLatestThreeOpenTickets, fetchLatestThreeResolvedTickets, fetchLatestThreeInprogressTickets, fetchTicketCount
@@ -17,6 +19,7 @@ import styles from "./Dashboard.module.css";
 
 import axios from "axios";
 import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
+
 
 
 
@@ -226,13 +229,30 @@ export default function Dashboard() {
   if (loading) {
     return <div>Loading...</div>; // Add your loading spinner here if you have one
   }
-
-
+   // samuel modal for notification
+   const [isModalOpen, setIsModalOpen] = useState(false);
+   const [currentAdmin, setCurrentAdmin] = useState({
+    adminId : 1,
+    username : "",
+    fullName : "",
+    email : "",
+   })
+   const handleOpenModal = () => {
+     setIsModalOpen(true);
+   };
+   const handleCloseModal = () => {
+     setIsModalOpen(false);
+   };
   return (
     <>
 <div className='p-2 pt-5 px-24'>
       {/* Navbar */}
-      <Navbar setProfileDropdown={setProfileDropdown} profileDropdown={profileDropdown}/>
+      <Navbar onOpen={handleOpenModal} onClose={handleCloseModal} setProfileDropdown={setProfileDropdown} profileDropdown={profileDropdown}/>
+
+
+      {isModalOpen && (
+          <Notification adminId={currentAdmin.adminId} onClose={handleCloseModal} />
+        )}
 
       {/* Sort and Add user row */}
       <div className='flex flex-wrap mt-10 mb-10 justify-end'>

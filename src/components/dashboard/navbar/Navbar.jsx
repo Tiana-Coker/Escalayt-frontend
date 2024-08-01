@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import IMAGES from '../../../assets';
 
-const Navbar = ({setProfileDropdown, profileDropdown}) => {
+const Navbar = ({ onOpen, setProfileDropdown, profileDropdown}) => {
 
   const handleProfileDropdown = () => {
     setProfileDropdown(prev => !prev);
@@ -22,7 +22,7 @@ const Navbar = ({setProfileDropdown, profileDropdown}) => {
                 <Link to = "/admin/tickets" className='ml-4'>All Tickets</Link>
             </div>
             <div className="flex flex-wrap items-center ml-28">
-              <button className=""><img src={IMAGES.NOTIFICATION_ICON} alt="" /></button>
+              <button className="" onClick={onOpen}><img src={IMAGES.NOTIFICATION_ICON} alt="notification" /></button>
               <button className="ml-6" onClick={handleProfileDropdown}><img src={IMAGES.PROFILE_ICON} className='' alt="" /></button>
             </div>
           </div>
