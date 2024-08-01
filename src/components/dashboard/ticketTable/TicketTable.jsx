@@ -6,8 +6,21 @@ import updown from '../../../assets/images/updown.png';
 import thcell from '../../../assets/images/Checkbox.svg';
 import redellipse from '../../../assets/images/redellipse.png';
 import orangeellipse from '../../../assets/images/orangellipse.png';
+import axios from 'axios';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+
+ // import url from .env file
+ const apiUrl = import.meta.env.VITE_APP_API_URL;
 
 const TicketTable = ({ activities, setActivities, setPage, page }) => {
+
+  // Token from local storage
+  // const token = localStorage.getItem("token");
+
   // State to track which dropdown is open
   const [openDropdownId, setOpenDropdownId] = useState(null);
 
@@ -37,12 +50,31 @@ const TicketTable = ({ activities, setActivities, setPage, page }) => {
     setOpenDropdownId(openDropdownId === id ? null : id);
   };
 
-
-
-  const handleResolve = (id) => {
-    console.log("Resolve ticket", id);
-    // Your logic for resolving the ticket
+  const handleResolve = async (ticketId) => {
+    const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
+  
+    try {
+      const response = await axios.post(`${apiUrl}/api/v1/ticket/${ticketId}/resolve`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      console.log('Ticket resolved successfully:', response.data);
+      toast.success('Ticket resolved successfully');
+      // Handle the success scenario, e.g., updating the UI or notifying the user
+    } catch (error) {
+      console.error('Error resolving ticket:', error.response ? error.response.data : error.message);
+      toast.error('Error resolving ticket');
+      // Handle the error scenario, e.g., showing an error message to the user
+    }
   };
+
+  // const handleResolve = (id) => {
+  //   console.log("Resolve ticket", id);
+    
+  //   // Your logic for resolving the ticket
+  // };
 
   return (
     <div className={styles.ticketTableContainer}>
@@ -110,11 +142,11 @@ const TicketTable = ({ activities, setActivities, setPage, page }) => {
               <td>{ticket.dateCreated}</td>
               <td>{ticket.location}</td>
               <td>
-                <button onClick={() => handleTableDropdown(ticket.id)}>⋮</button>
+                <button className='bg-gray-400' onClick={() => handleTableDropdown(ticket.id)}>⋮</button>
                 {openDropdownId === ticket.id && (
                   <div className={`${styles.dropdown} border absolute bg-white p-3`}>
                     <Link to={`/admin/tickets/${ticket.id}`}>View</Link>
-                    <div onClick={() => handleResolve(ticket.id)}>Resolve</div>
+                    <div style={{cursor:"pointer"}} onClick={() => handleResolve(ticket.id)}>Resolve</div>
                     <div onClick={() => handleDelete(ticket.id)}>Delete</div>
                   </div>
                 )}
@@ -133,6 +165,7 @@ const TicketTable = ({ activities, setActivities, setPage, page }) => {
         </button>
       </div>
       */}
+       <ToastContainer />
     </div>
   );
 }

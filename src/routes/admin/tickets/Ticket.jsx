@@ -45,6 +45,23 @@ export default function Ticket() {
   const [totalPages, setTotalPages] = useState(0);
   const [itemsPerPage] = useState(14); // Number of items per page
 
+  const formatDate = (dateString) => {
+
+    const date = new Date(dateString);
+    const today = new Date();
+    const timeDiff = today - date;
+    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+    if (daysDiff === 0) {
+      return "Today";
+    } else if (daysDiff === 1) {
+      return "1 day ago";
+    } else {
+      return `${daysDiff} days ago`;
+    }
+  };
+
+
   useEffect(() => {
     fetchFilteredTickets();
     
@@ -77,8 +94,15 @@ export default function Ticket() {
         },
       });
 
-      // Update tickets and totalPages
-      setTickets(response.data.content);
+
+      const formattedTickets = response.data.content.map((ticket) => ({
+        ...ticket,
+        ticketNumber: ticket.id,
+        assignee: ticket.assigneeFullName || "Unassigned",
+        dateCreated: formatDate(ticket.createdAt),
+      }));
+      // setTickets(response.data.content);
+      setTickets(formattedTickets);
       setTotalPages(response.data.totalPages); // Adjust if the actual pagination response differs
     } catch (error) {
       console.error('Error fetching tickets', error);
@@ -216,7 +240,7 @@ export default function Ticket() {
           <div className="w-[1000px] h-[800px] flex flex-col gap-[32px]">
                   <div className="h-[24px] flex items-center">
                     <span className="text-[20px] font-medium leading-[24px] text-left">
-                      Tickets (10)
+                      Tickets
                     </span>
                   </div>
                   <div className=" flex gap-[22px]">
