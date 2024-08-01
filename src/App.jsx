@@ -20,7 +20,6 @@ import TicketTable from "./components/dashboard/ticketTable/TicketTable";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 // import axios from 'axios'
 
-import Notification from "./components/modals/notification/Notification";
 
 function App() {
   return (
@@ -42,7 +41,7 @@ function App() {
         <Route path="/tick-table" element={<TicketTable />} />
       </Routes>
 
-      <Notification />
+      
     </BrowserRouter>
   );
 }

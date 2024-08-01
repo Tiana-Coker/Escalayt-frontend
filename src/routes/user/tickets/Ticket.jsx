@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import RateTicket from "../../../components/modals/rateTicket/RateTicket";
+import Notification from "../../../components/modals/notification/Notification";
+
+
  
 export default function Ticket() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,6 +33,8 @@ export default function Ticket() {
           <RateTicket onClose={handleCloseModal} ticketId={ticketId} />
         )}
       </div>
+
+      <Notification />
     </div>
   );
 }
