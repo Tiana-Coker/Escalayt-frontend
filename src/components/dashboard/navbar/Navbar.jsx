@@ -9,7 +9,7 @@ const Navbar = ({ onOpen, setProfileDropdown, profileDropdown}) => {
     setProfileDropdown(prev => !prev);
   }
   return (
-    <nav className="">
+    <nav className="px-16">
         <div className="relative flex flex-wrap items-center justify-between h-14">
           <div className="">
             <Link to="/" className="flex-shrink-0">

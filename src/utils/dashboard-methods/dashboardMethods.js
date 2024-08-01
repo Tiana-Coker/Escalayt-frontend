@@ -1,9 +1,8 @@
 import axios from "axios";
-const token = localStorage.getItem("token");
 
 const apiUrl = import.meta.env.VITE_APP_API_URL + '/api/v1/ticket';
 
-export const fetchLatestThreeOpenTickets = async (setTickets, setLoading, setError) => {
+export const fetchLatestThreeOpenTickets = async (token, setTickets, setLoading, setError) => {
   try {
     const response = await axios.get(`${apiUrl}/admin/open-tickets`, {
       headers: {
@@ -13,7 +12,6 @@ export const fetchLatestThreeOpenTickets = async (setTickets, setLoading, setErr
     });
 
     setTickets(response.data);
-    console.log(response);
   } catch (error) {
     console.error('Error fetching latest three open tickets:', error);
     setError(error);
@@ -22,7 +20,7 @@ export const fetchLatestThreeOpenTickets = async (setTickets, setLoading, setErr
   }
 };
 
-export const fetchLatestThreeResolvedTickets = async (setTickets, setLoading, setError) => {
+export const fetchLatestThreeResolvedTickets = async (token, setTickets, setLoading, setError) => {
   try {
     const response = await axios.get(`${apiUrl}/admin/resolved-tickets`, {
       headers: {
@@ -41,7 +39,7 @@ export const fetchLatestThreeResolvedTickets = async (setTickets, setLoading, se
   }
 };
 
-export const fetchLatestThreeInprogressTickets = async (setTickets, setLoading, setError) => {
+export const fetchLatestThreeInprogressTickets = async (token, setTickets, setLoading, setError) => {
   try {
     const response = await axios.get(`${apiUrl}/admin/inprogres-tickets`, {
       headers: {
@@ -60,7 +58,7 @@ export const fetchLatestThreeInprogressTickets = async (setTickets, setLoading, 
   }
 };
 
-export const fetchTicketCount = async (setTicketTotalCount, setOpenTicketCount, setResolvedTicketCount, setOngoingTicketCount) => {
+export const fetchTicketCount = async (token, setTicketTotalCount, setOpenTicketCount, setResolvedTicketCount, setOngoingTicketCount) => {
   try {
     const response = await axios.get(`${apiUrl}/count`, {
       headers: {

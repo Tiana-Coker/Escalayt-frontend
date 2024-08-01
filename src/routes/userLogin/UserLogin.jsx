@@ -7,7 +7,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import styles from './Login.module.css';
+import styles from './UserLogin.module.css';
 import { basicSCHEMA } from '../../schemas';
 import IMAGES from '../../assets';
 
@@ -27,7 +27,7 @@ export default function Login() {
 
   const onSubmit = async (values, actions) => {
     try {
-      const response = await axios.post(`${apiUrl}/api/v1/auth/login-admin`, {
+      const response = await axios.post(`${apiUrl}/api/v1/auth/login-user`, {
         username: values.username,
         password: values.password,
       }, {
@@ -42,9 +42,8 @@ export default function Login() {
         // Store the username and token in localStorage
         localStorage.setItem('username', username);
         localStorage.setItem('token', token);
-        console.log("admin token",token)
         actions.resetForm();
-        navigate('/admin/dashboard');
+        navigate('/user/dashboard');
       }
 
     } catch (error) {
@@ -148,12 +147,14 @@ export default function Login() {
     </div>
   )
 }
-    // fetchTickets();
-    // fetchNewTickets();
-    // // Method to ticket count
-    // fetchTicketCount(
-    //   setTicketTotalCount,
-    //   setOpenTicketCount,
-    //   setResolvedTicketCount,
-    //   setOngoingTicketCount
-    // );
+
+
+// fetchTickets();
+
+//     // Method to ticket count
+//     fetchTicketCount(token,
+//       setTicketTotalCount,
+//       setOpenTicketCount,
+//       setResolvedTicketCount,
+//       setOngoingTicketCount
+//     );

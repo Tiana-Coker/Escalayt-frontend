@@ -1,10 +1,8 @@
 /* eslint-disable no-unused-vars */
 
-
 // Components
 import Navbar from '../../../components/dashboard/navbar/Navbar';
 import TicketCountCards from '../../../components/dashboard/ticketCount/TicketCountCards';
-import CreateTicket from "../../../components/modals/createTicket/CreateTicket";
 import CreateUser from "../../../components/modals/createUser/CreateUser";
 import TicketCard from '../../../components/dashboard/ticketCard/TicketCard';
 import IMAGES from "../../../assets";
@@ -28,7 +26,12 @@ import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
  // import url from .env file
  const apiUrl = import.meta.env.VITE_APP_API_URL;
 
+
 export default function Dashboard() {
+
+
+  // Token from local storage
+  const token = localStorage.getItem("token");
 
    // State values for profile dropdown
   const [profileDropdown, setProfileDropdown] = useState(false);
@@ -57,6 +60,9 @@ export default function Dashboard() {
     const [sort, setSort] = useState('priority');
     const [sortedActivities, setSortedActivities] = useState([]);
 
+    // General loading state
+    const [loading, setLoading] = useState(true);
+
 
 
       // values for the style of ticket card titles - New, Ongoing, Resolved
@@ -70,8 +76,7 @@ export default function Dashboard() {
 
     // Method to fetch the latest 3 Open tickets
     const fetchNewTickets = () => {
-      console.log('Fetching new tickets...');
-      fetchLatestThreeOpenTickets(setTickets, setLoadingTickets, setTicketsError);
+      fetchLatestThreeOpenTickets(token, setTickets, setLoadingTickets, setTicketsError);
       // Update styles and reset others to default
       setButtonStyles({
         newTickets: clickedStyle,
@@ -81,8 +86,7 @@ export default function Dashboard() {
     }
   
     const fetchOngoingTickets = () => {
-      console.log('Fetching ongoing tickets...');
-      fetchLatestThreeInprogressTickets(setTickets, setLoadingTickets, setTicketsError);
+      fetchLatestThreeInprogressTickets(token, setTickets, setLoadingTickets, setTicketsError);
       // Update styles and reset others to default
       setButtonStyles({
         newTickets: defaultStyle,
@@ -92,8 +96,7 @@ export default function Dashboard() {
     };
   
     const fetchResolvedTickets = () => {
-      console.log('Fetching resolved tickets...');
-      fetchLatestThreeResolvedTickets(setTickets, setLoadingTickets, setTicketsError);
+      fetchLatestThreeResolvedTickets(token, setTickets, setLoadingTickets, setTicketsError);
       // Update styles and reset others to default
       setButtonStyles({
         newTickets: defaultStyle,
@@ -133,7 +136,8 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const token = localStorage.getItem("token");
+        
+        console.log("admin-token", token)
 
         const response = await axios.get( `${apiUrl}/api/v1/ticket/view-all-tickets`,
           {
@@ -153,6 +157,7 @@ export default function Dashboard() {
           dateCreated: formatDate(ticket.createdAt),
         }));
 
+        console.log("Fetched tickets:", formattedTickets);
         setActivities(formattedTickets);
 
         setHasMore(fetchTickets.length > 0);
@@ -161,24 +166,32 @@ export default function Dashboard() {
       }
     };
 
-    fetchTickets();
-    fetchNewTickets();
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        const promises = [
+          fetchTickets(),
+          fetchLatestThreeOpenTickets(token, setTickets, setLoading, setTicketsError),
+          fetchTicketCount(token,
+            setTicketTotalCount,
+            setOpenTicketCount,
+            setResolvedTicketCount,
+            setOngoingTicketCount
+          )
+        ];
+
+        await Promise.all(promises);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+
+
   }, [page]);
 
-
- 
-
-
-  // Fetch Ticket Count
-  useEffect(() => {
-    // Method to ticket count
-    fetchTicketCount(
-      setTicketTotalCount,
-      setOpenTicketCount,
-      setResolvedTicketCount,
-      setOngoingTicketCount
-    );
-  }, []);
 
    // Sorting function
    const sortTickets = (tickets) => {
@@ -213,7 +226,9 @@ export default function Dashboard() {
     setSort(value);
   };
 
-
+  if (loading) {
+    return <div>Loading...</div>; // Add your loading spinner here if you have one
+  }
    // samuel modal for notification
    const [isModalOpen, setIsModalOpen] = useState(false);
    const [currentAdmin, setCurrentAdmin] = useState({
@@ -230,7 +245,7 @@ export default function Dashboard() {
    };
   return (
     <>
-
+<div className='p-2 pt-5 px-24'>
       {/* Navbar */}
       <Navbar onOpen={handleOpenModal} onClose={handleCloseModal} setProfileDropdown={setProfileDropdown} profileDropdown={profileDropdown}/>
 
@@ -240,21 +255,21 @@ export default function Dashboard() {
         )}
 
       {/* Sort and Add user row */}
-      <div className='flex flex-wrap mt-10 mb-20 justify-end'>
-        <div className='flex border'>
-          <div>
-            <div>Sort by</div>
+      <div className='flex flex-wrap mt-10 mb-10 justify-end'>
+        <div className='flex flex-row '>
+          <div className='flex flex-col mr-8'>
+            <div className='text-gray-500'>Sort by</div>
             <div>
-              <select value={sort} onChange={handleSortChange}>
-                <option value="priority">Priority</option>
-                <option value="status">Status</option>
-                <option value="assigneeId">Assignee</option>
-                <option value="categoryId">Category</option>
+              <select className='px-9 py-1 bg-white border border-blue-500' value={sort} onChange={handleSortChange}>
+                <option value="priority">Priority </option>
+                <option value="status">Status </option>
+                <option value="assigneeId">Assignee </option>
+                <option value="categoryId">Category </option>
               </select>
             </div>
           </div>
           
-          <button onClick={() => openModalHandler('createUser')} className="bg-blue-500 text-white px-4 py-2 rounded">
+          <button onClick={() => openModalHandler('createUser')} className="bg-blue-500 text-white px-4 text-sm h-9 mr-20 ">
               Add New User
           </button>
          
@@ -275,7 +290,7 @@ export default function Dashboard() {
 
        {/* Ticket Card title widget */}
 
-       <div style={{backgroundColor:"#F2F2F2"}} className='flex flex-wrap mb-2 px-3 py-2 border-radius'>
+       <div style={{backgroundColor:"#F2F2F2"}} className='flex flex-wrap mb-5 px-3 py-2 border-radius'>
          <div className='flex flex-wrap w-full lg:w-8/12 gap-x-9 justify-between lg:justify-start'>
           <button className={`focus:outline-none border-none sm_text px-4`} style={buttonStyles.newTickets} onClick={fetchNewTickets}>New Tickets</button>
           <button className={`focus:outline-none border-none sm_text px-4`} style={buttonStyles.ongoingTickets} onClick={fetchOngoingTickets}>Ongoing Tickets</button>
@@ -291,7 +306,7 @@ export default function Dashboard() {
 
       </div>
            {/* Ticket Cards */}
-        <div className='flex flex-wrap'>
+        <div className='flex flex-wrap mb-8 justify-around'>
               {
               tickets.map((ticket)=>{
                 return <TicketCard  key = {ticket.id} ticket ={ticket} button = {true}/>
@@ -328,9 +343,9 @@ export default function Dashboard() {
        
     
 
-       {/* Profile Dropdown */}
+       {/* Profile Dropdown 
        {
-        !profileDropdown && 
+        profileDropdown && 
          <div className='position-absolute sm_text bg-white border w-40'>
             <div className='mb-4'>
               <div>Notification</div>
@@ -338,7 +353,8 @@ export default function Dashboard() {
             <div className='mb-4' style={{color:"#1F2937"}}>Profile</div>
             <div className='mb-4' style={{color:"#1F2937"}} >Logout</div>
          </div>
-      }
+      }*/}
+     </div> 
     </>
   );
 }

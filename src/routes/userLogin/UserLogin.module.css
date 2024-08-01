@@ -1,0 +1,29 @@
+
+.formContainer{
+    /* box-shadow: 0px 8px 8px -4px #1018280A; */
+    box-shadow: 0px 20px 24px -4px #1018281A;
+    /* border: 1px solid red; */
+  
+      
+  }
+  
+  .formInput label{
+      color: #09101D;
+      margin-bottom: 8px;
+  }
+  
+  .formInput input{
+      border: 1px solid #0070FF;
+  }
+  
+  .formInput input::placeholder{
+  
+      font-size: var(--normal-text);
+  }
+  
+  
+  .loginImgDiv{
+  
+  }
+  
+  

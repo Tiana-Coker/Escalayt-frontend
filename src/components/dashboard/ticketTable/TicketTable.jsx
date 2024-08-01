@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import styles from './TicketTable.module.css';
 import updown from '../../../assets/images/updown.png';
-import thcell from '../../../assets/images/thcell.png';
+import thcell from '../../../assets/images/Checkbox.svg';
 import redellipse from '../../../assets/images/redellipse.png';
 import orangeellipse from '../../../assets/images/orangellipse.png';
 
@@ -37,10 +37,7 @@ const TicketTable = ({ activities, setActivities, setPage, page }) => {
     setOpenDropdownId(openDropdownId === id ? null : id);
   };
 
-  const handleView = (id) => {
-    console.log("View ticket", id);
-    // Your logic for viewing the ticket
-  };
+
 
   const handleResolve = (id) => {
     console.log("Resolve ticket", id);
@@ -51,7 +48,7 @@ const TicketTable = ({ activities, setActivities, setPage, page }) => {
     <div className={styles.ticketTableContainer}>
       <h2 className={styles.recentActivitiesHeader}>Recent Activities</h2>
       <table className={styles.ticketTable}>
-        <thead>
+        <thead >
           <tr>
             <th><img src={thcell} alt="Checkbox" /></th>
             <th>Ticket Number</th>
@@ -126,6 +123,7 @@ const TicketTable = ({ activities, setActivities, setPage, page }) => {
           ))}
         </tbody>
       </table>
+      {/* 
       <div className={styles.pagination}>
         <button onClick={handlePreviousPage} disabled={page === 0}>
           Previous
@@ -134,6 +132,7 @@ const TicketTable = ({ activities, setActivities, setPage, page }) => {
           Next
         </button>
       </div>
+      */}
     </div>
   );
 }

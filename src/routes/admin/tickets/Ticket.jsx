@@ -11,9 +11,14 @@ import TicketTable from '../../../components/dashboard/ticketTable/TicketTable';
 
 // import url from .env file
 const base = import.meta.env.VITE_APP_API_URL;
-const token = localStorage.getItem("token");
 
 export default function Ticket() {
+
+    const token = localStorage.getItem("token");
+
+
+    // State values for profile dropdown
+    const [profileDropdown, setProfileDropdown] = useState(false);
 
     // Modal State
       const [openModal, setOpenModal] = useState(null);
@@ -47,6 +52,7 @@ export default function Ticket() {
 
   useEffect(() => {
     setSortedTickets(sortTickets(tickets));
+    console.log(tickets);
   }, [sort, tickets]);
 
   const fetchFilteredTickets = async () => {
@@ -119,7 +125,6 @@ export default function Ticket() {
   const handleSortChange = (e) => {
     const { value } = e.target;
     setSort(value);
-    console.log(e.target.value);
   };
 
   const handlePageChange = (newPage) => {
@@ -129,104 +134,126 @@ export default function Ticket() {
   return (
 
     <>
-        <div className='flex flex-wrap'>
-    <button onClick={() => openModalHandler('createCategory')} className="bg-blue-500 text-white px-4 py-2 rounded">
-       Create Category
-     </button>
+    {/* Navbar */}
+    <Navbar setProfileDropdown={setProfileDropdown} profileDropdown={profileDropdown}/>
 
-     <button onClick={() => openModalHandler('createDepartment')} className="bg-blue-500 text-white px-4 py-2 rounded" >
-          Create Department
-       </button>
-    </div>
-    <div className="ticket-management">
-      <div className="filters">
-        <h3>Filters</h3>
-        {/* Render filter UI here */}
-        <div>
-          <h4>Priority</h4>
-          <label>
-            <input type="checkbox" name="priority" value="HIGH" onChange={handleFilterChange} />
-            High
-          </label>
-          <label>
-            <input type="checkbox" name="priority" value="MEDIUM" onChange={handleFilterChange} />
-            Medium
-          </label>
-          <label>
-            <input type="checkbox" name="priority" value="LOW" onChange={handleFilterChange} />
-            Low
-          </label>
-        </div>
-        <div>
-          <h4>Status</h4>
-          <label>
-            <input type="checkbox" name="status" value="OPEN" onChange={handleFilterChange} />
-            Open
-          </label>
-          <label>
-            <input type="checkbox" name="status" value="IN_PROGRESS" onChange={handleFilterChange} />
-            In Progress
-          </label>
-          <label>
-            <input type="checkbox" name="status" value="RESOLVE" onChange={handleFilterChange} />
-            Resolved
-          </label>
-        </div>
-        <div>
-          <h4>Assignee</h4>
-          {/* Replace with dynamic assignees */}
-          <label>
-            <input type="checkbox" name="assigneeId" value="1" onChange={handleFilterChange} />
-            Abdul Ahmed
-          </label>
-          <label>
-            <input type="checkbox" name="assigneeId" value="2" onChange={handleFilterChange} />
-            Tayo Ade
-          </label>
-          <label>
-            <input type="checkbox" name="assigneeId" value="3" onChange={handleFilterChange} />
-            Chizzy Jack
-          </label>
-        </div>
-        <div>
-          <h4>Category</h4>
-          <label>
-            <input type="checkbox" name="categoryId" value="1" onChange={handleFilterChange} />
-            Plumbing
-          </label>
-          <label>
-            <input type="checkbox" name="categoryId" value="2" onChange={handleFilterChange} />
-            Electrical
-          </label>
-          <label>
-            <input type="checkbox" name="categoryId" value="3" onChange={handleFilterChange} />
-            HVAC
-          </label>
-        </div>
-        <div>
-          <h4>Sort By</h4>
-          <select value={sort} onChange={handleSortChange}>
-            <option value="priority">Priority</option>
-            <option value="status">Status</option>
-            <option value="assigneeId">Assignee</option>
-            <option value="categoryId">Category</option>
-          </select>
-        </div>
-      </div>
-      <div className="ticket-table">
-        <TicketTable activities={sortedTickets} setActivities = {setTickets} setPage = {setPage} page={page}/>
-       
-        <div className="pagination">
-          <button onClick={() => handlePageChange(page - 1)} disabled={page === 0}>
-            Previous
-          </button>
-          <span>Page {page + 1} of {totalPages}</span>
-          <button onClick={() => handlePageChange(page + 1)} disabled={page + 1 >= totalPages}>
-            Next
-          </button>
-        </div>
-      </div>
+    <div className="flex flex-wrap">
+          <div className="filters">
+            <h3>Filters</h3>
+            {/* Render filter UI here */}
+            <div>
+              <h4>Priority</h4>
+              <label>
+                <input type="checkbox" name="priority" value="HIGH" onChange={handleFilterChange} />
+                High
+              </label>
+              <label>
+                <input type="checkbox" name="priority" value="MEDIUM" onChange={handleFilterChange} />
+                Medium
+              </label>
+              <label>
+                <input type="checkbox" name="priority" value="LOW" onChange={handleFilterChange} />
+                Low
+              </label>
+            </div>
+            <div>
+              <h4>Status</h4>
+              <label>
+                <input type="checkbox" name="status" value="OPEN" onChange={handleFilterChange} />
+                Open
+              </label>
+              <label>
+                <input type="checkbox" name="status" value="IN_PROGRESS" onChange={handleFilterChange} />
+                In Progress
+              </label>
+              <label>
+                <input type="checkbox" name="status" value="RESOLVE" onChange={handleFilterChange} />
+                Resolved
+              </label>
+            </div>
+            <div>
+              <h4>Assignee</h4>
+              {/* Replace with dynamic assignees */}
+              <label>
+                <input type="checkbox" name="assigneeId" value="1" onChange={handleFilterChange} />
+                Abdul Ahmed
+              </label>
+              <label>
+                <input type="checkbox" name="assigneeId" value="2" onChange={handleFilterChange} />
+                Tayo Ade
+              </label>
+              <label>
+                <input type="checkbox" name="assigneeId" value="3" onChange={handleFilterChange} />
+                Chizzy Jack
+              </label>
+            </div>
+            <div>
+              <h4>Category</h4>
+              <label>
+                <input type="checkbox" name="categoryId" value="1" onChange={handleFilterChange} />
+                Plumbing
+              </label>
+              <label>
+                <input type="checkbox" name="categoryId" value="2" onChange={handleFilterChange} />
+                Electrical
+              </label>
+              <label>
+                <input type="checkbox" name="categoryId" value="3" onChange={handleFilterChange} />
+                HVAC
+              </label>
+            </div>
+            <div>
+              <h4>Sort By</h4>
+              <select value={sort} onChange={handleSortChange}>
+                <option value="priority">Priority</option>
+                <option value="status">Status</option>
+                <option value="assigneeId">Assignee</option>
+                <option value="categoryId">Category</option>
+              </select>
+            </div>
+          </div>
 
+          <div className="w-[1000px] h-[800px] flex flex-col gap-[32px]">
+                  <div className="h-[24px] flex items-center">
+                    <span className="text-[20px] font-medium leading-[24px] text-left">
+                      Tickets (10)
+                    </span>
+                  </div>
+                  <div className=" flex gap-[22px]">
+                    <div className="h-[44px] w-[175px] bg-[#0070FF] flex items-center justify-center px-[24px] py-[10px]">
+                      <button
+                        onClick={() => openModalHandler("createCategory")}
+                        className="text-[16px] font-medium leading-[24px] text-left text-white"
+                      >
+                        Create Category
+                      </button>
+                    </div>
+                    <div className="h-[44px] w-[200px] bg-[#0070FF] flex items-center justify-center px-[24px] py-[10px]">
+                      <button
+                        onClick={() => openModalHandler("createDepartment")}
+                        className="text-[16px] font-medium leading-[24px] text-left text-white"
+                      >
+                        Create Department
+                      </button>
+                    </div>
+                  </div>
+    
+                  <div className="h-[auto] ">
+                  <TicketTable activities={sortedTickets} setActivities = {setTickets} setPage = {setPage} page={page}/>
+              {/*
+                    <div className="pagination">
+                      <button onClick={() => handlePageChange(page - 1)} disabled={page === 0}>
+                        Previous
+                      </button>
+                      <span>Page {page + 1} of {totalPages}</span>
+                      <button onClick={() => handlePageChange(page + 1)} disabled={page + 1 >= totalPages}>
+                        Next
+                      </button>
+                    </div>
+                    */}
+                  
+                  </div>
+          </div>
 
         {/* Modals */}
 
@@ -239,6 +266,18 @@ export default function Ticket() {
           onClose={closeModalHandler}
           closeOnOutsideClick={true}
           />
+
+          {/* Profile Dropdown */}
+       {
+        profileDropdown && 
+         <div className='position-absolute sm_text bg-white border w-40'>
+            <div className='mb-4'>
+              <div>Notification</div>
+            </div>
+            <div className='mb-4' style={{color:"#1F2937"}}>Profile</div>
+            <div className='mb-4' style={{color:"#1F2937"}} >Logout</div>
+         </div>
+      }
     </div>
     
     </>
