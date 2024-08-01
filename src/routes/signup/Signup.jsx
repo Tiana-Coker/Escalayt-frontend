@@ -63,7 +63,7 @@ export default function Signup() {
       if (response.ok) {
         setIsSignupSucessful(true);
         alert("Registration successful!");
-        navigate("/login");
+        // navigate("/login");
       } else {
         const errorText = await response.text();
         alert(`Registration failed: ${errorText}`);
@@ -93,7 +93,7 @@ export default function Signup() {
           </span>
         </div>
  
-        <div className="absolute w-[448px] h-[912px] top-[124px] left-[50px]  rounded-[12px] shadow-lg shadow-[#1018281A] overflow-y-scroll">
+        <div className="absolute w-[448px] top-[124px] left-[50px]  rounded-[12px] shadow-lg shadow-[#1018281A] overflow-y-scroll">
           <form onSubmit={handleSubmit}>
             <div className="w-full h-[160px] bg-white">
               <div className="w-full h-[140px] flex flex-col gap-[4px]">

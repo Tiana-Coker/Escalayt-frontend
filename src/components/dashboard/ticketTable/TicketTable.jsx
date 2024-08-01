@@ -37,10 +37,7 @@ const TicketTable = ({ activities, setActivities, setPage, page }) => {
     setOpenDropdownId(openDropdownId === id ? null : id);
   };
 
-  const handleView = (id) => {
-    console.log("View ticket", id);
-    // Your logic for viewing the ticket
-  };
+
 
   const handleResolve = (id) => {
     console.log("Resolve ticket", id);
