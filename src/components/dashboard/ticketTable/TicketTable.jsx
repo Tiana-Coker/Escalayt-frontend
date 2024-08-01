@@ -112,7 +112,7 @@ const TicketTable = ({ activities, setActivities, setPage, page }) => {
               <td>
                 <button onClick={() => handleTableDropdown(ticket.id)}>⋮</button>
                 {openDropdownId === ticket.id && (
-                  <div className={`${styles.dropdown} border absolute`}>
+                  <div className={`${styles.dropdown} border absolute bg-white p-3`}>
                     <Link to={`/admin/tickets/${ticket.id}`}>View</Link>
                     <div onClick={() => handleResolve(ticket.id)}>Resolve</div>
                     <div onClick={() => handleDelete(ticket.id)}>Delete</div>

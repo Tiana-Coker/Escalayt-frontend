@@ -82,7 +82,7 @@ const option = {
     const newUser = {
       fullName: fullNameRef.current.value,
       email: emailRef.current.value,
-      phoneNumber: passwordRef.current.value,
+      phoneNumber: 87654321,
       departmentId: departmentId,
     };
 
@@ -142,7 +142,6 @@ const option = {
 
     //clear the space aftewards
     emailRef.current.value = "";
-    passwordRef.current.value = "";
     fullNameRef.current.value = "";
   };
 
