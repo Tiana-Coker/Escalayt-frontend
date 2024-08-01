@@ -36,7 +36,7 @@ const STATUS = {
   RESOLVED: "resolved",
 };
 
-const Notification = ({ adminId ,onClose }) => {
+const Notification = ({ adminId, onClose }) => {
   const [url, setUrl] = useState(`${URLS.TICKETS}/${adminId}`);
 
   const { data, isLoading, isError } = useFetchTicket(url, option);
@@ -109,34 +109,42 @@ const Notification = ({ adminId ,onClose }) => {
             </div>
 
             <ul>
-              {ticketList.map((ticket) => (
-                <li
-                  key={ticket.ticketId}
-                  className="flex items-center justify-between p-4 gap-2"
-                >
-                  <div className="flex items-center space-x-4">
-                    <img
-                      src={
-                        ticket.pictureUrl
-                          ? ticket.pictureUrl
-                          : "default-image-url"
-                      }
-                      alt="avatar"
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                    <div className="w-300">
-                      <span className="font-bold">{ticket.username}</span>{" "}
-                      <CustomPTag status={ticket.ticketStatus} />
-                      {` ticket #00${ticket.ticketId} - ${ticket.ticketTitle}${
-                        ticket.status === "IN_PROGRESS" ? " In Progress." : "."
-                      }`}
+              {ticketList.map((ticket) =>
+                !data ? (
+                  <li>No notification</li>
+                ) : (
+                  <li
+                    key={ticket.ticketId}
+                    className="flex items-center justify-between p-4 gap-2"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <img
+                        src={
+                          ticket.pictureUrl
+                            ? ticket.pictureUrl
+                            : "default-image-url"
+                        }
+                        alt="avatar"
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
+                      <div className="w-300">
+                        <span className="font-bold">{ticket.username}</span>{" "}
+                        <CustomPTag status={ticket.ticketStatus} />
+                        {` ticket #00${ticket.ticketId} - ${
+                          ticket.ticketTitle
+                        }${
+                          ticket.status === "IN_PROGRESS"
+                            ? " In Progress."
+                            : "."
+                        }`}
+                      </div>
                     </div>
-                  </div>
-                  <div className="text-gray-300">
-                    {formatTime(ticket.minutes)}
-                  </div>
-                </li>
-              ))}
+                    <div className="text-gray-300">
+                      {formatTime(ticket.minutes)}
+                    </div>
+                  </li>
+                )
+              )}
             </ul>
           </div>
         )}
