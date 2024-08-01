@@ -1,10 +1,8 @@
 /* eslint-disable no-unused-vars */
 
-
 // Components
 import Navbar from '../../../components/dashboard/navbar/Navbar';
 import TicketCountCards from '../../../components/dashboard/ticketCount/TicketCountCards';
-import CreateTicket from "../../../components/modals/createTicket/CreateTicket";
 import CreateUser from "../../../components/modals/createUser/CreateUser";
 import TicketCard from '../../../components/dashboard/ticketCard/TicketCard';
 import IMAGES from "../../../assets";
@@ -25,7 +23,12 @@ import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
  // import url from .env file
  const apiUrl = import.meta.env.VITE_APP_API_URL;
 
+
 export default function Dashboard() {
+
+
+  // Token from local storage
+  const token = localStorage.getItem("token");
 
    // State values for profile dropdown
   const [profileDropdown, setProfileDropdown] = useState(false);
@@ -54,6 +57,9 @@ export default function Dashboard() {
     const [sort, setSort] = useState('priority');
     const [sortedActivities, setSortedActivities] = useState([]);
 
+    // General loading state
+    const [loading, setLoading] = useState(true);
+
 
 
       // values for the style of ticket card titles - New, Ongoing, Resolved
@@ -67,7 +73,7 @@ export default function Dashboard() {
 
     // Method to fetch the latest 3 Open tickets
     const fetchNewTickets = () => {
-      fetchLatestThreeOpenTickets(setTickets, setLoadingTickets, setTicketsError);
+      fetchLatestThreeOpenTickets(token, setTickets, setLoadingTickets, setTicketsError);
       // Update styles and reset others to default
       setButtonStyles({
         newTickets: clickedStyle,
@@ -77,7 +83,7 @@ export default function Dashboard() {
     }
   
     const fetchOngoingTickets = () => {
-      fetchLatestThreeInprogressTickets(setTickets, setLoadingTickets, setTicketsError);
+      fetchLatestThreeInprogressTickets(token, setTickets, setLoadingTickets, setTicketsError);
       // Update styles and reset others to default
       setButtonStyles({
         newTickets: defaultStyle,
@@ -87,7 +93,7 @@ export default function Dashboard() {
     };
   
     const fetchResolvedTickets = () => {
-      fetchLatestThreeResolvedTickets(setTickets, setLoadingTickets, setTicketsError);
+      fetchLatestThreeResolvedTickets(token, setTickets, setLoadingTickets, setTicketsError);
       // Update styles and reset others to default
       setButtonStyles({
         newTickets: defaultStyle,
@@ -127,7 +133,8 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const token = localStorage.getItem("token");
+        
+        console.log("admin-token", token)
 
         const response = await axios.get( `${apiUrl}/api/v1/ticket/view-all-tickets`,
           {
@@ -156,20 +163,32 @@ export default function Dashboard() {
       }
     };
 
-    fetchTickets();
-    fetchNewTickets();
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        const promises = [
+          fetchTickets(),
+          fetchLatestThreeOpenTickets(token, setTickets, setLoading, setTicketsError),
+          fetchTicketCount(token,
+            setTicketTotalCount,
+            setOpenTicketCount,
+            setResolvedTicketCount,
+            setOngoingTicketCount
+          )
+        ];
+
+        await Promise.all(promises);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+
+
   }, [page]);
 
-  // Fetch Ticket Count
-  useEffect(() => {
-    // Method to ticket count
-    fetchTicketCount(
-      setTicketTotalCount,
-      setOpenTicketCount,
-      setResolvedTicketCount,
-      setOngoingTicketCount
-    );
-  }, []);
 
    // Sorting function
    const sortTickets = (tickets) => {
@@ -203,6 +222,10 @@ export default function Dashboard() {
     const { value } = e.target;
     setSort(value);
   };
+
+  if (loading) {
+    return <div>Loading...</div>; // Add your loading spinner here if you have one
+  }
 
 
   return (
@@ -302,7 +325,7 @@ export default function Dashboard() {
 
        {/* Profile Dropdown */}
        {
-        !profileDropdown && 
+        profileDropdown && 
          <div className='position-absolute sm_text bg-white border w-40'>
             <div className='mb-4'>
               <div>Notification</div>

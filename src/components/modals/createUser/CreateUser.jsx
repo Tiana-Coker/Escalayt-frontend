@@ -6,6 +6,9 @@ import CreateUserIcon from "../../../assets/CreateUserIcon";
 import Confirm from "../createTicket/Confirm";
 import TicketSuccessIcon from "../../../assets/TicketSuccessIcon";
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
  // import url from .env file
  const apiUrl = import.meta.env.VITE_APP_API_URL;
@@ -13,7 +16,7 @@ import TicketSuccessIcon from "../../../assets/TicketSuccessIcon";
 // Testing url
 const URLS = {
   DEPARTMENT: "http://localhost:8080/api/v1/admin/get-all-department",
-  CREATE_USER: "http://localhost:8080/api/v1/admin/register-user/",
+  CREATE_USER: "http://localhost:8080/api/v1/admin/register-user",
 };
 
 
@@ -45,9 +48,6 @@ const option = {
 
   //full name ref
   const fullNameRef = useRef();
-
-  //username ref
-  const usernameRef = useRef();
 
   // use ref email
   const emailRef = useRef();
@@ -83,7 +83,7 @@ const option = {
       fullName: fullNameRef.current.value,
       email: emailRef.current.value,
       phoneNumber: passwordRef.current.value,
-      jobTitle: usernameRef.current.value, //username
+      departmentId: departmentId,
     };
 
     // check that the person is logged in
@@ -94,7 +94,7 @@ const option = {
 
     try {
       // using fetch to connect with the response
-      const response = await fetch(`${URLS.CREATE_USER}${departmentId}`, {
+      const response = await fetch(`${URLS.CREATE_USER}`, {
         // method
         method: "POST",
 
@@ -106,25 +106,37 @@ const option = {
         body: JSON.stringify(newUser),
       });
 
-      // if response is ok
+      // // if response is ok
+      // if (response.ok) {
+      //   // set confirm to true
+      //   setIsAfterFirstSubmit(true);
+      //   console.log("User created successfully");
+      //   alert("User created successfully");
+      // } else {
+      //   // throw alert error
+      //   alert("Error creating user1");
+      //   console.log("Error:", response);
+      // }
+
       if (response.ok) {
         // set confirm to true
         setIsAfterFirstSubmit(true);
-        console.log("Category created successfully");
+        console.log("User created successfully");
+        toast.success("User created successfully");
       } else {
-        // throw alert error
-        alert("Error creating category");
-        console.log("Error:", response.statusText);
+        // Extract error message from the response
+        const errorData = await response.json();
+        const errorMessage = errorData.message || "Error creating user";
+        toast.error(errorMessage);
       }
     } catch (error) {
       // catch error either way
-      alert("Error creating category something else");
+      alert("Error creating user");
       console.log(error);
     }
 
     console.log("password", newUser.phoneNumber);
     console.log("email", newUser.email);
-    console.log("username", newUser.jobTitle);
     console.log("full name", newUser.fullName);
     console.log("department id", departmentId);
 
@@ -132,7 +144,6 @@ const option = {
     emailRef.current.value = "";
     passwordRef.current.value = "";
     fullNameRef.current.value = "";
-    usernameRef.current.value = "";
   };
 
   return (
@@ -205,23 +216,6 @@ const option = {
                   </div>
                 </div>
 
-                {/* enter user name */}
-                <div className="h-[80px] flex flex-col mb-3">
-                  <div className=" h-[35px] flex items-center">
-                    <span className="text-[18px] font-sm leading-[24px] text-lg text-left h-[24px] w-[200px] px-4 py-0">
-                      Username
-                      <span className="text-[#DA1414]">*</span>
-                    </span>
-                  </div>
-                  <div className="h-[48px] flex items-center px-4 border border-[#0070FF]">
-                    <input
-                      type="text"
-                      ref={usernameRef}
-                      placeholder="Enter Username"
-                      className="text-[#09101D] h-[40px] flex items-center text-lg font-medium leading-6 text-left w-full border-none outline-none"
-                    />
-                  </div>
-                </div>
 
                 {/* enter email */}
 
@@ -244,22 +238,7 @@ const option = {
 
                 {/* enter password on change */}
 
-                <div className="h-[80px] flex flex-col mb-3">
-                  <div className=" h-[35px] flex items-center">
-                    <span className="text-[18px] font-sm leading-[24px] text-lg text-left h-[24px] w-[200px] px-4 py-0">
-                      Password
-                      <span className="text-[#DA1414]">*</span>
-                    </span>
-                  </div>
-                  <div className="h-[48px] flex items-center px-4 border border-[#0070FF]">
-                    <input
-                      type="text"
-                      ref={passwordRef}
-                      placeholder="Enter Phone number"
-                      className="text-[#09101D] h-[40px] flex items-center text-lg font-medium leading-6 text-left w-full border-none outline-none"
-                    />
-                  </div>
-                </div>
+              
 
                 {/* drop down list */}
 
@@ -285,7 +264,10 @@ const option = {
             </>
           )}
         </div>
+
+        <ToastContainer />
       </div>
+      
     </>
   );
 };
