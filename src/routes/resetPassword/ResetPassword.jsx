@@ -32,7 +32,7 @@ export default function ResetPassword() {
         .then((response) => {
           const jwtToken = response.data.split(":")[1].trim();
           console.log(jwtToken);
-          localStorage.setItem("jwtToken", jwtToken);
+          localStorage.setItem("token", jwtToken);
           setIsTokenValid(true);
         })
         .catch((error) => {
@@ -59,7 +59,7 @@ export default function ResetPassword() {
       return;
     }
 
-    const token = localStorage.getItem("jwtToken"); // Corrected key to retrieve the token
+    const token = localStorage.getItem("token"); // Corrected key to retrieve the token
     console.log(token);
 
     if (!token) {
