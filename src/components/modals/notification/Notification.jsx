@@ -32,7 +32,7 @@ const INTIAL_TICKET_OBJ = {
 // progress state constant
 const STATUS = {
   OPEN: "created a new",
-  IN_PROGRESS: ["updated", "to In-Progress."],
+  IN_PROGRESS: ["updated", " to In-Progress."],
   RESOLVED: "resolved",
 };
 
@@ -133,8 +133,8 @@ const Notification = ({ adminId, onClose }) => {
                         {` ticket #00${ticket.ticketId} - ${
                           ticket.ticketTitle
                         }${
-                          ticket.status === "IN_PROGRESS"
-                            ? " In Progress."
+                          ticket.ticketStatus == "IN_PROGRESS"
+                            ? STATUS.IN_PROGRESS[1]
                             : "."
                         }`}
                       </div>
