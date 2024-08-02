@@ -33,7 +33,7 @@ const INTIAL_USER_OBJ = {
 // we will pass assignId as props
 // and also we will pass
 // ticket id ass props
-const AssignTicket = () => {
+const AssignTicket = ({ticketId, onAssignTicketClose}) => {
   const { data, isLoading, isError } = useFetchEmployList(
     URLS.EMPLOYEES,
     option
@@ -59,6 +59,9 @@ const AssignTicket = () => {
 
   const [assigneeId, setAssigneeId] = useState(0);
 
+  //filter employee name
+  const [filterName, setFilterName] = useState("");
+
   useEffect(() => {
     // const something = data ? data : "something wrong";
 
@@ -71,10 +74,20 @@ const AssignTicket = () => {
         jobTitle: employee.jobTitle,
       }));
 
-    data && setEmployeeList(theList);
+    const filteredEmployee =
+      data &&
+      theList.filter((employee) => {
+        // filter by search
+        return employee.fullName.includes(filterName);
+      });
+
+    //console.log(filteredEmployee);
+
+    data && setEmployeeList(filteredEmployee);
+
     //console.log(something);
     // console.log(assigneeId)
-  }, [data]);
+  }, [data, filterName]);
 
   /*
   setOption1((prevOption) => ({
@@ -89,8 +102,7 @@ const AssignTicket = () => {
   */
 
   const handleOnChange = (assignee) => {
-    console.log(assignee);
-    
+    //console.log(assignee);
 
     let newAssignee = {
       assigneeId: assignee,
@@ -101,24 +113,56 @@ const AssignTicket = () => {
       body: JSON.stringify(newAssignee),
     }));
 
-    seturl(`${URLS.ASSIGN_TICKET}/1`);
+    seturl(`${URLS.ASSIGN_TICKET}/${ticketId}`);
 
-    const somthing = data1 ? data1 : " samotheing";
+   // const somthing = data1 ? data1 : " samotheing";
 
-    console.log(somthing);
+    //onAssignTicketClose();
+
+    //console.log(somthing);
   };
+
+  // handle to do filter
 
   return (
     <div>
-      {isLoading ? (
-        <Spinner />
-      ) : (
-        <div>
-          <ul>
-            {employeList.map((employee) => (
-              <li key={employee.userId}>
-                <img src={`${employee.pictureUrl}`} alt="employeeImage" />
-                <div>
+        <div
+        className= {`fixed inset-0 bg-black bg-opacity-50 ${isLoading1 ? "z-30": "z-10"}`}
+        onClick={onAssignTicketClose}
+      ></div>
+      <div
+        className={` ${"bg-white"} text-sm  w-[400px]  rounded-lg shadow-custom p-6 fixed inset-0 overflow-y-auto z-20 `}
+      >
+        <div className="p-4">
+          <div className="relative mb-4">
+            <input
+              type="text"
+              id="name"
+              value={filterName}
+              onChange={(e) => setFilterName(e.target.value)}
+              className="w-full p-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+              placeholder="Search..."
+            />
+            <svg
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M12.9 14.32a8 8 0 111.414-1.414l4.95 4.95a1 1 0 01-1.414 1.414l-4.95-4.95zM8 14A6 6 0 108 2a6 6 0 000 12z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
+          {isLoading ? (
+            <div className="flex justify-center items-center">
+              <Spinner />
+            </div>
+          ) : (
+            <ul>
+              {employeList.map((employee) => (
+                <li key={employee.userId} className="flex items-center mb-4">
                   <input
                     type="radio"
                     checked={assigneeId === employee.userId}
@@ -126,15 +170,23 @@ const AssignTicket = () => {
                       handleOnChange(employee.userId);
                       setAssigneeId(employee.userId);
                     }}
+                    className="form-radio h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
                   />
-                  <div>{employee.fullName}</div>
-                  <div>{employee.jobTitle}</div>
-                </div>
-              </li>
-            ))}
-          </ul>
+                  <img
+                    src={`${employee.pictureUrl}`}
+                    alt="employeeImage"
+                    className="ml-4 w-10 h-10 rounded-full object-cover"
+                  />
+                  <div className="ml-4">
+                    <div className="font-bold">{employee.fullName}</div>
+                    <div className="text-gray-600">{employee.jobTitle}</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
@@ -164,3 +216,21 @@ const Spinner = () => {
     </div>
   );
 };
+
+/*
+ const filteredTodos = todos.filter((todo) => {
+    // filter by completed
+    if (hideCompletedFilter && todo.completed) return false;
+
+    // filter by search
+    return todo.name.includes(filterName);
+  });
+
+
+  <input
+          type="text"
+          id="name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+*/

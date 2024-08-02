@@ -63,6 +63,15 @@ export default function Dashboard() {
     // General loading state
     const [loading, setLoading] = useState(true);
 
+    // samuel modal for notification
+   const [isModalOpen, setIsModalOpen] = useState(false);
+   const [currentAdmin, setCurrentAdmin] = useState({
+    adminId : 1,
+    username : "",
+    fullName : "",
+    email : "",
+   })
+
 
 
       // values for the style of ticket card titles - New, Ongoing, Resolved
@@ -229,14 +238,7 @@ export default function Dashboard() {
   if (loading) {
     return <div>Loading...</div>; // Add your loading spinner here if you have one
   }
-   // samuel modal for notification
-   const [isModalOpen, setIsModalOpen] = useState(false);
-   const [currentAdmin, setCurrentAdmin] = useState({
-    adminId : 1,
-    username : "",
-    fullName : "",
-    email : "",
-   })
+   
    const handleOpenModal = () => {
      setIsModalOpen(true);
    };
