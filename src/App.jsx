@@ -16,11 +16,10 @@ import AdminTicketPreview from "./routes/admin/ticketPreview/TicketPreview";
 import UserDashboard from "./routes/user/dashboard/Dashboard";
 import UserTicket from "./routes/user/tickets/Ticket";
 
-import TicketTable from './components/dashboard/ticketTable/TicketTable';
+import TicketTable from "./components/dashboard/ticketTable/TicketTable";
 
-import {BrowserRouter, Routes, Route} from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 // import axios from 'axios'
-
 
 
 function App() {
@@ -38,14 +37,13 @@ function App() {
         <Route path="/admin/tickets" element={<AdminTicket />} />
         <Route path="/admin/tickets/:id" element={<AdminTicketPreview />} />
 
-
         <Route path="/user/dashboard" element={<UserDashboard />} />
         <Route path="/user/tickets" element={<UserTicket />} />
 
-        <Route path='/tick-table' element={<TicketTable />}/>
-       
-
+        <Route path="/tick-table" element={<TicketTable />} />
       </Routes>
+
+      
     </BrowserRouter>
   );
 }
