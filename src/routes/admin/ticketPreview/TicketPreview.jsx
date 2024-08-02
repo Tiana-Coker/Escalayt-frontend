@@ -4,12 +4,15 @@ import axios from 'axios';
 
 import Navbar from '../../../components/dashboard/navbar/Navbar';
 import TicketDetails from '../../../components/dashboard/ticketDetails/TicketDetails';
+// import { Comment } from '../../../components/dashboard/comment/Comment';
 
 
 // import url from .env file
 const base = import.meta.env.VITE_APP_API_URL;
 
+
 export default function TicketPreview() {
+  const token = localStorage.getItem('token');
 
   const { id } = useParams();
 
@@ -27,7 +30,7 @@ export default function TicketPreview() {
 
   const fetchTicket = async () => {
     const apiUrl = `${base}/api/v1/ticket/preview-ticket/${id}`;
-    const token = localStorage.getItem('token');
+    
 
     try {
       const response = await axios.get(apiUrl, {
@@ -53,6 +56,8 @@ export default function TicketPreview() {
         <Navbar />
 
         <TicketDetails ticket={ticket} />
+        {/* {console.log("id now", ticket.id)}
+        <Comment ticketId={1} /> */}
        
     </div>
   )

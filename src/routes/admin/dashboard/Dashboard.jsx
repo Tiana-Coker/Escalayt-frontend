@@ -209,6 +209,7 @@ export default function Dashboard() {
         );
 
         const { data } = response;
+        console.log("eje", response)
 
         const formattedTickets = data.map((ticket) => ({
           ...ticket,

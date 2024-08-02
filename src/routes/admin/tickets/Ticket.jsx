@@ -53,6 +53,23 @@ export default function Ticket() {
   const [totalPages, setTotalPages] = useState(0);
   const [itemsPerPage] = useState(14); // Number of items per page
 
+  const formatDate = (dateString) => {
+
+    const date = new Date(dateString);
+    const today = new Date();
+    const timeDiff = today - date;
+    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+
+    if (daysDiff === 0) {
+      return "Today";
+    } else if (daysDiff === 1) {
+      return "1 day ago";
+    } else {
+      return `${daysDiff} days ago`;
+    }
+  };
+
+
   useEffect(() => {
     fetchFilteredTickets();
   }, [filters, page]);
@@ -83,8 +100,15 @@ export default function Ticket() {
         },
       });
 
-      // Update tickets and totalPages
-      setTickets(response.data.content);
+
+      const formattedTickets = response.data.content.map((ticket) => ({
+        ...ticket,
+        ticketNumber: ticket.id,
+        assignee: ticket.assigneeFullName || "Unassigned",
+        dateCreated: formatDate(ticket.createdAt),
+      }));
+      // setTickets(response.data.content);
+      setTickets(formattedTickets);
       setTotalPages(response.data.totalPages); // Adjust if the actual pagination response differs
     } catch (error) {
       console.error("Error fetching tickets", error);
@@ -298,39 +322,34 @@ export default function Ticket() {
           </div>
         </div>
 
-        <div className="w-[1000px] h-[800px] flex flex-col gap-[32px]">
-          <div className="h-[24px] flex items-center">
-            <span className="text-[20px] font-medium leading-[24px] text-left">
-              Tickets (10)
-            </span>
-          </div>
-          <div className=" flex gap-[22px]">
-            <div className="h-[44px] w-[175px] bg-[#0070FF] flex items-center justify-center px-[24px] py-[10px]">
-              <button
-                onClick={() => openModalHandler("createCategory")}
-                className="text-[16px] font-medium leading-[24px] text-left text-white"
-              >
-                Create Category
-              </button>
-            </div>
-            <div className="h-[44px] w-[200px] bg-[#0070FF] flex items-center justify-center px-[24px] py-[10px]">
-              <button
-                onClick={() => openModalHandler("createDepartment")}
-                className="text-[16px] font-medium leading-[24px] text-left text-white"
-              >
-                Create Department
-              </button>
-            </div>
-          </div>
-
-          <div className="h-[auto] ">
-            <TicketTable
-              activities={sortedTickets}
-              setActivities={setTickets}
-              setPage={setPage}
-              page={page}
-            />
-            {/*
+          <div className="w-[1000px] h-[800px] flex flex-col gap-[32px]">
+                  <div className="h-[24px] flex items-center">
+                    <span className="text-[20px] font-medium leading-[24px] text-left">
+                      Tickets
+                    </span>
+                  </div>
+                  <div className=" flex gap-[22px]">
+                    <div className="h-[44px] w-[175px] bg-[#0070FF] flex items-center justify-center px-[24px] py-[10px]">
+                      <button
+                        onClick={() => openModalHandler("createCategory")}
+                        className="text-[16px] font-medium leading-[24px] text-left text-white"
+                      >
+                        Create Category
+                      </button>
+                    </div>
+                    <div className="h-[44px] w-[200px] bg-[#0070FF] flex items-center justify-center px-[24px] py-[10px]">
+                      <button
+                        onClick={() => openModalHandler("createDepartment")}
+                        className="text-[16px] font-medium leading-[24px] text-left text-white"
+                      >
+                        Create Department
+                      </button>
+                    </div>
+                  </div>
+    
+                  <div className="h-[auto] ">
+                  <TicketTable activities={sortedTickets} setActivities = {setTickets} setPage = {setPage} page={page}/>
+              {/*
                     <div className="pagination">
                       <button onClick={() => handlePageChange(page - 1)} disabled={page === 0}>
                         Previous
