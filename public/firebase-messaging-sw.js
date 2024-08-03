@@ -27,8 +27,4 @@ messaging.onBackgroundMessage((payload) => {
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
-<<<<<<< HEAD
 });
-=======
-});
->>>>>>> 3da9d2876f4470cf827ff00703bf0f208f002e8f
