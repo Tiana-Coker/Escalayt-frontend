@@ -1,5 +1,4 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
 import "./App.css";
 
 import LandingPage from "./routes/landingPage/LandingPage";
@@ -20,8 +19,6 @@ import {BrowserRouter, Routes, Route} from 'react-router-dom'
 // import axios from 'axios'
 
 
-
-function App() {
   return (
     <BrowserRouter>
       <Routes>
