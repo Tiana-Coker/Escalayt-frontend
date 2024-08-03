@@ -1,15 +1,13 @@
-
 /* eslint-disable no-unused-vars */
 
 // Components
-import Navbar from '../../../components/dashboard/navbar/Navbar';
-import TicketCountCards from '../../../components/dashboard/ticketCount/TicketCountCards';
+import Navbar from "../../../components/dashboard/navbar/Navbar";
+import TicketCountCards from "../../../components/dashboard/ticketCount/TicketCountCards";
 import CreateTicket from "../../../components/modals/createTicket/CreateTicket";
 import IMAGES from "../../../assets";
 
 // utility methods
-import { fetchTicketCount
-} from '../../../utils/dashboard-methods/dashboardMethods';
+import { fetchTicketCount } from "../../../utils/dashboard-methods/dashboardMethods";
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,19 +15,19 @@ import styles from "./Dashboard.module.css";
 
 import axios from "axios";
 import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
+import UserNotification from "../../../components/modals/notification/UserNotification";
 
-
-
- // import url from .env file
- const apiUrl = import.meta.env.VITE_APP_API_URL;
-
-
+// import url from .env file
+const apiUrl = import.meta.env.VITE_APP_API_URL;
 
 export default function Dashboard() {
-
   const token = localStorage.getItem("token");
 
-   // State values for profile dropdown
+
+   // samuel modal for notification
+   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // State values for profile dropdown
   const [profileDropdown, setProfileDropdown] = useState(false);
 
   //State values for ticket count
@@ -39,26 +37,19 @@ export default function Dashboard() {
   const [ongoingTicketCount, setOngoingTicketCount] = useState(0);
   const navigate = useNavigate();
 
-  
+  // State for Recent Activities - Tickets
+  const [activities, setActivities] = useState([]);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
+  // State for sorting
+  const [sort, setSort] = useState("priority");
+  const [sortedActivities, setSortedActivities] = useState([]);
 
-    // State for Recent Activities - Tickets
-    const [activities, setActivities] = useState([]); 
-    const [page, setPage] = useState(0);
-    const [hasMore, setHasMore] = useState(true);
-
-    // State for sorting
-    const [sort, setSort] = useState('priority');
-    const [sortedActivities, setSortedActivities] = useState([]);
-
-    // General loading state
-    const [loading, setLoading] = useState(true);
-
+  // General loading state
+  const [loading, setLoading] = useState(true);
 
   const formatDate = (dateString) => {
-
-   
-
     const date = new Date(dateString);
     const today = new Date();
     const timeDiff = today - date;
@@ -74,9 +65,9 @@ export default function Dashboard() {
   };
 
   // Modal State
-   const [openModal, setOpenModal] = useState(null);
+  const [openModal, setOpenModal] = useState(null);
 
-   const openModalHandler = (modalName) => {
+  const openModalHandler = (modalName) => {
     setOpenModal(modalName);
   };
 
@@ -87,8 +78,8 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-
-        const response = await axios.get( `${apiUrl}/api/v1/ticket/view-all-tickets`,
+        const response = await axios.get(
+          `${apiUrl}/api/v1/ticket/view-all-tickets`,
           {
             params: { page },
             headers: {
@@ -115,14 +106,19 @@ export default function Dashboard() {
       }
     };
 
-
     const fetchData = async () => {
       try {
         setLoading(true);
 
         const promises = [
           fetchTickets(),
-          fetchTicketCount(token, setTicketTotalCount, setOpenTicketCount, setResolvedTicketCount, setOngoingTicketCount)
+          fetchTicketCount(
+            token,
+            setTicketTotalCount,
+            setOpenTicketCount,
+            setResolvedTicketCount,
+            setOngoingTicketCount
+          ),
         ];
 
         await Promise.all(promises);
@@ -132,26 +128,26 @@ export default function Dashboard() {
     };
 
     fetchData();
-
   }, [page]);
 
-
-   // Sorting function
-   const sortTickets = (tickets) => {
-    const priorityOrder = ['HIGH', 'MEDIUM', 'LOW'];
-    const statusOrder = ['OPEN', 'IN_PROGRESS', 'RESOLVE'];
+  // Sorting function
+  const sortTickets = (tickets) => {
+    const priorityOrder = ["HIGH", "MEDIUM", "LOW"];
+    const statusOrder = ["OPEN", "IN_PROGRESS", "RESOLVE"];
 
     return [...tickets].sort((a, b) => {
-      if (sort === 'priority') {
-        return priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority);
+      if (sort === "priority") {
+        return (
+          priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority)
+        );
       }
-      if (sort === 'status') {
+      if (sort === "status") {
         return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
       }
-      if (sort === 'assigneeId') {
+      if (sort === "assigneeId") {
         return a.assignee.localeCompare(b.assignee);
       }
-      if (sort === 'categoryId') {
+      if (sort === "categoryId") {
         return a.ticketCategoryName.localeCompare(b.ticketCategoryName);
       }
       return 0;
@@ -173,16 +169,32 @@ export default function Dashboard() {
     return <div>Loading...</div>; // Add your loading spinner here if you have one
   }
 
+  // notification modal
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <>
-
       {/* Navbar */}
-      <Navbar setProfileDropdown={setProfileDropdown} profileDropdown={profileDropdown}/>
+      <Navbar
+        onOpen={handleOpenModal}
+        setProfileDropdown={setProfileDropdown}
+        profileDropdown={profileDropdown}
+      />
+
+      {isModalOpen && (
+        <UserNotification
+          onClose={handleCloseModal}
+        />
+      )}
 
       {/* Sort and Add user row */}
-      <div className='flex flex-wrap mt-10 mb-20 justify-end'>
-        <div className='flex border'>
+      <div className="flex flex-wrap mt-10 mb-20 justify-end">
+        <div className="flex border">
           <div>
             <div>Sort by</div>
             <div>
@@ -194,50 +206,53 @@ export default function Dashboard() {
               </select>
             </div>
           </div>
-          <button onClick={() => openModalHandler('createTicket')} className="bg-blue-500 text-white px-4 py-2 rounded">
-              Create Ticket
+          <button
+            onClick={() => openModalHandler("createTicket")}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Create Ticket
           </button>
-
         </div>
       </div>
-
-
 
       {/* Ticket Count Cards */}
       <TicketCountCards
         totalTicketCount={totalTicketCount}
         openTicketCount={openTicketCount}
         resolvedTicketCount={resolvedTicketCount}
-        ongoingTicketCount={ongoingTicketCount} />
-    
-        {/* Ticket Table */}
-        <TicketTable
-              activities={sortedActivities} 
-              setActivities={setActivities}
-              setPage={setPage}
-              page={page}
-            />
+        ongoingTicketCount={ongoingTicketCount}
+      />
 
-            {/* Modals */}
+      {/* Ticket Table */}
+      <TicketTable
+        activities={sortedActivities}
+        setActivities={setActivities}
+        setPage={setPage}
+        page={page}
+      />
 
-        <CreateTicket
-          isOpen={openModal === 'createTicket'}
-          onClose={closeModalHandler}
-          // closeOnOutsideClick={true}
-        />
+      {/* Modals */}
 
+      <CreateTicket
+        isOpen={openModal === "createTicket"}
+        onClose={closeModalHandler}
+        // closeOnOutsideClick={true}
+      />
 
-       {/* Profile Dropdown */}
-       {
-        profileDropdown && 
-         <div className='position-absolute sm_text bg-white border w-40'>
-            <div className='mb-4'>
-              <div>Notification</div>
-            </div>
-            <div className='mb-4' style={{color:"#1F2937"}}>Profile</div>
-            <div className='mb-4' style={{color:"#1F2937"}} >Logout</div>
-         </div>
-      }
+      {/* Profile Dropdown */}
+      {profileDropdown && (
+        <div className="position-absolute sm_text bg-white border w-40">
+          <div className="mb-4">
+            <div>Notification</div>
+          </div>
+          <div className="mb-4" style={{ color: "#1F2937" }}>
+            Profile
+          </div>
+          <div className="mb-4" style={{ color: "#1F2937" }}>
+            Logout
+          </div>
+        </div>
+      )}
     </>
   );
 }
