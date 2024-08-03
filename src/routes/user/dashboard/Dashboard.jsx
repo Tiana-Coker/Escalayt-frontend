@@ -1,11 +1,18 @@
 
 /* eslint-disable no-unused-vars */
 
+import { onMessage } from "firebase/messaging";
+import { messaging } from "../../../firebase/firebaseConfig";
+
 // Components
 import Navbar from '../../../components/dashboard/navbar/Navbar';
 import TicketCountCards from '../../../components/dashboard/ticketCount/TicketCountCards';
 import CreateTicket from "../../../components/modals/createTicket/CreateTicket";
 import IMAGES from "../../../assets";
+
+// import method to request for permission
+import { requestPermission } from "../../../firebase/utils/notification";
+
 
 // utility methods
 import { fetchTicketCount
@@ -17,17 +24,31 @@ import styles from "./Dashboard.module.css";
 
 import axios from "axios";
 import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
+import { useFetchUser } from "./useFetchUser";
 
 
 
  // import url from .env file
  const apiUrl = import.meta.env.VITE_APP_API_URL;
 
+ const userUrl = `${apiUrl}/api/v1/users/get-user-detail`;
 
 
 export default function Dashboard() {
 
   const token = localStorage.getItem("token");
+
+
+    // second parameter for setting header
+  const option = {
+    // method
+    method: "GET",
+    // header
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
 
    // State values for profile dropdown
   const [profileDropdown, setProfileDropdown] = useState(false);
@@ -39,7 +60,6 @@ export default function Dashboard() {
   const [ongoingTicketCount, setOngoingTicketCount] = useState(0);
   const navigate = useNavigate();
 
-  
 
 
     // State for Recent Activities - Tickets
@@ -53,6 +73,9 @@ export default function Dashboard() {
 
     // General loading state
     const [loading, setLoading] = useState(true);
+
+    // Fetching Admin Details
+  const { data, isLoading, isError } = useFetchUser(userUrl, option);
 
 
   const formatDate = (dateString) => {
@@ -83,6 +106,34 @@ export default function Dashboard() {
   const closeModalHandler = () => {
     setOpenModal(null);
   };
+
+    //useEffect to load admin info
+    useEffect(() => {
+
+      // console.log("user data", data)
+      // console.log(isError, STATUS.IN_PROGRESS[1], isLoading);
+  
+      const userDetails = {
+        userId: data?.id,
+        username: data?.username,
+        fullName: data?.fullName,
+        email: data?.email,
+        pictureUrl: data?.pictureUrl,
+      };
+  
+      // if (data) {
+      //   setCurrentAdmin({ adminDetails });
+      //   console.log(adminDetails.username, adminDetails.adminId);
+      // }
+      // console.log("Admin Data",data);
+     
+      // Ensure userId is defined before calling requestPermission
+      if (userDetails.userId) {
+        requestPermission(userDetails.userId);
+      }
+  
+      
+    }, [data]);
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -173,6 +224,12 @@ export default function Dashboard() {
     return <div>Loading...</div>; // Add your loading spinner here if you have one
   }
 
+
+  onMessage(messaging, (payload) => {
+    console.log("incoming msg");
+    alert("incoming")
+    // toast(<Message notification={payload.notification} />);
+  });
 
   return (
     <>

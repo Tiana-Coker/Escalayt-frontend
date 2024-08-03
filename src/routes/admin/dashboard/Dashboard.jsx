@@ -1,5 +1,8 @@
 /* eslint-disable no-unused-vars */
 
+import { onMessage } from "firebase/messaging";
+import { messaging } from "../../../firebase/firebaseConfig";
+
 // Components
 import Navbar from "../../../components/dashboard/navbar/Navbar";
 import TicketCountCards from "../../../components/dashboard/ticketCount/TicketCountCards";
@@ -86,6 +89,7 @@ export default function Dashboard() {
   // samuel modal for notification
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Fetching Admin Details
   const { data, isLoading, isError } = useFetchAdmin(adminUrl, option);
 
   const [currentAdmin, setCurrentAdmin] = useState({
@@ -316,6 +320,11 @@ export default function Dashboard() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+  onMessage(messaging, (payload) => {
+    console.log("incoming msg");
+    alert("incoming")
+    // toast(<Message notification={payload.notification} />);
+  });
   return (
     <>
       <div className="p-2 pt-5 px-24">
