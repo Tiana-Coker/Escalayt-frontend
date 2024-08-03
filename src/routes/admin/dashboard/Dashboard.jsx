@@ -12,7 +12,7 @@ import IMAGES from "../../../assets";
 import Notification from "../../../components/modals/notification/Notification";
 
 // import method to request for permission
-import { requestPermission } from "../../../firebase/utils/notification";
+// import { requestPermission } from "../../../firebase/utils/notification";
 
 // utility methods
 import {
@@ -204,9 +204,9 @@ export default function Dashboard() {
     console.log("Admin Data",data);
    
     // Ensure adminId is defined before calling requestPermission
-    if (adminDetails.adminId) {
-      requestPermission(adminDetails.adminId);
-    }
+    // if (adminDetails.adminId) {
+    //   requestPermission(adminDetails.adminId);
+    // }
 
     
   }, [data]);
