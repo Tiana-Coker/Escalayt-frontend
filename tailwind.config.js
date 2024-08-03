@@ -19,6 +19,9 @@ export default {
       colors: {
         overlay: 'rgba(0, 0, 0, 0.5)',
       },
+      maxWidth: {
+        '1180': '1180px',
+      },
     },
   },
   plugins: [],
