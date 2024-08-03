@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
 import BankingMgtIcon from "../../assets/BankingMgtIcon";
 import EscalaytImage from "../../assets/EscalaytImage";
 import ResetPasswordIcon from "../../assets/ResetPasswordIcon";
@@ -13,6 +14,34 @@ export default function ResetPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPasswordReset, setIsPasswordReset] = useState(false);
+  const [isTokenValid, setIsTokenValid] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get("token");
+
+    if (token) {
+      axios
+        .get(
+          `http://localhost:8080/api/v1/auth/confirm-reset-password?token=${token}`
+        )
+        .then((response) => {
+          const jwtToken = response.data.split(":")[1].trim();
+          console.log(jwtToken);
+          localStorage.setItem("token", jwtToken);
+          setIsTokenValid(true);
+        })
+        .catch((error) => {
+          setErrorMessage("Invalid token. Try again!");
+        });
+    } else {
+      setErrorMessage("No token provided. Try again!");
+    }
+  }, [location]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -30,8 +59,9 @@ export default function ResetPassword() {
       return;
     }
 
-    const token = localStorage.getItem("token");
-    
+    const token = localStorage.getItem("token"); // Corrected key to retrieve the token
+    console.log(token);
+
     if (!token) {
       alert("User is not authenticated!");
       return;
@@ -179,8 +209,8 @@ export default function ResetPassword() {
           </form>
         </div>
 
-        <div className="absolute w-[740px] h-[740px] top-[110px] left-[650px]">
-          <EscalaytImage />
+        <div className="flex items-center justify-center absolute left-[1100px] top-[110px]">
+          <EscalaytImage className="w-[500px] h-[800px]" />
         </div>
       </div>
     </>

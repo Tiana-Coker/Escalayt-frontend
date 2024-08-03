@@ -5,7 +5,8 @@ import CreateCategoryIcon from "../../../assets/CreateCategoryIcon";
 import Confirm from "../createTicket/Confirm";
 import TicketCategorySuccess from "./TicketCategorySuccess";
 
-export default function CreateCategory({ onClose }) {
+export default function CreateCategory({ isOpen, onClose}) {
+  if (!isOpen) return null;
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isConfirmed, setIsConfirmed] = useState(false);
@@ -13,7 +14,7 @@ export default function CreateCategory({ onClose }) {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
 
-      const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
+      const token = localStorage.getItem("token"); // Retrieve the token from localStorge Or
    
    
     if (!token) {

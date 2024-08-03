@@ -1,23 +1,64 @@
 /* eslint-disable no-unused-vars */
-import CreateTicket from "../../../components/modals/createTicket/CreateTicket";
-import CreateCategory from "../../../components/modals/createCategory/CreateTicketCategory";
-import CreateDepartment from "../../../components/modals/createDepartment/CreateDepartment";
+
+// Components
+import Navbar from "../../../components/dashboard/navbar/Navbar";
+import TicketCountCards from "../../../components/dashboard/ticketCount/TicketCountCards";
 import CreateUser from "../../../components/modals/createUser/CreateUser";
+import TicketCard from "../../../components/dashboard/ticketCard/TicketCard";
+import IMAGES from "../../../assets";
+import Notification from "../../../components/modals/notification/Notification";
+
+// import method to request for permission
+// import { requestPermission } from "../../../firebase/utils/notification";
+
+// utility methods
+import {
+  fetchLatestThreeOpenTickets,
+  fetchLatestThreeResolvedTickets,
+  fetchLatestThreeInprogressTickets,
+  fetchTicketCount,
+} from "../../../utils/dashboard-methods/dashboardMethods";
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./Dashboard.module.css";
-import folderImg from "../../../assets/images/folder.png";
-import frameImg from "../../../assets/images/frame.png";
-import engineImg from "../../../assets/images/engine.png";
-import goodImg from "../../../assets/images/good.png";
 
 import axios from "axios";
 import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
+import { useFetchAdmin } from "./useFetchAdmin";
 
-import { fetchTicketCount } from "../../../utils/dashboard-methods";
+
+
+
+//http://localhost:8080/api/v1/admin/get-admin-details
+
+// import url from .env file
+const apiUrl = import.meta.env.VITE_APP_API_URL;
+
+const adminUrl = `${apiUrl}/api/v1/admin/get-admin-details`;
 
 export default function Dashboard() {
+
+  // Token from local storage
+  const token = localStorage.getItem("token");
+
+
+  // second parameter for setting header
+  const option = {
+    // method
+    method: "GET",
+    // header
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  // console.log("dash token", token);
+
+  // State values for profile dropdown
+  const [profileDropdown, setProfileDropdown] = useState(false);
+
   //State values for ticket count
   const [totalTicketCount, setTicketTotalCount] = useState(0);
   const [openTicketCount, setOpenTicketCount] = useState(0);
@@ -25,9 +66,94 @@ export default function Dashboard() {
   const [ongoingTicketCount, setOngoingTicketCount] = useState(0);
   const navigate = useNavigate();
 
-  const [tickets, setTickets] = useState([]);
+  // State for Recent Activities - Tickets
+  const [activities, setActivities] = useState([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+
+  // state values for tickets card
+  const [tickets, setTickets] = useState([]);
+  const [loadingTickets, setLoadingTickets] = useState(true);
+  const [ticketsError, setTicketsError] = useState(null);
+
+  // State for sorting
+  const [sort, setSort] = useState("priority");
+  const [sortedActivities, setSortedActivities] = useState([]);
+
+  // General loading state
+  const [loading, setLoading] = useState(true);
+
+  // samuel modal for notification
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { data, isLoading, isError } = useFetchAdmin(adminUrl, option);
+
+  const [currentAdmin, setCurrentAdmin] = useState({
+    adminId: 1,
+    username: "",
+    fullName: "",
+    email: "",
+    pictureUrl: "",
+  });
+
+  // values for the style of ticket card titles - New, Ongoing, Resolved
+  const defaultStyle = { color: "#BDBDBD" };
+  const clickedStyle = {
+    backgroundColor: "white",
+    color: "#828282",
+    borderRadius: "5px",
+  };
+  const [buttonStyles, setButtonStyles] = useState({
+    newTickets: clickedStyle,
+    ongoingTickets: defaultStyle,
+    resolvedTickets: defaultStyle,
+  });
+
+  // Method to fetch the latest 3 Open tickets
+  const fetchNewTickets = () => {
+    fetchLatestThreeOpenTickets(
+      token,
+      setTickets,
+      setLoadingTickets,
+      setTicketsError
+    );
+    // Update styles and reset others to default
+    setButtonStyles({
+      newTickets: clickedStyle,
+      ongoingTickets: defaultStyle,
+      resolvedTickets: defaultStyle,
+    });
+  };
+
+  const fetchOngoingTickets = () => {
+    fetchLatestThreeInprogressTickets(
+      token,
+      setTickets,
+      setLoadingTickets,
+      setTicketsError
+    );
+    // Update styles and reset others to default
+    setButtonStyles({
+      newTickets: defaultStyle,
+      ongoingTickets: clickedStyle,
+      resolvedTickets: defaultStyle,
+    });
+  };
+
+  const fetchResolvedTickets = () => {
+    fetchLatestThreeResolvedTickets(
+      token,
+      setTickets,
+      setLoadingTickets,
+      setTicketsError
+    );
+    // Update styles and reset others to default
+    setButtonStyles({
+      newTickets: defaultStyle,
+      ongoingTickets: defaultStyle,
+      resolvedTickets: clickedStyle,
+    });
+  };
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -44,54 +170,50 @@ export default function Dashboard() {
     }
   };
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isModalOpen2, setIsModalOpen2] = useState(false);
+  // Modal State
+  const [openModal, setOpenModal] = useState(null);
 
-  // handle create department state modal
-  const [isModalOpen3, setIsModalOpen3] = useState(false);
-
-  // handle create new user by admin
-  const [isModalOpen4, setIsModalOpen4] = useState(false);
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleOpenModal2 = () => {
-    setIsModalOpen2(true);
+  const openModalHandler = (modalName) => {
+    setOpenModal(modalName);
   };
 
-  const handleOpenModal3 = () => {
-    setIsModalOpen3(true);
-  };
-  const handleOpenModal4 = () => {
-    setIsModalOpen4(true);
+  const closeModalHandler = () => {
+    setOpenModal(null);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-  const handleCloseModal2 = () => {
-    setIsModalOpen2(false);
-  };
+  //useEffect to load admin info
+  useEffect(() => {
+    // console.log(isError, STATUS.IN_PROGRESS[1], isLoading);
 
-  const handleCloseModal3 = () => {
-    setIsModalOpen3(false);
-  };
-  const handleCloseModal4 = () => {
-    setIsModalOpen4(false);
-  };
+    const adminDetails = {
+      adminId: data?.id,
+      username: data?.username,
+      fullName: data?.fullName,
+      email: data?.email,
+      pictureUrl: data?.pictureUrl,
+    };
 
-  // Fetch Tickets
+    if (data) {
+      setCurrentAdmin({ adminDetails });
+      console.log(adminDetails.username, adminDetails.adminId);
+    }
+    console.log("Admin Data",data);
+   
+    // Ensure adminId is defined before calling requestPermission
+    // if (adminDetails.adminId) {
+    //   requestPermission(adminDetails.adminId);
+    // }
+
+    
+  }, [data]);
+
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const token = localStorage.getItem("jwtToken");
-
-        // const token =
-        //   "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJBRE1JTiJdLCJzdWIiOiJNdWdpZG8xIiwiaWF0IjoxNzIyMjcxMjg2LCJleHAiOjE3MjIzNTc2ODZ9.UFQyj8DhPYqtHovlE--gqkV2t7mkNtlIVOwSe_DpfyA";
+        // console.log("admin-token", token);
 
         const response = await axios.get(
-          "http://localhost:8080/api/v1/ticket/view-all-tickets",
+          `${apiUrl}/api/v1/ticket/view-all-tickets`,
           {
             params: { page },
             headers: {
@@ -101,6 +223,7 @@ export default function Dashboard() {
         );
 
         const { data } = response;
+        // console.log("eje", response)
 
         const formattedTickets = data.map((ticket) => ({
           ...ticket,
@@ -109,7 +232,8 @@ export default function Dashboard() {
           dateCreated: formatDate(ticket.createdAt),
         }));
 
-        setTickets(formattedTickets);
+        console.log("Fetched tickets:", formattedTickets);
+        setActivities(formattedTickets);
 
         setHasMore(fetchTickets.length > 0);
       } catch (error) {
@@ -117,154 +241,213 @@ export default function Dashboard() {
       }
     };
 
-    fetchTickets();
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        const promises = [
+          fetchTickets(),
+          fetchLatestThreeOpenTickets(
+            token,
+            setTickets,
+            setLoading,
+            setTicketsError
+          ),
+          fetchTicketCount(
+            token,
+            setTicketTotalCount,
+            setOpenTicketCount,
+            setResolvedTicketCount,
+            setOngoingTicketCount
+          ),
+        ];
+
+        await Promise.all(promises);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [page]);
 
-  // Fetch Ticket Count
-  useEffect(() => {
-    // Method to ticket count
-    fetchTicketCount(
-      setTicketTotalCount,
-      setOpenTicketCount,
-      setResolvedTicketCount,
-      setOngoingTicketCount
-    );
-  }, []);
+  // Sorting function
+  const sortTickets = (tickets) => {
+    const priorityOrder = ["HIGH", "MEDIUM", "LOW"];
+    const statusOrder = ["OPEN", "IN_PROGRESS", "RESOLVE"];
 
-  const handleButtonClick = (type) => {
-    navigate(`/tickets/${type}`);
+    return [...tickets].sort((a, b) => {
+      if (sort === "priority") {
+        return (
+          priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority)
+        );
+      }
+      if (sort === "status") {
+        return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
+      }
+      if (sort === "assigneeId") {
+        return a.assignee.localeCompare(b.assignee);
+      }
+      if (sort === "categoryId") {
+        return a.ticketCategoryName.localeCompare(b.ticketCategoryName);
+      }
+      return 0;
+    });
   };
 
+  // Sort activities whenever `sort` or `activities` change
+  useEffect(() => {
+    setSortedActivities(sortTickets(activities));
+  }, [sort, activities]);
+
+  // Handle sort change
+  const handleSortChange = (e) => {
+    const { value } = e.target;
+    setSort(value);
+  };
+
+  if (loading) {
+    return <div>Loading...</div>; // Add your loading spinner here if you have one
+  }
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
   return (
     <>
-      <div className={`relative ${isModalOpen ? "filter-blurred" : ""}`}>
-        <p>Hello, this is the Admin Dashboard </p>
-        <button
-          onClick={handleOpenModal}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Create Ticket
-        </button>
-        {isModalOpen && <CreateTicket onClose={handleCloseModal} />}
-      </div>
-      <div className={`relative ${isModalOpen2 ? "filter-blurred" : ""}`}>
-        <p>.</p>
-        <br />
-        <button
-          onClick={handleOpenModal2}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Create Category
-        </button>
-        {isModalOpen2 && <CreateCategory onClose={handleCloseModal2} />}
-      </div>
+      <div className="p-2 pt-5 px-24">
+        {/* Navbar */}
+        <Navbar
+          onOpen={handleOpenModal}
+          onClose={handleCloseModal}
+          setProfileDropdown={setProfileDropdown}
+          profileDropdown={profileDropdown}
+        />
 
-      {/* handle create department modal */}
-      <div className={`relative ${isModalOpen3 ? "filter-blurred" : ""}`}>
-        <p>.</p>
-        <br />
-        <button
-          onClick={handleOpenModal3}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Create Department
-        </button>
-        {isModalOpen3 && <CreateDepartment onClose={handleCloseModal3} />}
-      </div>
+        {isModalOpen && (
+          <Notification adminId={data && data.id} onClose={handleCloseModal} />
+        )}
 
-      {/* handle create New User modal */}
-      <div className={`relative ${isModalOpen4 ? "filter-blurred" : ""}`}>
-        <p>.</p>
-        <br />
-        <button
-          onClick={handleOpenModal4}
-          className="bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Create New User
-        </button>
-        {isModalOpen4 && <CreateUser onClose={handleCloseModal4} />}
-      </div>
+        {/* Sort and Add user row */}
+        <div className="flex flex-wrap mt-10 mb-10 justify-end">
+          <div className="flex flex-row ">
+            <div className="flex flex-col mr-8">
+              <div className="text-gray-500">Sort by</div>
+              <div>
+                <select
+                  className="px-9 py-1 bg-white border border-blue-500"
+                  value={sort}
+                  onChange={handleSortChange}
+                >
+                  <option value="priority">Priority </option>
+                  <option value="status">Status </option>
+                  <option value="assigneeId">Assignee </option>
+                  <option value="categoryId">Category </option>
+                </select>
+              </div>
+            </div>
 
-      <div className={styles.dashboardContainer}>
-        {/* Ticket Count Card */}
-        <div className={styles.buttonGroup}>
-          <div
-            className={`${styles.dashboardButton} ${styles.totalTicketsButton}`}
-            onClick={() => handleButtonClick("total")}
-          >
-            <div className={styles.buttonContent}>
-              <div className={styles.buttonText}>Total Tickets</div>
-              <img
-                src={folderImg}
-                alt="Total Tickets"
-                className={styles.buttonImg}
-              />
-            </div>
-            <div className={styles.ticketCount} style={{ color: "#0070FF" }}>
-              {totalTicketCount}
-            </div>
-          </div>
-
-          <div
-            className={`${styles.dashboardButton} ${styles.openTicketsButton}`}
-            onClick={() => handleButtonClick("open")}
-          >
-            <div className={styles.buttonContent}>
-              <div className={styles.buttonText}>Open Tickets</div>
-              <img
-                src={frameImg}
-                alt="Open Tickets"
-                className={styles.buttonImg}
-              />
-            </div>
-            <div className={styles.ticketCount} style={{ color: "#FF4C4C" }}>
-              {openTicketCount}
-            </div>
-          </div>
-
-          <div
-            className={`${styles.dashboardButton} ${styles.inProgressTicketsButton}`}
-            onClick={() => handleButtonClick("in-progress")}
-          >
-            <div className={styles.buttonContent}>
-              <div className={styles.buttonText}>In-Progress Tickets</div>
-              <img
-                src={engineImg}
-                alt="In-Progress Tickets"
-                className={styles.buttonImg}
-              />
-            </div>
-            <div className={styles.ticketCount} style={{ color: "#FFA500" }}>
-              {ongoingTicketCount}
-            </div>
-          </div>
-
-          <div
-            className={`${styles.dashboardButton} ${styles.resolvedTicketsButton}`}
-            onClick={() => handleButtonClick("resolved")}
-          >
-            <div className={styles.buttonContent}>
-              <div className={styles.buttonText}>Resolved Tickets</div>
-              <img
-                src={goodImg}
-                alt="Resolved Tickets"
-                className={styles.buttonImg}
-              />
-            </div>
-            <div className={styles.ticketCount} style={{ color: "#32CD32" }}>
-              {resolvedTicketCount}
-            </div>
+            <button
+              onClick={() => openModalHandler("createUser")}
+              className="bg-blue-500 text-white px-4 text-sm h-9 mr-20 "
+            >
+              Add New User
+            </button>
           </div>
         </div>
 
-        {/* Ticket Table */}
+        {/* Ticket Count Cards */}
+        <TicketCountCards
+          totalTicketCount={totalTicketCount}
+          openTicketCount={openTicketCount}
+          resolvedTicketCount={resolvedTicketCount}
+          ongoingTicketCount={ongoingTicketCount}
+        />
 
+        {/* Ticket Card title widget */}
+
+        <div
+          style={{ backgroundColor: "#F2F2F2" }}
+          className="flex flex-wrap mb-5 px-3 py-2 border-radius"
+        >
+          <div className="flex flex-wrap w-full lg:w-8/12 gap-x-9 justify-between lg:justify-start">
+            <button
+              className={`focus:outline-none border-none sm_text px-4`}
+              style={buttonStyles.newTickets}
+              onClick={fetchNewTickets}
+            >
+              New Tickets
+            </button>
+            <button
+              className={`focus:outline-none border-none sm_text px-4`}
+              style={buttonStyles.ongoingTickets}
+              onClick={fetchOngoingTickets}
+            >
+              Ongoing Tickets
+            </button>
+            <button
+              className={`focus:outline-none border-none sm_text px-4`}
+              style={buttonStyles.resolvedTickets}
+              onClick={fetchResolvedTickets}
+            >
+              Resolved Tickets
+            </button>
+          </div>
+
+          <div className="w-full lg:w-4/12 hidden lg:flex gap-x-6">
+            <button
+              className="ml-auto bg-white px-2 sm_text rounded-md"
+              style={{ color: "#828282", borderRadius: "5px" }}
+            >
+              Today
+            </button>
+            <button>
+              <img src={IMAGES.LEFT_ARROW} alt="" />
+            </button>
+            <button>
+              <img src={IMAGES.RIGHT_ARROW} alt="" />
+            </button>
+          </div>
+        </div>
+        {/* Ticket Cards */}
+        <div className="flex flex-wrap mb-8 justify-around">
+          {tickets.map((ticket) => {
+            return <TicketCard key={ticket.id} ticket={ticket} button={true} />;
+          })}
+        </div>
+
+        {/* Ticket Table */}
         <TicketTable
-          tickets={tickets}
-          setTickets={setTickets}
+          activities={sortedActivities}
+          setActivities={setActivities}
           setPage={setPage}
           page={page}
         />
+
+        {/* Modals */}
+
+        <CreateUser
+          isOpen={openModal === "createUser"}
+          onClose={closeModalHandler}
+          // closeOnOutsideClick={true}
+        />
+
+
+
+        {/* Profile Dropdown 
+       {
+        profileDropdown && 
+         <div className='position-absolute sm_text bg-white border w-40'>
+            <div className='mb-4'>
+              <div>Notification</div>
+            </div>
+            <div className='mb-4' style={{color:"#1F2937"}}>Profile</div>
+            <div className='mb-4' style={{color:"#1F2937"}} >Logout</div>
+         </div>
+      }*/}
       </div>
     </>
   );

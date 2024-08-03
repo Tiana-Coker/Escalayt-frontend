@@ -7,6 +7,9 @@ import closeIcon from '../../assets/forgot-images/close-icon.svg';
 import './ForgotPassword.css';
 import axios from 'axios';
 
+ // import url from .env file
+ const apiUrl = import.meta.env.VITE_APP_API_URL;
+
 export default function ForgotPassword() {
 
   // `email` is the state variable, `setEmail` is the function to update it  
@@ -20,7 +23,7 @@ export default function ForgotPassword() {
 
     e.preventDefault();
     try{
-      const response = await axios.post('http://localhost:8080/api/v1/auth/initiate-forget-password', {email});
+      const response = await axios.post(apiUrl + '/api/v1/auth/initiate-forget-password', {email});
       if(response.status === 200){
         setShowModal(true);
       }

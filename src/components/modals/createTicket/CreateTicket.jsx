@@ -6,7 +6,8 @@ import Confirm from "./Confirm";
 import Dropdown from "./Dropdown";
 import TicketSuccess from "./TicketSuccess";
 
-export default function CreateTicket({ onClose }) {
+export default function CreateTicket({ isOpen, onClose}) {
+  if (!isOpen) return null;
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
@@ -16,29 +17,33 @@ export default function CreateTicket({ onClose }) {
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [categoryOptions, setCategoryOptions] = useState([]);
 
+  // import url from .env file
+ const apiUrl = import.meta.env.VITE_APP_API_URL;
+
   useEffect(() => {
     const fetchCategoryOptions = async () => {
-
-       const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorage OR
-      // // const token = sessionStorage.getItem("jwtToken"); // Retrieve the token from sessionStorage
-
-    
+      console.log("fetching")
+       const token = localStorage.getItem("token"); 
 
       try {
         const response = await fetch(
-          "http://localhost:8080/api/v1/ticket/category/name",
+         apiUrl + "/api/v1/ticket/categories",
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
+       
         if (response.ok) {
           const data = await response.json();
-          const options = data.map((name, index) => ({
-            value: String(index + 1),
-            label: name,
+          console.log("category data", data)
+          const options = data.map((singleData, index) => ({
+            value: singleData.id,
+            label: singleData.name,
           }));
+
+          console.log(options)
           setCategoryOptions(options);
         } else {
           alert("Failed to fetch category options. Please try again.");
@@ -63,8 +68,7 @@ export default function CreateTicket({ onClose }) {
 
     const categoryId = category;
 
-    const token = localStorage.getItem("jwtToken"); // Retrieve the token from localSTorage OR
-    // const token = sessionStorage.getItem("jwtToken"); // Retrieve the token from sessionStorage
+    const token = localStorage.getItem("token"); 
 
     try {
       const response = await fetch(

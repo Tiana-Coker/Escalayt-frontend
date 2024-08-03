@@ -6,43 +6,48 @@ import CreateUserIcon from "../../../assets/CreateUserIcon";
 import Confirm from "../createTicket/Confirm";
 import TicketSuccessIcon from "../../../assets/TicketSuccessIcon";
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+ // import url from .env file
+ const apiUrl = import.meta.env.VITE_APP_API_URL;
+
 // Testing url
 const URLS = {
   DEPARTMENT: "http://localhost:8080/api/v1/admin/get-all-department",
-  CREATE_USER: "http://localhost:8080/api/v1/admin/register-user/",
+  CREATE_USER: "http://localhost:8080/api/v1/admin/register-user",
 };
 
-const token = localStorage.getItem("jwtToken");
 
-// const token =
-//       "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJBRE1JTiJdLCJzdWIiOiJzdHJpbmciLCJpYXQiOjE3MjIzMTUwMDYsImV4cCI6MTcyMjQwMTQwNn0.6J_HLwVUiOhiivAx6WpUsm6_KVrRFNrlf-6G_NRnGKk";
+
+// // this is to handle post request
+//     // post request header
+
+const CreateUser = ({ isOpen, onClose}) => {
+  if (!isOpen) return null;
+
+  const token = localStorage.getItem("token");
 
 //second parameter for setting header
 const option = {
-  // method
   method: "GET",
-  // header
   headers: {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
   },
 };
-
-// // this is to handle post request
-//     // post request header
-
-const CreateUser = ({ onClose }) => {
+  
   // fetch info
   const { data, isLoading, isError } = useFetchDepartment(
     URLS.DEPARTMENT,
     option
   );
 
+  console.log(data);
+
   //full name ref
   const fullNameRef = useRef();
-
-  //username ref
-  const usernameRef = useRef();
 
   // use ref email
   const emailRef = useRef();
@@ -77,11 +82,9 @@ const CreateUser = ({ onClose }) => {
     const newUser = {
       fullName: fullNameRef.current.value,
       email: emailRef.current.value,
-      phoneNumber: passwordRef.current.value,
-      jobTitle: usernameRef.current.value, //username
+      phoneNumber: 87654321,
+      departmentId: departmentId,
     };
-
-    // const token = localStorage.getItem("jwtToken"); // Retrieve the token from localStorge Or
 
     // check that the person is logged in
     if (!token) {
@@ -91,7 +94,7 @@ const CreateUser = ({ onClose }) => {
 
     try {
       // using fetch to connect with the response
-      const response = await fetch(`${URLS.CREATE_USER}${departmentId}`, {
+      const response = await fetch(`${URLS.CREATE_USER}`, {
         // method
         method: "POST",
 
@@ -103,33 +106,43 @@ const CreateUser = ({ onClose }) => {
         body: JSON.stringify(newUser),
       });
 
-      // if response is ok
+      // // if response is ok
+      // if (response.ok) {
+      //   // set confirm to true
+      //   setIsAfterFirstSubmit(true);
+      //   console.log("User created successfully");
+      //   alert("User created successfully");
+      // } else {
+      //   // throw alert error
+      //   alert("Error creating user1");
+      //   console.log("Error:", response);
+      // }
+
       if (response.ok) {
         // set confirm to true
         setIsAfterFirstSubmit(true);
-        console.log("Category created successfully");
+        console.log("User created successfully");
+        toast.success("User created successfully");
       } else {
-        // throw alert error
-        alert("Error creating category");
-        console.log("Error:", response.statusText);
+        // Extract error message from the response
+        const errorData = await response.json();
+        const errorMessage = errorData.message || "Error creating user";
+        toast.error(errorMessage);
       }
     } catch (error) {
       // catch error either way
-      alert("Error creating category something else");
+      alert("Error creating user");
       console.log(error);
     }
 
     console.log("password", newUser.phoneNumber);
     console.log("email", newUser.email);
-    console.log("username", newUser.jobTitle);
     console.log("full name", newUser.fullName);
     console.log("department id", departmentId);
 
     //clear the space aftewards
     emailRef.current.value = "";
-    passwordRef.current.value = "";
     fullNameRef.current.value = "";
-    usernameRef.current.value = "";
   };
 
   return (
@@ -202,23 +215,6 @@ const CreateUser = ({ onClose }) => {
                   </div>
                 </div>
 
-                {/* enter user name */}
-                <div className="h-[80px] flex flex-col mb-3">
-                  <div className=" h-[35px] flex items-center">
-                    <span className="text-[18px] font-sm leading-[24px] text-lg text-left h-[24px] w-[200px] px-4 py-0">
-                      Username
-                      <span className="text-[#DA1414]">*</span>
-                    </span>
-                  </div>
-                  <div className="h-[48px] flex items-center px-4 border border-[#0070FF]">
-                    <input
-                      type="text"
-                      ref={usernameRef}
-                      placeholder="Enter Username"
-                      className="text-[#09101D] h-[40px] flex items-center text-lg font-medium leading-6 text-left w-full border-none outline-none"
-                    />
-                  </div>
-                </div>
 
                 {/* enter email */}
 
@@ -241,22 +237,7 @@ const CreateUser = ({ onClose }) => {
 
                 {/* enter password on change */}
 
-                <div className="h-[80px] flex flex-col mb-3">
-                  <div className=" h-[35px] flex items-center">
-                    <span className="text-[18px] font-sm leading-[24px] text-lg text-left h-[24px] w-[200px] px-4 py-0">
-                      Password
-                      <span className="text-[#DA1414]">*</span>
-                    </span>
-                  </div>
-                  <div className="h-[48px] flex items-center px-4 border border-[#0070FF]">
-                    <input
-                      type="text"
-                      ref={passwordRef}
-                      placeholder="Enter Phone number"
-                      className="text-[#09101D] h-[40px] flex items-center text-lg font-medium leading-6 text-left w-full border-none outline-none"
-                    />
-                  </div>
-                </div>
+              
 
                 {/* drop down list */}
 
@@ -282,7 +263,10 @@ const CreateUser = ({ onClose }) => {
             </>
           )}
         </div>
+
+        <ToastContainer />
       </div>
+      
     </>
   );
 };
