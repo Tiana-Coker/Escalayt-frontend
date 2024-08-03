@@ -7,11 +7,14 @@ import RateTicketIcon from "../../../assets/RateTicketIcon";
 const RateTicket = ({ onClose, ticketId }) => {
   const [rating, setRating] = useState(0);
 
+  const [isLoading, setIsloading] = useState(false);
+
   const reviewText = useRef();
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsloading(true)
 
     const token = localStorage.getItem("token"); // Retrieve the token from localStorge Or
   
@@ -42,6 +45,7 @@ const RateTicket = ({ onClose, ticketId }) => {
 
       if (response.ok) {
         console.log("Ticket Rated created successfully");
+        setIsloading(false)
         onClose();
       } else {
         alert("Error Rating ticket");
@@ -59,11 +63,18 @@ const RateTicket = ({ onClose, ticketId }) => {
     reviewText.current.value = "";
   };
 
+  // // testing the ticket id
+  // const handleSubmit1 = (e)=>{
+  //   e.preventDefault();
+
+  //   console.log(ticketId);
+  // }
+
   return (
     <>
       <div className="fixed inset-0 z-20 flex items-center justify-center">
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-10"
+          className={`fixed inset-0 bg-black bg-opacity-50 ${isLoading ? "z-30": "z-10"}`}
           onClick={onClose}
         ></div>
 
