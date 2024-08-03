@@ -8,6 +8,9 @@ import TicketCard from "../../../components/dashboard/ticketCard/TicketCard";
 import IMAGES from "../../../assets";
 import Notification from "../../../components/modals/notification/Notification";
 
+// import method to request for permission
+// import { requestPermission } from "../../../firebase/utils/notification";
+
 // utility methods
 import {
   fetchLatestThreeOpenTickets,
@@ -24,19 +27,8 @@ import axios from "axios";
 import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
 import { useFetchAdmin } from "./useFetchAdmin";
 
-//second parameter for setting header
 
-const token = localStorage.getItem("token");
 
-const option = {
-  // method
-  method: "GET",
-  // header
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-};
 
 //http://localhost:8080/api/v1/admin/get-admin-details
 
@@ -46,8 +38,23 @@ const apiUrl = import.meta.env.VITE_APP_API_URL;
 const adminUrl = `${apiUrl}/api/v1/admin/get-admin-details`;
 
 export default function Dashboard() {
+
   // Token from local storage
   const token = localStorage.getItem("token");
+
+
+  // second parameter for setting header
+  const option = {
+    // method
+    method: "GET",
+    // header
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  // console.log("dash token", token);
 
   // State values for profile dropdown
   const [profileDropdown, setProfileDropdown] = useState(false);
@@ -190,13 +197,20 @@ export default function Dashboard() {
       setCurrentAdmin({ adminDetails });
       console.log(adminDetails.username, adminDetails.adminId);
     }
-    console.log(data);
+    console.log("Admin Data",data);
+   
+    // Ensure adminId is defined before calling requestPermission
+    // if (adminDetails.adminId) {
+    //   requestPermission(adminDetails.adminId);
+    // }
+
+    
   }, [data]);
 
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        console.log("admin-token", token);
+        // console.log("admin-token", token);
 
         const response = await axios.get(
           `${apiUrl}/api/v1/ticket/view-all-tickets`,
@@ -209,7 +223,7 @@ export default function Dashboard() {
         );
 
         const { data } = response;
-        console.log("eje", response)
+        // console.log("eje", response)
 
         const formattedTickets = data.map((ticket) => ({
           ...ticket,
@@ -405,12 +419,6 @@ export default function Dashboard() {
           })}
         </div>
 
-        {/* {isModalOpen && <CreateTicket onClose={handleCloseModal} />}
-        <button onClick={handleOpenModal} className="bg-blue-500 text-white px-4 py-2 rounded" >
-          Create Ticket
-        </button>
-      */}
-
         {/* Ticket Table */}
         <TicketTable
           activities={sortedActivities}
@@ -426,6 +434,8 @@ export default function Dashboard() {
           onClose={closeModalHandler}
           // closeOnOutsideClick={true}
         />
+
+
 
         {/* Profile Dropdown 
        {

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 
 export function useFetchAdmin(url, options = {}) {
+  // console.log("option token", options.headers.Authorization);
+
   const [data, setData] = useState()
   const [isError, setIsError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
