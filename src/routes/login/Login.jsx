@@ -35,14 +35,14 @@ export default function Login() {
           'Content-Type': 'application/json',
         },
       });
-      console.log(response);
+      // console.log(response);
   
       if (response.data && response.data.loginInfo) {
         const { username, token } = response.data.loginInfo;
         // Store the username and token in localStorage
         localStorage.setItem('username', username);
         localStorage.setItem('token', token);
-        console.log("admin token",token)
+        // console.log("admin token",token)
         actions.resetForm();
         navigate('/admin/dashboard');
       }
@@ -148,12 +148,3 @@ export default function Login() {
     </div>
   )
 }
-    // fetchTickets();
-    // fetchNewTickets();
-    // // Method to ticket count
-    // fetchTicketCount(
-    //   setTicketTotalCount,
-    //   setOpenTicketCount,
-    //   setResolvedTicketCount,
-    //   setOngoingTicketCount
-    // );
