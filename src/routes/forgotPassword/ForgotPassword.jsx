@@ -46,13 +46,13 @@ export default function ForgotPassword() {
             <img src={forgotIcon} alt="forgot icon" />
           </div>
           <h2>Forgot Password</h2>
-          <p>Enter your email address below and we'll send you a link to reset your password.</p>
+          <p className={styles['para-text']}>Enter your email address below and we'll send you a link to reset your password.</p>
           </div>
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="email">  Email Address</label>
+          <form onSubmit={handleSubmit} className={styles['forgot-form']}>
+            <label htmlFor="email" className={styles['password-label']}>  Email Address</label>
             <input 
             type="email"
-            placeholder='  Email input'
+            placeholder='Email input'
             required 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
