@@ -27,6 +27,10 @@ const INTIAL_TICKET_OBJ = {
   minutes: 0,
   username: "",
   pictureUrl: "",
+  assigneeId: "",
+  assigneeFullName: "",
+  assigneeUsername: "",
+  assigneePictureUrl: "",
 };
 
 // progress state constant
@@ -54,12 +58,31 @@ const Notification = ({ adminId, onClose }) => {
             ticketStatus: ticket.status,
             ticketTitle: ticket.title,
             minutes: ticket.minutesDifference,
-            username: ticket.createdByDto.username,
-            pictureUrl: ticket.createdByDto.pictureUrl,
+            username: ticket.resolvedByAdminDto
+              ? ticket.resolvedByAdminDto.username
+              : ticket.resolvedByUserDto
+              ? ticket.resolvedByUserDto.username
+              : ticket.assigneeDto
+              ? ticket.assigneeDto.username
+              : ticket.createdByAdmin
+              ? ticket.createdByAdmin.username
+              : ticket.createdByUserDto?.username,
+
+            pictureUrl: ticket.resolvedByAdminDto
+              ? ticket.resolvedByAdminDto.pictureUrl
+              : ticket.resolvedByUserDto
+              ? ticket.resolvedByUserDto.pictureUrl
+              : ticket.assigneeDto
+              ? ticket.assigneeDto.pictureUrl
+              : ticket.createdByAdmin
+              ? ticket.createdByAdmin.pictureUrl
+              : ticket.createdByUserDto?.pictureUrl,
           };
         })
       );
     }
+
+    console.log(data);
   }, [data]);
 
   return (
@@ -122,7 +145,7 @@ const Notification = ({ adminId, onClose }) => {
                         src={
                           ticket.pictureUrl
                             ? ticket.pictureUrl
-                            : "default-image-url"
+                            : "https://avatar.iran.liara.run/public/boy?username=Ash"
                         }
                         alt="avatar"
                         className="w-10 h-10 rounded-full object-cover"
@@ -149,6 +172,7 @@ const Notification = ({ adminId, onClose }) => {
           </div>
         )}
       </div>
+      
     </>
   );
 };
