@@ -4,7 +4,7 @@ import forgotIcon from '../../assets/forgot-images/forgot-icon.svg';
 import settingsImage from '../../assets/forgot-images/settings.png';
 import tickIcon from '../../assets/forgot-images/tick-icon.svg';
 import closeIcon from '../../assets/forgot-images/close-icon.svg';
-import './ForgotPassword.css';
+import styles from './ForgotPassword.module.css';
 import axios from 'axios';
 
  // import url from .env file
@@ -35,14 +35,14 @@ export default function ForgotPassword() {
 
   return (
     <>
-      <nav className='nav-bar'>
-        <img src={escalogo} alt="escalayt-logo" /><span className='p_color'>Escalayt</span>
+      <nav className={styles['nav-bar']}>
+        <img src={escalogo} alt="escalayt-logo" /><span className={styles['p-color']}>Escalayt</span>
       </nav>
 
-      <div className='forgot-password-container'>
-        <div className='forgot-password-card'>
-          <div className='forgot-password-header'>
-          <div className='forgot-password-icon'>
+      <div className={styles['forgot-password-container']}>
+        <div className={styles['forgot-password-card']}>
+          <div className={styles['forgot-password-header']}>
+          <div className={styles['forgot-password-icon']}>
             <img src={forgotIcon} alt="forgot icon" />
           </div>
           <h2>Forgot Password</h2>
@@ -57,34 +57,35 @@ export default function ForgotPassword() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             />
+           
 
-            <button type='submit' className='submit-button bg_p_color'>Send Reset Link</button>
+            <button type='submit' className= {`${styles['submit-button']} ${styles['bg-p-color']}`}>Send Reset Link</button>
           </form>
 
         </div>
 
-<div className='password-image'>
-        <img src={settingsImage} alt="settings-image" className='settings-image'/>
+<div className={styles['password-image']}>
+        <img src={settingsImage} alt="settings-image"/>
 </div>
       </div>
        
       {/* Modal that shows after successful email submission */}
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <div className="modal-icon">
-                <img src={tickIcon} alt="tick icon" className="tick-icon" />
+        <div className={styles['modal-overlay']}>
+          <div className={styles['modal']}>
+            <div className={styles['modal-header']}>
+              <div className={styles['modal-icon']}>
+                <img src={tickIcon} alt="tick icon" className={styles['tick-icon' ]}/>
               </div>
-              <button className='close-button' onClick={() => setShowModal(false)}>
+              <button className={styles['close-button']} onClick={() => setShowModal(false)}>
                 <img src={closeIcon} alt="close icon" />
               </button>
             </div>
-            <div className="modal-body">
+            <div className={styles['modal-body']}>
               <h2>Check Your Email</h2>
               <p>We have sent a password reset link to your email address. Please check your inbox and follow the instructions to reset your password.</p>
-              <button className='confirm-button' onClick={() => setShowModal(false)}>Confirm</button>
+              <button className={styles['confirm-button']} onClick={() => setShowModal(false)}>Confirm</button>
             </div>
           </div>
         </div>
