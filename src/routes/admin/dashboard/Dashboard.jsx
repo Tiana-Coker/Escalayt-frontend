@@ -326,6 +326,11 @@ export default function Dashboard() {
           setProfileDropdown={setProfileDropdown}
           profileDropdown={profileDropdown}
         />
+        
+
+
+
+
 
         {isModalOpen && (
           <Notification adminId={data && data.id} onClose={handleCloseModal} />
@@ -437,17 +442,8 @@ export default function Dashboard() {
 
 
 
-        {/* Profile Dropdown 
-       {
-        profileDropdown && 
-         <div className='position-absolute sm_text bg-white border w-40'>
-            <div className='mb-4'>
-              <div>Notification</div>
-            </div>
-            <div className='mb-4' style={{color:"#1F2937"}}>Profile</div>
-            <div className='mb-4' style={{color:"#1F2937"}} >Logout</div>
-         </div>
-      }*/}
+        {/* Profile Dropdown */}
+       
       </div>
     </>
   );
