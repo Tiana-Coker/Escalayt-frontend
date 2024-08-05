@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
@@ -6,7 +7,7 @@ import Confirm from "./Confirm";
 import Dropdown from "./Dropdown";
 import TicketSuccess from "./TicketSuccess";
 
-export default function CreateTicket({ isOpen, onClose}) {
+export default function CreateTicket({ isOpen, onClose }) {
   if (!isOpen) return null;
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
@@ -14,36 +15,35 @@ export default function CreateTicket({ isOpen, onClose}) {
   const [priority, setPriority] = useState("");
   const [description, setDescription] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const [file, setFile] = useState(null);
+  const [fileTitle, setFileTitle] = useState("");
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [categoryOptions, setCategoryOptions] = useState([]);
 
   // import url from .env file
- const apiUrl = import.meta.env.VITE_APP_API_URL;
+  const apiUrl = import.meta.env.VITE_APP_API_URL;
 
   useEffect(() => {
     const fetchCategoryOptions = async () => {
-      console.log("fetching")
-       const token = localStorage.getItem("token"); 
+      console.log("fetching");
+      const token = localStorage.getItem("token");
 
       try {
-        const response = await fetch(
-         apiUrl + "/api/v1/ticket/categories",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-       
+        const response = await fetch(apiUrl + "/api/v1/ticket/categories", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
         if (response.ok) {
           const data = await response.json();
-          console.log("category data", data)
+          console.log("category data", data);
           const options = data.map((singleData, index) => ({
             value: singleData.id,
             label: singleData.name,
           }));
 
-          console.log(options)
+          console.log(options);
           setCategoryOptions(options);
         } else {
           alert("Failed to fetch category options. Please try again.");
@@ -56,19 +56,35 @@ export default function CreateTicket({ isOpen, onClose}) {
     fetchCategoryOptions();
   }, []);
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFile(file); // set the selected file
+      setFileTitle(file.name); // Extract and set the file title
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission behavior
 
-    const requestBody = {
-      title,
-      location,
-      priority,
-      description,
-    };
+    // const requestBody = {
+    //   title,
+    //   location,
+    //   priority,
+    //   description,
+    // };
+
+    const formData = new FormData(); // Create a new FormData object
+    formData.append("title", title);
+    formData.append("location", location);
+    formData.append("priority", priority);
+    formData.append("description", description);
+    formData.append("file", file);
+    formData.append("fileTitle", fileTitle);
 
     const categoryId = category;
 
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem("token");
 
     try {
       const response = await fetch(
@@ -76,10 +92,11 @@ export default function CreateTicket({ isOpen, onClose}) {
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            // "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(requestBody),
+          //body: JSON.stringify(requestBody),
+          body: formData, // Send the FormData object
         }
       );
 
@@ -247,9 +264,7 @@ export default function CreateTicket({ isOpen, onClose}) {
                       id="file-upload"
                       type="file"
                       className="absolute top-0 left-0 w-full h-full opacity-0 cursor-pointer"
-                      onChange={(e) => {
-                        console.log(e.target.files);
-                      }}
+                      onChange={handleFileChange}
                       aria-hidden="true"
                     />
                   </div>
