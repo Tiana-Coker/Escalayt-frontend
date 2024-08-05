@@ -48,6 +48,11 @@ export default function TicketPreview() {
     <div className="w-11/12 mx-auto">
       <Navbar />
 
+      {/* Title and resolution */}
+      <div>
+        
+      </div>
+
       <TicketDetails ticket={ticket} />
       {console.log("id now", ticket.id)}
       <Comment ticketId={id} />
