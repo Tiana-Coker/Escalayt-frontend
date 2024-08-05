@@ -5,6 +5,10 @@ import IMAGES from '../../../assets';
 
 const Navbar = ({ onOpen, setProfileDropdown, profileDropdown}) => {
 
+  const handleOpenModal = () => {
+    onOpen('notification'); // Replace 'myModalName' with the name of the modal you want to open
+  };
+
   const handleProfileDropdown = () => {
     setProfileDropdown(prev => !prev);
   }
@@ -31,7 +35,7 @@ const Navbar = ({ onOpen, setProfileDropdown, profileDropdown}) => {
                 <Link to = "/admin/tickets" className='ml-4'>All Tickets</Link>
             </div>
             <div className="relative flex flex-wrap items-center ml-28">
-              <button className="" onClick={onOpen}><img src={IMAGES.NOTIFICATION_ICON} alt="notification" /></button>
+              <button className="" onClick={handleOpenModal}><img src={IMAGES.NOTIFICATION_ICON} alt="notification" /></button>
               <button className="ml-6" onClick={handleProfileDropdown}><img src={IMAGES.PROFILE_ICON} className='' alt="" /></button>
 
             

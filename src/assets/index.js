@@ -2,6 +2,7 @@ import react from "./react.svg";
 import PROFILE from "./profile.svg";
 import ARROW from "./arrow.svg";
 import CHECKBOX_CHECKED from "./checkbox-checked.svg";
+import CHECKBOX_UNCHECKED from "./checkbox-unchecked.svg";
 import CHECKBOX_NEUTRAL from "./checkbox-neutral.svg";
 import HIGH_PRIORITY from "./high-priority.svg";
 import MEDIUM_PRIORITY from "./medium-priority.svg";
@@ -16,7 +17,7 @@ import AUTH_ICON from "./auth-icon.svg";
 
 
 export default {react, 
-    PROFILE, ARROW, CHECKBOX_CHECKED, CHECKBOX_NEUTRAL, HIGH_PRIORITY, MEDIUM_PRIORITY, LOW_PRIORITY, LEFT_ARROW, RIGHT_ARROW, ESCALAYT_LOGO, NOTIFICATION_ICON, PROFILE_ICON, LOGIN_IMAGE, AUTH_ICON
+    PROFILE, ARROW, CHECKBOX_CHECKED, CHECKBOX_UNCHECKED, CHECKBOX_NEUTRAL, HIGH_PRIORITY, MEDIUM_PRIORITY, LOW_PRIORITY, LEFT_ARROW, RIGHT_ARROW, ESCALAYT_LOGO, NOTIFICATION_ICON, PROFILE_ICON, LOGIN_IMAGE, AUTH_ICON
     
     
 

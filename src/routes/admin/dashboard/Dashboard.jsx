@@ -1,5 +1,11 @@
 /* eslint-disable no-unused-vars */
 
+import { onMessage } from "firebase/messaging";
+import { messaging } from "../../../firebase/firebaseConfig";
+
+// Loader
+import RingLoader from "react-spinners/RingLoader";
+
 // Components
 import Navbar from "../../../components/dashboard/navbar/Navbar";
 import TicketCountCards from "../../../components/dashboard/ticketCount/TicketCountCards";
@@ -16,8 +22,10 @@ import {
   fetchLatestThreeOpenTickets,
   fetchLatestThreeResolvedTickets,
   fetchLatestThreeInprogressTickets,
-  fetchTicketCount,
+  fetchTicketCount, sortTickets
 } from "../../../utils/dashboard-methods/dashboardMethods";
+
+import { formatDate } from "../../../utils/formatDate";
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -26,15 +34,11 @@ import styles from "./Dashboard.module.css";
 import axios from "axios";
 import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
 import { useFetchAdmin } from "./useFetchAdmin";
+import { BeatLoader } from "react-spinners";
 
-
-
-
-//http://localhost:8080/api/v1/admin/get-admin-details
 
 // import url from .env file
 const apiUrl = import.meta.env.VITE_APP_API_URL;
-
 const adminUrl = `${apiUrl}/api/v1/admin/get-admin-details`;
 
 export default function Dashboard() {
@@ -42,19 +46,6 @@ export default function Dashboard() {
   // Token from local storage
   const token = localStorage.getItem("token");
 
-
-  // second parameter for setting header
-  const option = {
-    // method
-    method: "GET",
-    // header
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  // console.log("dash token", token);
 
   // State values for profile dropdown
   const [profileDropdown, setProfileDropdown] = useState(false);
@@ -73,7 +64,7 @@ export default function Dashboard() {
 
   // state values for tickets card
   const [tickets, setTickets] = useState([]);
-  const [loadingTickets, setLoadingTickets] = useState(true);
+  const [isTicketCardLoading, setIsTicketCardLoading] = useState(false);
   const [ticketsError, setTicketsError] = useState(null);
 
   // State for sorting
@@ -82,11 +73,6 @@ export default function Dashboard() {
 
   // General loading state
   const [loading, setLoading] = useState(true);
-
-  // samuel modal for notification
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const { data, isLoading, isError } = useFetchAdmin(adminUrl, option);
 
   const [currentAdmin, setCurrentAdmin] = useState({
     adminId: 1,
@@ -114,8 +100,8 @@ export default function Dashboard() {
     fetchLatestThreeOpenTickets(
       token,
       setTickets,
-      setLoadingTickets,
-      setTicketsError
+      setIsTicketCardLoading,
+      setTicketsError,
     );
     // Update styles and reset others to default
     setButtonStyles({
@@ -129,7 +115,7 @@ export default function Dashboard() {
     fetchLatestThreeInprogressTickets(
       token,
       setTickets,
-      setLoadingTickets,
+      setIsTicketCardLoading,
       setTicketsError
     );
     // Update styles and reset others to default
@@ -144,7 +130,7 @@ export default function Dashboard() {
     fetchLatestThreeResolvedTickets(
       token,
       setTickets,
-      setLoadingTickets,
+      setIsTicketCardLoading,
       setTicketsError
     );
     // Update styles and reset others to default
@@ -155,31 +141,34 @@ export default function Dashboard() {
     });
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const timeDiff = today - date;
-    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-
-    if (daysDiff === 0) {
-      return "Today";
-    } else if (daysDiff === 1) {
-      return "1 day ago";
-    } else {
-      return `${daysDiff} days ago`;
-    }
-  };
-
-  // Modal State
+  
+  
+  // General Modal State
   const [openModal, setOpenModal] = useState(null);
 
+  // General Modal Open Handler
   const openModalHandler = (modalName) => {
     setOpenModal(modalName);
   };
 
+  // General Modal Close Handler
   const closeModalHandler = () => {
     setOpenModal(null);
   };
+
+   // second parameter for setting header
+   const option = {
+    // method
+    method: "GET",
+    // header
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+   // Fetching Admin Details
+  const { data, isLoading: isAdminLoading, isError: isAdminError } = useFetchAdmin(adminUrl, option);
 
   //useEffect to load admin info
   useEffect(() => {
@@ -250,7 +239,7 @@ export default function Dashboard() {
           fetchLatestThreeOpenTickets(
             token,
             setTickets,
-            setLoading,
+            setIsTicketCardLoading,
             setTicketsError
           ),
           fetchTicketCount(
@@ -271,33 +260,10 @@ export default function Dashboard() {
     fetchData();
   }, [page]);
 
-  // Sorting function
-  const sortTickets = (tickets) => {
-    const priorityOrder = ["HIGH", "MEDIUM", "LOW"];
-    const statusOrder = ["OPEN", "IN_PROGRESS", "RESOLVE"];
-
-    return [...tickets].sort((a, b) => {
-      if (sort === "priority") {
-        return (
-          priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority)
-        );
-      }
-      if (sort === "status") {
-        return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
-      }
-      if (sort === "assigneeId") {
-        return a.assignee.localeCompare(b.assignee);
-      }
-      if (sort === "categoryId") {
-        return a.ticketCategoryName.localeCompare(b.ticketCategoryName);
-      }
-      return 0;
-    });
-  };
-
+ 
   // Sort activities whenever `sort` or `activities` change
   useEffect(() => {
-    setSortedActivities(sortTickets(activities));
+    setSortedActivities(sortTickets(sort, activities));
   }, [sort, activities]);
 
   // Handle sort change
@@ -306,23 +272,28 @@ export default function Dashboard() {
     setSort(value);
   };
 
-  if (loading) {
-    return <div>Loading...</div>; // Add your loading spinner here if you have one
+  // Loading state
+  if (loading || isAdminLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <RingLoader size={150} color={"#0070FF"} loading={loading} />
+      </div>
+    );
   }
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  onMessage(messaging, (payload) => {
+    console.log("incoming msg");
+    alert("incoming")
+    // toast(<Message notification={payload.notification} />);
+  });
   return (
     <>
       <div className="p-2 pt-5 px-24">
         {/* Navbar */}
+
         <Navbar
-          onOpen={handleOpenModal}
-          onClose={handleCloseModal}
+          onOpen={openModalHandler}
+          onClose={closeModalHandler}
           setProfileDropdown={setProfileDropdown}
           profileDropdown={profileDropdown}
         />
@@ -332,9 +303,11 @@ export default function Dashboard() {
 
 
 
-        {isModalOpen && (
-          <Notification adminId={data && data.id} onClose={handleCloseModal} />
-        )}
+        <Notification 
+            adminId={data && data.id}
+            isOpen={openModal === "notification"}
+            onClose={closeModalHandler}
+        />
 
         {/* Sort and Add user row */}
         <div className="flex flex-wrap mt-10 mb-10 justify-end">
@@ -418,10 +391,19 @@ export default function Dashboard() {
           </div>
         </div>
         {/* Ticket Cards */}
-        <div className="flex flex-wrap mb-8 justify-around">
-          {tickets.map((ticket) => {
+        <div className="flex flex-wrap mb-8 gap-10">
+          {
+            
+          isTicketCardLoading ? (
+            <div className="flex min-w-full justify-center items-center transition-opacity duration-500 ease-in-out">
+              <BeatLoader size={15} color={"#0070FF"} loading={isTicketCardLoading} />
+            </div>
+          ) :
+          tickets.map((ticket) => {
             return <TicketCard key={ticket.id} ticket={ticket} button={true} />;
-          })}
+          })
+          
+          }
         </div>
 
         {/* Ticket Table */}
