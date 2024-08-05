@@ -134,9 +134,9 @@ export default function Login() {
 
             </form>
 
-            <div className={`${styles.loginImgDiv} hidden md:block md:w-7/12 lg:w-8/12 flex flex-wrap lg:h-[600px] items-center`}>
-                <div className=''>
-                  <img src={IMAGES.LOGIN_IMAGE} className='mx-auto' alt="" />
+            <div className={`${styles.loginImgDiv}  hidden md:flex md:w-7/12 lg:w-8/12 flex-wrap lg:h-[600px] items-center`}>
+                <div className=' mx-auto'>
+                  <img src={IMAGES.LOGIN_IMAGE} className='' alt="" />
                 </div>
 
             </div>

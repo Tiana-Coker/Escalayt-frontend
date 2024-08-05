@@ -1,11 +1,16 @@
-import React, {useState}  from'react';
+import React, {useState, useEffect}  from'react';
 import AssignTicket from '../../modals/assignTicket/AssignTicket';
-
+import styles from './TicketCard.module.css';
 
 const TicketCard = ({ticket, button}) => {
 
   const [isAssignTicketModalOpen, setIsAssignTicketModalOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
+  useEffect(() => {
+    // Trigger the fade-in effect after component mounts
+    setIsVisible(true);
+  }, []);
 
 
   const handleAssignTicketOpenModal = () => {
@@ -17,7 +22,7 @@ const TicketCard = ({ticket, button}) => {
   };
 
   return (
-    <div className="bg-gray-100 p-4 rounded-lg shadow-md max-w-xs">
+    <div className={`bg-gray-100 p-4 rounded-lg shadow-md max-w-xs transition-opacity duration-1000 ${isVisible ? 'opacity-100' : 'opacity-0'} ${styles.fadeIn}`}>
       <div className="flex flex-wrap justify-between items-center mb-2">
         <span className="font-medium sm_text">Ticket #002</span>
         <span className="sm_text" style={{color:'#828282'}}>20 mins</span>

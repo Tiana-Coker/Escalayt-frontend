@@ -1,13 +1,22 @@
 /* eslint-disable no-unused-vars */
 
+import { onMessage } from "firebase/messaging";
+import { messaging } from "../../../firebase/firebaseConfig";
+
 // Components
 import Navbar from "../../../components/dashboard/navbar/Navbar";
+import UserNavbar from "../../../components/dashboard/user-navbar/UserNavbar";
 import TicketCountCards from "../../../components/dashboard/ticketCount/TicketCountCards";
 import CreateTicket from "../../../components/modals/createTicket/CreateTicket";
 import IMAGES from "../../../assets";
 
+// import method to request for permission
+import { requestPermission } from "../../../firebase/utils/notification";
+
+
 // utility methods
 import { fetchTicketCount } from "../../../utils/dashboard-methods/dashboardMethods";
+import { formatDate } from "../../../utils/formatDate";
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -15,17 +24,29 @@ import styles from "./Dashboard.module.css";
 
 import axios from "axios";
 import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
+import { useFetchUser } from "./useFetchUser";
 import UserNotification from "../../../components/modals/notification/UserNotification";
 
-// import url from .env file
-const apiUrl = import.meta.env.VITE_APP_API_URL;
+ // import url from .env file
+ const apiUrl = import.meta.env.VITE_APP_API_URL;
+
+ const userUrl = `${apiUrl}/api/v1/users/get-user-detail`;
+
 
 export default function Dashboard() {
   const token = localStorage.getItem("token");
 
 
-   // samuel modal for notification
-   const [isModalOpen, setIsModalOpen] = useState(false);
+    // second parameter for setting header
+  const option = {
+    // method
+    method: "GET",
+    // header
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
 
   // State values for profile dropdown
   const [profileDropdown, setProfileDropdown] = useState(false);
@@ -46,34 +67,43 @@ export default function Dashboard() {
   const [sort, setSort] = useState("priority");
   const [sortedActivities, setSortedActivities] = useState([]);
 
+    // Fetching Admin Details
+  const { data, isLoading, isError } = useFetchUser(userUrl, option);
+
   // General loading state
   const [loading, setLoading] = useState(true);
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const timeDiff = today - date;
-    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-
-    if (daysDiff === 0) {
-      return "Today";
-    } else if (daysDiff === 1) {
-      return "1 day ago";
-    } else {
-      return `${daysDiff} days ago`;
-    }
-  };
-
-  // Modal State
+  // General Modal State
   const [openModal, setOpenModal] = useState(null);
 
+  // General Modal Open Handler
   const openModalHandler = (modalName) => {
     setOpenModal(modalName);
   };
 
+  // General Modal Close Handler
   const closeModalHandler = () => {
     setOpenModal(null);
   };
+
+    //useEffect to load admin info
+    useEffect(() => {
+  
+      const userDetails = {
+        userId: data?.id,
+        username: data?.username,
+        fullName: data?.fullName,
+        email: data?.email,
+        pictureUrl: data?.pictureUrl,
+      };
+     
+      // Ensure userId is defined before calling requestPermission
+      if (userDetails.userId) {
+        requestPermission(userDetails.userId);
+      }
+  
+      
+    }, [data]);
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -169,28 +199,20 @@ export default function Dashboard() {
     return <div>Loading...</div>; // Add your loading spinner here if you have one
   }
 
-  // notification modal
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
+  onMessage(messaging, (payload) => {
+    console.log("incoming msg");
+    alert("incoming")
+    // toast(<Message notification={payload.notification} />);
+  });
 
   return (
     <>
       {/* Navbar */}
-      <Navbar
-        onOpen={handleOpenModal}
-        setProfileDropdown={setProfileDropdown}
-        profileDropdown={profileDropdown}
-      />
-
-      {isModalOpen && (
-        <UserNotification
-          onClose={handleCloseModal}
-        />
-      )}
+      <UserNavbar 
+            onOpen={openModalHandler}
+            setProfileDropdown={setProfileDropdown}
+            profileDropdown={profileDropdown}
+          />
 
       {/* Sort and Add user row */}
       <div className="flex flex-wrap mt-10 mb-20 justify-end">
@@ -238,6 +260,11 @@ export default function Dashboard() {
         onClose={closeModalHandler}
         // closeOnOutsideClick={true}
       />
+
+      <UserNotification 
+        isOpen={openModal === "notification"}
+        onClose={closeModalHandler}
+       />
 
       {/* Profile Dropdown */}
       {profileDropdown && (

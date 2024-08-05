@@ -39,7 +39,7 @@ function App() {
         <Route path="/user/dashboard" element={<UserDashboard />} />
         <Route path="/user/tickets" element={<UserTicket />} />
 
-        <Route path="/tick-table" element={<TicketTable />} />
+        <Route path="/tick-table" element={<TicketTable />} />  
       </Routes>
 
       

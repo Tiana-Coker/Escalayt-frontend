@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CreateCategory from "../../../components/modals/createCategory/CreateTicketCategory";
 import CreateDepartment from "../../../components/modals/createDepartment/CreateDepartment";
+import { formatDate } from "../../../utils/formatDate";
+import { useFetchAdmin } from "../dashboard/useFetchAdmin";
 
 import "./ticket.css";
 
@@ -10,7 +12,8 @@ import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
 import Notification from "../../../components/modals/notification/Notification";
 
 // import url from .env file
-const base = import.meta.env.VITE_APP_API_URL;
+const apiUrl = import.meta.env.VITE_APP_API_URL;
+const adminUrl = `${apiUrl}/api/v1/admin/get-admin-details`;
 
 export default function Ticket() {
   const token = localStorage.getItem("token");
@@ -29,13 +32,15 @@ export default function Ticket() {
   // State values for profile dropdown
   const [profileDropdown, setProfileDropdown] = useState(false);
 
-  // Modal State
+  // General Modal State
   const [openModal, setOpenModal] = useState(null);
 
+  // General Modal Open Handler
   const openModalHandler = (modalName) => {
     setOpenModal(modalName);
   };
 
+  // General Modal Close Handler
   const closeModalHandler = () => {
     setOpenModal(null);
   };
@@ -53,22 +58,45 @@ export default function Ticket() {
   const [totalPages, setTotalPages] = useState(0);
   const [itemsPerPage] = useState(14); // Number of items per page
 
-  const formatDate = (dateString) => {
+  // second parameter for setting header
+  const option = {
+  // method
+  method: "GET",
+  // header
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+};
 
-    const date = new Date(dateString);
-    const today = new Date();
-    const timeDiff = today - date;
-    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+     // Fetching Admin Details
+     const { data, isLoading: isAdminLoading, isError: isAdminError } = useFetchAdmin(adminUrl, option);
 
-    if (daysDiff === 0) {
-      return "Today";
-    } else if (daysDiff === 1) {
-      return "1 day ago";
-    } else {
-      return `${daysDiff} days ago`;
+  //useEffect to load admin info
+  useEffect(() => {
+    // console.log(isError, STATUS.IN_PROGRESS[1], isLoading);
+
+    const adminDetails = {
+      adminId: data?.id,
+      username: data?.username,
+      fullName: data?.fullName,
+      email: data?.email,
+      pictureUrl: data?.pictureUrl,
+    };
+
+    if (data) {
+      setCurrentAdmin({ adminDetails });
+      console.log(adminDetails.username, adminDetails.adminId);
     }
-  };
+    console.log("Admin Data",data);
 
+    // Ensure adminId is defined before calling requestPermission
+    // if (adminDetails.adminId) {
+    //   requestPermission(adminDetails.adminId);
+    // }
+
+    
+  }, [data]);
 
   useEffect(() => {
     fetchFilteredTickets();
@@ -80,7 +108,7 @@ export default function Ticket() {
   }, [sort, tickets]);
 
   const fetchFilteredTickets = async () => {
-    const apiUrl = base + "/api/v1/ticket/filter-new";
+    const apiGeneralUrl = apiUrl + "/api/v1/ticket/filter-new";
 
     // Construct query parameters
     const params = new URLSearchParams();
@@ -92,7 +120,7 @@ export default function Ticket() {
     });
 
     try {
-      const response = await axios.get(apiUrl, {
+      const response = await axios.get(apiGeneralUrl, {
         params: params,
         headers: {
           "Content-Type": "application/json",
@@ -162,34 +190,30 @@ export default function Ticket() {
     setPage(newPage);
   };
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
 
   return (
     <>
       {/* Navbar */}
       <Navbar
-        onOpen={handleOpenModal}
-        onClose={handleCloseModal}
-        setProfileDropdown={setProfileDropdown}
-        profileDropdown={profileDropdown}
-      />
-
-      {isModalOpen && (
-        <Notification
-          adminId={currentAdmin.adminId}
-          onClose={handleCloseModal}
+          onOpen={openModalHandler}
+          onClose={closeModalHandler}
+          setProfileDropdown={setProfileDropdown}
+          profileDropdown={profileDropdown}
         />
-      )}
 
       <div className="flex flex-wrap">
         <div className="filters">
           <h3>Filters</h3>
           {/* Render filter UI here */}
+          <div>
+            <h4>Sort By</h4>
+            <select value={sort} onChange={handleSortChange}>
+              <option value="priority">Priority</option>
+              <option value="status">Status</option>
+              <option value="assigneeId">Assignee</option>
+              <option value="categoryId">Category</option>
+            </select>
+          </div>
           <div>
             <h4>Priority</h4>
             <label>
@@ -311,15 +335,6 @@ export default function Ticket() {
               HVAC
             </label>
           </div>
-          <div>
-            <h4>Sort By</h4>
-            <select value={sort} onChange={handleSortChange}>
-              <option value="priority">Priority</option>
-              <option value="status">Status</option>
-              <option value="assigneeId">Assignee</option>
-              <option value="categoryId">Category</option>
-            </select>
-          </div>
         </div>
 
           <div className="w-[1000px] h-[800px] flex flex-col gap-[32px]">
@@ -375,6 +390,13 @@ export default function Ticket() {
           onClose={closeModalHandler}
           closeOnOutsideClick={true}
         />
+
+        <Notification 
+            adminId={data && data.id}
+            isOpen={openModal === "notification"}
+            onClose={closeModalHandler}
+        />
+
 
         {/* Profile Dropdown */}
         {profileDropdown && (

@@ -25,6 +25,13 @@
 
 }
 
+.dgray{
+  color: var(--dark-gray);
+}
+.dnavy{
+  color: var(--dark-navy);
+}
+
 /* Primary Color Classes */
 .p_color{  /* for text color */
   color: var(--primary-color);
