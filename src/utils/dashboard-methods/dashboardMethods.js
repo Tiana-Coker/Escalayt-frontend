@@ -2,7 +2,8 @@ import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_APP_API_URL + '/api/v1/ticket';
 
-export const fetchLatestThreeOpenTickets = async (token, setTickets, setLoading, setError) => {
+export const fetchLatestThreeOpenTickets = async (token, setTickets, setLoading, setError,) => {
+  setLoading(true);
   try {
     const response = await axios.get(`${apiUrl}/admin/open-tickets`, {
       headers: {
@@ -21,6 +22,7 @@ export const fetchLatestThreeOpenTickets = async (token, setTickets, setLoading,
 };
 
 export const fetchLatestThreeResolvedTickets = async (token, setTickets, setLoading, setError) => {
+  setLoading(true);
   try {
     const response = await axios.get(`${apiUrl}/admin/resolved-tickets`, {
       headers: {
@@ -40,6 +42,7 @@ export const fetchLatestThreeResolvedTickets = async (token, setTickets, setLoad
 };
 
 export const fetchLatestThreeInprogressTickets = async (token, setTickets, setLoading, setError) => {
+  setLoading(true);
   try {
     const response = await axios.get(`${apiUrl}/admin/inprogres-tickets`, {
       headers: {
@@ -80,4 +83,26 @@ export const fetchTicketCount = async (token, setTicketTotalCount, setOpenTicket
 }
 
 
-// eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6WyJBRE1JTiJdLCJzdWIiOiJuZWNoZTIzNCIsImlhdCI6MTcyMjQwMjE1MSwiZXhwIjoxNzIyNDg4NTUxfQ.GcpeLFdr6UhW6bB4rKNIeajWu0HJXPlamEuH5l_wE2c
+ // Sorting function
+export const sortTickets = (sort, tickets) => {
+  const priorityOrder = ["HIGH", "MEDIUM", "LOW"];
+  const statusOrder = ["OPEN", "IN_PROGRESS", "RESOLVE"];
+
+  return [...tickets].sort((a, b) => {
+    if (sort === "priority") {
+      return (
+        priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority)
+      );
+    }
+    if (sort === "status") {
+      return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
+    }
+    if (sort === "assigneeId") {
+      return a.assignee.localeCompare(b.assignee);
+    }
+    if (sort === "categoryId") {
+      return a.ticketCategoryName.localeCompare(b.ticketCategoryName);
+    }
+    return 0;
+  });
+};

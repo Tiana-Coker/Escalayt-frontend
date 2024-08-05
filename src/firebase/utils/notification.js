@@ -6,9 +6,11 @@ import axios from "axios";
 const vapidKey = import.meta.env.VITE_APP_VAPID_KEY;
 
 export async function requestPermission(userId) {
+
     const permission = await Notification.requestPermission();
 
     if (permission === "granted") {
+      console.log("granted")
   
       const token = await getToken(messaging, {
         vapidKey: vapidKey
@@ -24,13 +26,15 @@ export async function requestPermission(userId) {
 
       
       if (token) {
-        // setToken(token);
+      
         // Send token to backend
         await axios.post("http://localhost:8080/token/save", { userId, token });
         console.log("Token generated and sent to backend: ", token);
       }
     } else if (permission === "denied") {
       alert("You denied the notification");
+      console.log("denied")
+
     }
   }
 

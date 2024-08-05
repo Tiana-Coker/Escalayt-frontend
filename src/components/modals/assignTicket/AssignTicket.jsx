@@ -3,7 +3,7 @@ import { useFetchEmployList } from "./useFetchEmployList";
 import { useFetchAssign } from "./useFetchAssign";
 
 const token = localStorage.getItem("token");
-
+console.log(token);
 //second parameter for setting header
 const option = {
   // method

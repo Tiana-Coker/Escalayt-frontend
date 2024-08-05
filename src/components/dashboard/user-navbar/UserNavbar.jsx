@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 
 import IMAGES from '../../../assets';
 
-const Navbar = ({ onOpen, setProfileDropdown, profileDropdown}) => {
-
-  const handleOpenModal = () => {
-    onOpen('notification'); // Replace 'myModalName' with the name of the modal you want to open
-  };
+const UserNavbar = ({ onOpen, setProfileDropdown, profileDropdown}) => {
+    const handleOpenModal = () => {
+        onOpen('notification'); // Replace 'myModalName' with the name of the modal you want to open
+      };
+    
 
   const handleProfileDropdown = () => {
     setProfileDropdown(prev => !prev);
@@ -22,11 +22,11 @@ const Navbar = ({ onOpen, setProfileDropdown, profileDropdown}) => {
           </div>
           <div className="flex flex-wrap items-center ">
             <div className="flex flex-wrap no_text">
-                <Link to = "/admin/dashboard">Dashboard</Link>
-                <Link to = "/admin/tickets" className='ml-4'>All Tickets</Link>
+                <Link to = "/user/dashboard">Dashboard</Link>
+                <Link to = "/user/tickets" className='ml-4'>My Tickets</Link>
             </div>
             <div className="flex flex-wrap items-center ml-28">
-              <button className="" onClick={handleOpenModal}><img src={IMAGES.NOTIFICATION_ICON} alt="notification" /></button>
+              <button className="" onClick={ handleOpenModal}><img src={IMAGES.NOTIFICATION_ICON} alt="notification" /></button>
               <button className="ml-6" onClick={handleProfileDropdown}><img src={IMAGES.PROFILE_ICON} className='' alt="" /></button>
             </div>
           </div>
@@ -35,4 +35,4 @@ const Navbar = ({ onOpen, setProfileDropdown, profileDropdown}) => {
   );
 };
 
-export default Navbar;
+export default UserNavbar;
