@@ -297,6 +297,11 @@ export default function Dashboard() {
           setProfileDropdown={setProfileDropdown}
           profileDropdown={profileDropdown}
         />
+        
+
+
+
+
 
         <Notification 
             adminId={data && data.id}
@@ -414,8 +419,13 @@ export default function Dashboard() {
         <CreateUser
           isOpen={openModal === "createUser"}
           onClose={closeModalHandler}
+          // closeOnOutsideClick={true}
         />
 
+
+
+        {/* Profile Dropdown */}
+       
       </div>
     </>
   );
