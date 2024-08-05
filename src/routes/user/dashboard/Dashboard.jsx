@@ -5,6 +5,7 @@ import { messaging } from "../../../firebase/firebaseConfig";
 
 // Components
 import Navbar from "../../../components/dashboard/navbar/Navbar";
+import UserNavbar from "../../../components/dashboard/user-navbar/UserNavbar";
 import TicketCountCards from "../../../components/dashboard/ticketCount/TicketCountCards";
 import CreateTicket from "../../../components/modals/createTicket/CreateTicket";
 import IMAGES from "../../../assets";
@@ -15,6 +16,7 @@ import { requestPermission } from "../../../firebase/utils/notification";
 
 // utility methods
 import { fetchTicketCount } from "../../../utils/dashboard-methods/dashboardMethods";
+import { formatDate } from "../../../utils/formatDate";
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -30,7 +32,6 @@ import UserNotification from "../../../components/modals/notification/UserNotifi
 
  const userUrl = `${apiUrl}/api/v1/users/get-user-detail`;
 
-import UserNotification from "../../../components/modals/notification/UserNotification";
 
 export default function Dashboard() {
   const token = localStorage.getItem("token");
@@ -46,10 +47,6 @@ export default function Dashboard() {
       Authorization: `Bearer ${token}`,
     },
   };
-
-   // State values for profile dropdown
-   // samuel modal for notification
-   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // State values for profile dropdown
   const [profileDropdown, setProfileDropdown] = useState(false);
@@ -76,37 +73,21 @@ export default function Dashboard() {
   // General loading state
   const [loading, setLoading] = useState(true);
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const timeDiff = today - date;
-    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-
-    if (daysDiff === 0) {
-      return "Today";
-    } else if (daysDiff === 1) {
-      return "1 day ago";
-    } else {
-      return `${daysDiff} days ago`;
-    }
-  };
-
-  // Modal State
+  // General Modal State
   const [openModal, setOpenModal] = useState(null);
 
+  // General Modal Open Handler
   const openModalHandler = (modalName) => {
     setOpenModal(modalName);
   };
 
+  // General Modal Close Handler
   const closeModalHandler = () => {
     setOpenModal(null);
   };
 
     //useEffect to load admin info
     useEffect(() => {
-
-      // console.log("user data", data)
-      // console.log(isError, STATUS.IN_PROGRESS[1], isLoading);
   
       const userDetails = {
         userId: data?.id,
@@ -115,12 +96,6 @@ export default function Dashboard() {
         email: data?.email,
         pictureUrl: data?.pictureUrl,
       };
-  
-      // if (data) {
-      //   setCurrentAdmin({ adminDetails });
-      //   console.log(adminDetails.username, adminDetails.adminId);
-      // }
-      // console.log("Admin Data",data);
      
       // Ensure userId is defined before calling requestPermission
       if (userDetails.userId) {
@@ -224,14 +199,6 @@ export default function Dashboard() {
     return <div>Loading...</div>; // Add your loading spinner here if you have one
   }
 
-  // notification modal
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
   onMessage(messaging, (payload) => {
     console.log("incoming msg");
     alert("incoming")
@@ -241,17 +208,11 @@ export default function Dashboard() {
   return (
     <>
       {/* Navbar */}
-      <Navbar
-        onOpen={handleOpenModal}
-        setProfileDropdown={setProfileDropdown}
-        profileDropdown={profileDropdown}
-      />
-
-      {isModalOpen && (
-        <UserNotification
-          onClose={handleCloseModal}
-        />
-      )}
+      <UserNavbar 
+            onOpen={openModalHandler}
+            setProfileDropdown={setProfileDropdown}
+            profileDropdown={profileDropdown}
+          />
 
       {/* Sort and Add user row */}
       <div className="flex flex-wrap mt-10 mb-20 justify-end">
@@ -299,6 +260,11 @@ export default function Dashboard() {
         onClose={closeModalHandler}
         // closeOnOutsideClick={true}
       />
+
+      <UserNotification 
+        isOpen={openModal === "notification"}
+        onClose={closeModalHandler}
+       />
 
       {/* Profile Dropdown */}
       {profileDropdown && (

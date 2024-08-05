@@ -40,7 +40,8 @@ const STATUS = {
   RESOLVED: "resolved",
 };
 
-const Notification = ({ adminId, onClose }) => {
+const Notification = ({isOpen, adminId, onClose }) => {
+  if (!isOpen) return null;
   const [url, setUrl] = useState(`${URLS.TICKETS}/${adminId}`);
 
   const { data, isLoading, isError } = useFetchTicket(url, option);
