@@ -13,8 +13,6 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import IMAGES from "../../../assets/index";
 
-
-
  // import url from .env file
  const apiUrl = import.meta.env.VITE_APP_API_URL;
 
@@ -87,6 +85,59 @@ const TicketTable = ({ activities, setPage, page }) => {
   };
 
   const handleDeleteAll = (id) => { }
+
+
+
+  const handleResolveMultiple = async () => {
+    const token = localStorage.getItem('token');
+    const ticketIds = activities.filter(ticket => ticket.checked).map(ticket => ticket.id);
+
+    if (ticketIds.length === 0) {
+      toast.error('No tickets selected for resolving');
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${apiUrl}/api/v1/ticket/resolve`, ticketIds, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('Tickets resolved successfully:', response.data);
+      toast.success('Tickets resolved successfully');
+      // Optionally update UI here
+    } catch (error) {
+      console.error('Error resolving tickets:', error.response ? error.response.data : error.message);
+      toast.error('Error resolving tickets');
+    }
+  };
+
+  const handleDeleteMultiple = async () => {
+    const token = localStorage.getItem('token');
+    const ticketIds = activities.filter(ticket => ticket.checked).map(ticket => ticket.id);
+
+    if (ticketIds.length === 0) {
+      toast.error('No tickets selected for deletion');
+      return;
+    }
+
+    try {
+      const response = await axios.delete(`${apiUrl}/api/v1/ticket/delete`, {
+        data: ticketIds,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('Tickets deleted successfully:', response.data);
+      toast.success('Tickets deleted successfully');
+      setActivities(activities.filter(ticket => !ticket.checked));
+    } catch (error) {
+      console.error('Error deleting tickets:', error.response ? error.response.data : error.message);
+      toast.error('Error deleting tickets');
+    }
+  };
 
 
   return (
