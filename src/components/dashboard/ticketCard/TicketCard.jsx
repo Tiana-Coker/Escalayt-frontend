@@ -4,6 +4,9 @@ import styles from './TicketCard.module.css';
 
 const TicketCard = ({ticket, button}) => {
 
+  console.log("ticket card", ticket);
+
+
   const [isAssignTicketModalOpen, setIsAssignTicketModalOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 

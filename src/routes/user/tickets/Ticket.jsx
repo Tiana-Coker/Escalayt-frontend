@@ -7,8 +7,12 @@ import CreateDepartment from "../../../components/modals/createDepartment/Create
 import "./ticket.css";
 
 import Navbar from '../../../components/dashboard/navbar/Navbar';
+import UserNavbar from '../../../components/dashboard/user-navbar/UserNavbar';
+import UserNotification from '../../../components/modals/notification/UserNotification';
 import TicketTable from '../../../components/dashboard/ticketTable/TicketTable';
 import CreateTicket from "../../../components/modals/createTicket/CreateTicket";
+
+import { fetchFilteredTickets } from '../../../utils/dashboard-methods/dashboardMethods';
 
 // import url from .env file
 const base = import.meta.env.VITE_APP_API_URL;
@@ -21,16 +25,22 @@ export default function Ticket() {
     // State values for profile dropdown
     const [profileDropdown, setProfileDropdown] = useState(false);
 
-    // Modal State
-      const [openModal, setOpenModal] = useState(null);
+   
+    // General loading state
+    const [loading, setLoading] = useState(true);
 
-      const openModalHandler = (modalName) => {
-        setOpenModal(modalName);
-      };
+    // General Modal State
+    const [openModal, setOpenModal] = useState(null);
 
-      const closeModalHandler = () => {
-        setOpenModal(null);
-      };
+    // General Modal Open Handler
+    const openModalHandler = (modalName) => {
+      setOpenModal(modalName);
+    };
+
+     // General Modal Close Handler
+    const closeModalHandler = () => {
+      setOpenModal(null);
+    };
 
 
   const [tickets, setTickets] = useState([]);
@@ -64,7 +74,7 @@ export default function Ticket() {
 
 
   useEffect(() => {
-    fetchFilteredTickets();
+    fetchFilteredTickets(token, page, setTickets, setTotalPages, filters);
     
   }, [filters, page]);
 
@@ -73,42 +83,7 @@ export default function Ticket() {
     console.log(tickets);
   }, [sort, tickets]);
 
-  const fetchFilteredTickets = async () => {
-    const apiUrl = base + '/api/v1/ticket/filter-new';
-   
 
-    // Construct query parameters
-    const params = new URLSearchParams();
-    params.append('page', page);
-    
-    // Handle multiple values for filters
-    Object.entries(filters).forEach(([key, values]) => {
-        values.forEach(value => params.append(key, value));
-    });
-
-    try {
-      const response = await axios.get(apiUrl, {
-        params: params,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-
-      const formattedTickets = response.data.content.map((ticket) => ({
-        ...ticket,
-        ticketNumber: ticket.id,
-        assignee: ticket.assigneeFullName || "Unassigned",
-        dateCreated: formatDate(ticket.createdAt),
-      }));
-      // setTickets(response.data.content);
-      setTickets(formattedTickets);
-      setTotalPages(response.data.totalPages); // Adjust if the actual pagination response differs
-    } catch (error) {
-      console.error('Error fetching tickets', error);
-    }
-  };
 
   const sortTickets = (tickets) => {
     const priorityOrder = ['HIGH', 'MEDIUM', 'LOW'];
@@ -160,7 +135,18 @@ export default function Ticket() {
 
     <>
     {/* Navbar */}
-    <Navbar setProfileDropdown={setProfileDropdown} profileDropdown={profileDropdown}/>
+    {/* <Navbar setProfileDropdown={setProfileDropdown} profileDropdown={profileDropdown}/> */}
+
+        <UserNavbar 
+              onOpen={openModalHandler}
+              setProfileDropdown={setProfileDropdown}
+              profileDropdown={profileDropdown}
+            />
+
+        <UserNotification 
+          isOpen={openModal === "notification"}
+          onClose={closeModalHandler}
+        />
 
     <div className="flex flex-wrap">
           <div className="filters">
@@ -264,6 +250,19 @@ export default function Ticket() {
           isOpen={openModal === 'createTicket'}
           onClose={closeModalHandler}
           // closeOnOutsideClick={true}
+        />
+
+
+        <CreateTicket
+          isOpen={openModal === "createTicket"}
+          onClose={closeModalHandler}
+          // Fetch filtered ticket values
+            fetchFilteredTickets={fetchFilteredTickets}
+            token={token}
+            page={page}
+            setTickets={setTickets}
+            setTotalPages={setTotalPages}
+            filters={filters}
         />
 
           {/* Profile Dropdown */}

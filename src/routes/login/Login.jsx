@@ -126,7 +126,7 @@ export default function Login() {
 
                 </div>
 
-                <Link to = "/forgot-password" className='text-right mb-8 sm_text p_color'>Forgot password</Link>
+               <div className='flex flex-wrap justify-end'> <Link to = "/forgot-password" className='mb-8 sm_text p_color'>Forgot password</Link></div>
                 <div>
                   <button disabled={isSubmitting} type='submit' className='p_btn w-full py-2 sm_text '>Confirm</button>
                 </div>

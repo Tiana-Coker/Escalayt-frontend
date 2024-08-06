@@ -6,7 +6,7 @@ import DownloadIcon from "./../../../assets/DownloadIcon";
 import TrashIcon from "./../../../assets/TrashIcon";
 
 export default function TicketDetails({ ticket }) {
-  console.log("ticket here", ticket);
+  // console.log("ticket here", ticket);
 
   const handleDownload = () => {
     const link = document.createElement('a');

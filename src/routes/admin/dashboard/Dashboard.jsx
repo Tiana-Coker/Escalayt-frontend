@@ -3,9 +3,6 @@
 import { onMessage } from "firebase/messaging";
 import { messaging } from "../../../firebase/firebaseConfig";
 
-// Loader
-import RingLoader from "react-spinners/RingLoader";
-
 // Components
 import Navbar from "../../../components/dashboard/navbar/Navbar";
 import TicketCountCards from "../../../components/dashboard/ticketCount/TicketCountCards";
@@ -34,7 +31,7 @@ import styles from "./Dashboard.module.css";
 import axios from "axios";
 import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
 import { useFetchAdmin } from "./useFetchAdmin";
-import { BeatLoader } from "react-spinners";
+import { BeatLoader, BounceLoader } from "react-spinners";
 
 
 // import url from .env file
@@ -276,19 +273,19 @@ export default function Dashboard() {
   if (loading || isAdminLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <RingLoader size={150} color={"#0070FF"} loading={loading} />
+        <BounceLoader size={150} color={"#0070FF"} loading={loading} />
       </div>
     );
   }
 
   onMessage(messaging, (payload) => {
     console.log("incoming msg");
-    alert("incoming")
+    alert("Ticket created")
     // toast(<Message notification={payload.notification} />);
   });
   return (
     <>
-      <div className="p-2 pt-5 px-24">
+      <div className="pt-5 w-11/12 mx-auto">
         {/* Navbar */}
 
         <Navbar
@@ -298,37 +295,34 @@ export default function Dashboard() {
           profileDropdown={profileDropdown}
         />
 
-        <Notification 
-            adminId={data && data.id}
-            isOpen={openModal === "notification"}
-            onClose={closeModalHandler}
-        />
 
         {/* Sort and Add user row */}
         <div className="flex flex-wrap mt-10 mb-10 justify-end">
-          <div className="flex flex-row ">
-            <div className="flex flex-col mr-8">
-              <div className="text-gray-500">Sort by</div>
-              <div>
-                <select
-                  className="px-9 py-1 bg-white border border-blue-500"
-                  value={sort}
-                  onChange={handleSortChange}
-                >
-                  <option value="priority">Priority </option>
-                  <option value="status">Status </option>
-                  <option value="assigneeId">Assignee </option>
-                  <option value="categoryId">Category </option>
-                </select>
-              </div>
+          <div>
+            <div className="text-gray-500">Sort by</div>
+            <div className="flex flex-wrap gap-4">
+                <div>
+                    <select
+                      className="px-9 py-1 bg-white border border-blue-500 h-9"
+                      value={sort}
+                      onChange={handleSortChange}
+                    >
+                      <option value="priority">Priority </option>
+                      <option value="status">Status </option>
+                      <option value="assigneeId">Assignee </option>
+                      <option value="categoryId">Category </option>
+                    </select>
+                </div>
+                <div>
+                    <button
+                    onClick={() => openModalHandler("createUser")}
+                    className="bg-blue-500 text-white px-4 text-sm h-9 mr-20 "
+                  >
+                    Add New User
+                  </button>
+                </div>
+              
             </div>
-
-            <button
-              onClick={() => openModalHandler("createUser")}
-              className="bg-blue-500 text-white px-4 text-sm h-9 mr-20 "
-            >
-              Add New User
-            </button>
           </div>
         </div>
 
@@ -414,6 +408,12 @@ export default function Dashboard() {
         <CreateUser
           isOpen={openModal === "createUser"}
           onClose={closeModalHandler}
+        />
+
+        <Notification 
+            adminId={data && data.id}
+            isOpen={openModal === "notification"}
+            onClose={closeModalHandler}
         />
 
       </div>

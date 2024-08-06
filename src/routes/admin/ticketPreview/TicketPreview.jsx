@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import IMAGES from "../../../assets"
 
 import Navbar from "../../../components/dashboard/navbar/Navbar";
 import TicketDetails from "../../../components/dashboard/ticketDetails/TicketDetails";
@@ -49,12 +50,20 @@ export default function TicketPreview() {
       <Navbar />
 
       {/* Title and resolution */}
-      <div>
+      <div className="flex flex-wrap justify-between mt-5 mb-8">
+
+        <div className="flex flex-wrap">
+          <div><img src={IMAGES.BACK_ARROW} alt="" /></div>
+          <div>Ticket: #009 - Fix leaking pipe</div>
+        </div>
+
+        <div>
+          <button className="p_btn px-3 py-2">Resolve</button>
+        </div>
         
       </div>
 
       <TicketDetails ticket={ticket} />
-      {console.log("id now", ticket.id)}
       <Comment ticketId={id} />
     </div>
   );

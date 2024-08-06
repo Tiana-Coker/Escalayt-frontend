@@ -1,4 +1,36 @@
 
+.ticketCountCard{
+  height: 100px;
+  width: 23%;
+  padding: 13px 25px;
+  /* border: 1px solid red; */  
+}
+
+@media(max-width:1023px){
+  .ticketCountCard{
+    width: 30%;
+  }
+}
+
+
+.ticketCountTitleWrapper{
+  margin-bottom: 10px;
+}
+
+.ticketCountCardTitle{
+  font-size: var(--normal-text);
+
+  color: #4F4F4F;
+}
+
+.ticketCount{
+  font-size: 32px;
+  font-weight: 500;
+}
+
+
+
+/* 
 .buttonGroup {
     display: flex;
     flex-wrap: wrap;
@@ -65,4 +97,4 @@
     flex: 1;
     text-align: left;
   }
-  
+   */
