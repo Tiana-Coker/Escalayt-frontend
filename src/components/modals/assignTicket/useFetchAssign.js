@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -21,8 +21,10 @@ export function useFetchAssign(url, options = {}) {
         // and convert to json
       .then(res => {
         if (res.status === 200) {
+          if(url){
+            toast.success("Ticket assigned successfully");
+          }
           return res.json()
-          toast.success('Ticket Assigned Successfully');
         }
         return Promise.reject(res)
       })

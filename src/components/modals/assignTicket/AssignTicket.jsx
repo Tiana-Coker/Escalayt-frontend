@@ -52,6 +52,9 @@ const AssignTicket = ({ticketId, onAssignTicketClose}) => {
 
   const [url, seturl] = useState("");
 
+
+  option1.body == null
+
   const { data1, isLoading1, isError1 } = useFetchAssign(
     url,
     option1.body == null ? null : option1

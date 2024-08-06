@@ -68,13 +68,13 @@ const TicketCard = ({ticket, button}) => {
             <>
                 <h2 className="no_text font-medium mb-2 text-center">{ticket.title}</h2>
                 <p className="sm_text mb-4 text-center">
-                  "{ticket.createdByAdmin ? ticket.createdByAdmin : ticket.createdByUser} created a new ticket #{ticket.id} - {ticket.title}."
+                  "{ticket.resolvedByAdmin ? ticket.resolvedByAdmin : ticket.resolvedByUser} resolved ticket #{ticket.id} - {ticket.title}."
                 </p>
                 <div className='flex justify-center border'>
                     <button style = {{color:"#344054"}} className="bg-white w-full hover:bg-gray-100 no_text font-semibold py-2 rounded"
                     onClick={handleAssignTicketOpenModal}
                     >
-                        Assign
+                        Completed
                     </button>
                 </div>
             </>

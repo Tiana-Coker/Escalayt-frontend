@@ -174,6 +174,7 @@ const TicketTable = ({ activities, setPage, page }) => {
             </th>
             <th>Date Created</th>
             <th>Location</th>
+            <th></th>
           </tr>
         </thead>
         <tbody className='sm_text'>
@@ -205,24 +206,24 @@ const TicketTable = ({ activities, setPage, page }) => {
               <td>{ticket.ticketCategoryName}</td>
               <td>{ticket.dateCreated}</td>
               <td>{ticket.location}</td>
-              <td>
+              <td className=''>
                 <button className='text-gray-500 hover:text-gray-700' onClick={() => handleTableDropdown(ticket.id)}>⋮</button>
                 {openDropdownId === ticket.id && (
-                  <div className={`${styles.dropdown} border absolute bg-white p-3`}>
+                  <div className={`${styles.dropdown} shadow-md absolute right-4 bg-white h-36 w-[110px] z-10`}>
                     {selectedTickets.length <= 1 ? (
-                      <Link to={`/admin/tickets/${ticket.id}`}>View</Link>
+                      <Link className='block mb-1  hover:bg-gray-100 p-3 pl-4' to={`/admin/tickets/${ticket.id}`}>View</Link>
                     ) : (
-                      <span style={{ color: 'gray', cursor: 'not-allowed' }}>View</span>
+                      <div className='mb-1 hover:bg-gray-100 p-3  pl-4' style={{ color: 'gray', cursor: 'not-allowed' }}>View</div>
                     )}
                     {selectedTickets.length > 1 ? (
-                      <div style={{ cursor: 'pointer' }} onClick={handleResolveAll}>Resolve All</div>
+                      <div className='mb-1 hover:bg-gray-100 p-3  pl-4' style={{ cursor: 'pointer' }} onClick={handleResolveAll}>Resolve All</div>
                     ) : (
-                      <div style={{ cursor: 'pointer' }} onClick={() => handleResolve(ticket.id)}>Resolve</div>
+                      <div className='mb-1 hover:bg-gray-100 p-3  pl-4' style={{ cursor: 'pointer' }} onClick={() => handleResolve(ticket.id)}>Resolve</div>
                     )}
                     {selectedTickets.length > 1 ? (
-                      <div style={{ cursor: 'pointer' }} onClick={handleDeleteAll}>Delete All</div>
+                      <div className='mb-1 hover:bg-gray-100 p-3  pl-4' style={{ cursor: 'pointer' }} onClick={handleDeleteAll}>Delete All</div>
                     ) : (
-                      <div style={{ cursor: 'pointer' }} onClick={() => handleDelete(ticket.id)}>Delete</div>
+                      <div className='mb-1 hover:bg-gray-100 p-3  pl-4' style={{ cursor: 'pointer' }} onClick={() => handleDelete(ticket.id)}>Delete</div>
                     )}
                   </div>
                 )}
