@@ -15,7 +15,7 @@ import { requestPermission } from "../../../firebase/utils/notification";
 
 
 // utility methods
-import { fetchTicketCount } from "../../../utils/dashboard-methods/dashboardMethods";
+import { fetchTicketCount, fetchTickets } from "../../../utils/dashboard-methods/dashboardMethods";
 import { formatDate } from "../../../utils/formatDate";
 
 import React, { useState, useEffect } from "react";
@@ -106,42 +106,12 @@ export default function Dashboard() {
     }, [data]);
 
   useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        const response = await axios.get(
-          `${apiUrl}/api/v1/ticket/view-all-tickets`,
-          {
-            params: { page },
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const { data } = response;
-
-        const formattedTickets = data.map((ticket) => ({
-          ...ticket,
-          ticketNumber: ticket.id,
-          assignee: ticket.assigneeFullName || "Unassigned",
-          dateCreated: formatDate(ticket.createdAt),
-        }));
-
-        console.log("Fetched tickets:", formattedTickets);
-        setActivities(formattedTickets);
-
-        setHasMore(fetchTickets.length > 0);
-      } catch (error) {
-        console.error("Error fetching tickets:", error);
-      }
-    };
-
     const fetchData = async () => {
       try {
         setLoading(true);
 
         const promises = [
-          fetchTickets(),
+          fetchTickets(token, setActivities, setHasMore, page),
           fetchTicketCount(
             token,
             setTicketTotalCount,
@@ -201,12 +171,12 @@ export default function Dashboard() {
 
   onMessage(messaging, (payload) => {
     console.log("incoming msg");
-    alert("incoming")
+    alert("Ticket assigned")
     // toast(<Message notification={payload.notification} />);
   });
 
   return (
-    <>
+    <div className="pt-5 w-11/12 mx-auto">
       {/* Navbar */}
       <UserNavbar 
             onOpen={openModalHandler}
@@ -214,28 +184,24 @@ export default function Dashboard() {
             profileDropdown={profileDropdown}
           />
 
-      {/* Sort and Add user row */}
+      {/* Sort row */}
       <div className="flex flex-wrap mt-10 mb-20 justify-end">
-        <div className="flex border">
           <div>
-            <div>Sort by</div>
-            <div>
-              <select value={sort} onChange={handleSortChange}>
-                <option value="priority">Priority</option>
-                <option value="status">Status</option>
-                <option value="assigneeId">Assignee</option>
-                <option value="categoryId">Category</option>
-              </select>
-            </div>
+              <div>Sort by</div>
+              <div>
+                  <select
+                    className="px-9 py-1 bg-white border border-blue-500 h-9"
+                    value={sort}
+                    onChange={handleSortChange}
+                  >
+                    <option value="priority">Priority </option>
+                    <option value="status">Status </option>
+                    <option value="assigneeId">Assignee </option>
+                    <option value="categoryId">Category </option>
+                  </select>
+                </div>
           </div>
-          <button
-            onClick={() => openModalHandler("createTicket")}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Create Ticket
-          </button>
         </div>
-      </div>
 
       {/* Ticket Count Cards */}
       <TicketCountCards
@@ -253,14 +219,7 @@ export default function Dashboard() {
         page={page}
       />
 
-      {/* Modals */}
-
-      <CreateTicket
-        isOpen={openModal === "createTicket"}
-        onClose={closeModalHandler}
-        // closeOnOutsideClick={true}
-      />
-
+  
       <UserNotification 
         isOpen={openModal === "notification"}
         onClose={closeModalHandler}
@@ -280,6 +239,6 @@ export default function Dashboard() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

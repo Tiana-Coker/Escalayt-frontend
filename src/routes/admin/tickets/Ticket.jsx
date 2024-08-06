@@ -5,7 +5,7 @@ import CreateDepartment from "../../../components/modals/createDepartment/Create
 import { formatDate } from "../../../utils/formatDate";
 import { useFetchAdmin } from "../dashboard/useFetchAdmin";
 
-import "./ticket.css";
+import styles from  "./ticket.module.css";
 
 import Navbar from "../../../components/dashboard/navbar/Navbar";
 import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
@@ -88,7 +88,7 @@ export default function Ticket() {
       setCurrentAdmin({ adminDetails });
       console.log(adminDetails.username, adminDetails.adminId);
     }
-    console.log("Admin Data",data);
+    // console.log("Admin Data",data);
 
     // Ensure adminId is defined before calling requestPermission
     // if (adminDetails.adminId) {
@@ -201,149 +201,158 @@ export default function Ticket() {
           profileDropdown={profileDropdown}
         />
 
-      <div className="flex flex-wrap">
-        <div className="filters">
-          <h3>Filters</h3>
-          {/* Render filter UI here */}
-          <div>
-            <h4>Sort By</h4>
-            <select value={sort} onChange={handleSortChange}>
-              <option value="priority">Priority</option>
-              <option value="status">Status</option>
-              <option value="assigneeId">Assignee</option>
-              <option value="categoryId">Category</option>
-            </select>
-          </div>
-          <div>
-            <h4>Priority</h4>
-            <label>
-              <input
-                type="checkbox"
-                name="priority"
-                value="HIGH"
-                onChange={handleFilterChange}
-              />
-              High
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="priority"
-                value="MEDIUM"
-                onChange={handleFilterChange}
-              />
-              Medium
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="priority"
-                value="LOW"
-                onChange={handleFilterChange}
-              />
-              Low
-            </label>
-          </div>
-          <div>
-            <h4>Status</h4>
-            <label>
-              <input
-                type="checkbox"
-                name="status"
-                value="OPEN"
-                onChange={handleFilterChange}
-              />
-              Open
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="status"
-                value="IN_PROGRESS"
-                onChange={handleFilterChange}
-              />
-              In Progress
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="status"
-                value="RESOLVE"
-                onChange={handleFilterChange}
-              />
-              Resolved
-            </label>
-          </div>
-          <div>
-            <h4>Assignee</h4>
-            {/* Replace with dynamic assignees */}
-            <label>
-              <input
-                type="checkbox"
-                name="assigneeId"
-                value="1"
-                onChange={handleFilterChange}
-              />
-              Abdul Ahmed
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="assigneeId"
-                value="2"
-                onChange={handleFilterChange}
-              />
-              Tayo Ade
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="assigneeId"
-                value="3"
-                onChange={handleFilterChange}
-              />
-              Chizzy Jack
-            </label>
-          </div>
-          <div>
-            <h4>Category</h4>
-            <label>
-              <input
-                type="checkbox"
-                name="categoryId"
-                value="1"
-                onChange={handleFilterChange}
-              />
-              Plumbing
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="categoryId"
-                value="2"
-                onChange={handleFilterChange}
-              />
-              Electrical
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                name="categoryId"
-                value="3"
-                onChange={handleFilterChange}
-              />
-              HVAC
-            </label>
-          </div>
+      <div className="flex flex-wrap w-11/12 mx-auto  mt-8">
+        <div className="pl-4 bg-[#F2F2F280] w-2/12 pt-4">
+             {/* Render filter UI here */}
+              <div className="font-medium text-[18px] mb-4">Filters</div>
+              {/* Sort By */}
+              <div className={`${styles.filter_component}`}>
+                <div>Sort By</div>
+                <select value={sort} onChange={handleSortChange}>
+                  <option value="priority">Priority</option>
+                  <option value="status">Status</option>
+                  <option value="assigneeId">Assignee</option>
+                  <option value="categoryId">Category</option>
+                </select>
+              </div>
+
+              {/* Priority */}
+              <div className={`${styles.filter_component}`}>
+                <div className={`${styles.filter_component_title}`}>Priority</div>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="priority"
+                    value="HIGH"
+                    onChange={handleFilterChange}
+                  />
+                  High
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="priority"
+                    value="MEDIUM"
+                    onChange={handleFilterChange}
+                  />
+                  Medium
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="priority"
+                    value="LOW"
+                    onChange={handleFilterChange}
+                  />
+                  Low
+                </label>
+              </div>
+
+              {/* Status */}
+              <div className={`${styles.filter_component}`}>
+                <div className={`${styles.filter_component_title}`}>Status</div>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="status"
+                    value="OPEN"
+                    onChange={handleFilterChange}
+                  />
+                  Open
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="status"
+                    value="IN_PROGRESS"
+                    onChange={handleFilterChange}
+                  />
+                  In Progress
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="status"
+                    value="RESOLVE"
+                    onChange={handleFilterChange}
+                  />
+                  Resolved
+                </label>
+              </div>
+
+              {/* Assignee */}
+              <div className={`${styles.filter_component}`}>
+                <div className={`${styles.filter_component_title}`}>Assignee</div>
+                {/* Replace with dynamic assignees */}
+                <label>
+                  <input
+                    type="checkbox"
+                    name="assigneeId"
+                    value="1"
+                    onChange={handleFilterChange}
+                  />
+                  Abdul Ahmed
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="assigneeId"
+                    value="2"
+                    onChange={handleFilterChange}
+                  />
+                  Tayo Ade
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="assigneeId"
+                    value="3"
+                    onChange={handleFilterChange}
+                  />
+                  Chizzy Jack
+                </label>
+              </div>
+
+              {/* Category */}
+              <div className={`${styles.filter_component}`}>
+                <div className={`${styles.filter_component_title}`}>Category</div>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="categoryId"
+                    value="1"
+                    onChange={handleFilterChange}
+                  />
+                  Plumbing
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="categoryId"
+                    value="2"
+                    onChange={handleFilterChange}
+                  />
+                  Electrical
+                </label>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="categoryId"
+                    value="3"
+                    onChange={handleFilterChange}
+                  />
+                  HVAC
+                </label>
+              </div>
         </div>
 
-          <div className="w-[1000px] h-[800px] flex flex-col gap-[32px]">
-                  <div className="h-[24px] flex items-center">
+        <div className="pl-8">
+                  <div className="h-[24px] flex items-center mb-8 ">
                     <span className="text-[20px] font-medium leading-[24px] text-left">
                       Tickets
                     </span>
                   </div>
-                  <div className=" flex gap-[22px]">
+                  <div className=" flex gap-[22px] mb-8 ">
                     <div className="h-[44px] w-[175px] bg-[#0070FF] flex items-center justify-center px-[24px] py-[10px]">
                       <button
                         onClick={() => openModalHandler("createCategory")}
@@ -375,7 +384,7 @@ export default function Ticket() {
                       </button>
                     </div>
                     */}
-          </div>
+                  </div>
         </div>
 
         {/* Modals */}

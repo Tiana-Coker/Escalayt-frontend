@@ -32,16 +32,15 @@ export default function Signup() {
   };
  
   const onSubmit = async (values, actions) => {
-    console.log("called");
-    console.log(values);
  
     const requestBody = {
-      firstname: values.firstname,
-      lastname: values.lastname,
+      firstName: values.firstname,
+      lastName: values.lastname,
       email: values.email,
       phone: values.phone,
-      username: values.username,
+      userName: values.username,
       password: values.password,
+      confirmPassword: values.confirmPassword, // Not neccssary
     };
 
     console.log(requestBody);
@@ -66,6 +65,7 @@ export default function Signup() {
         // Extract error message from the response
         const errorData = await response.json();
         const errorMessage = errorData.message || "Error creating user";
+        console.log(errorData)
         console.log(errorMessage);
       }
     } catch (error) {
@@ -220,7 +220,7 @@ export default function Signup() {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     className={`${errors.confirmPassword && touched.confirmPassword ? "input-error" : ""}  w-full px-2 py-1`} 
-                    type={showPassword ? 'text' : 'password'} 
+                    type={showConfirmPassword ? 'text' : 'password'} 
                     placeholder='Enter Password' />
 
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">

@@ -2,6 +2,76 @@ import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_APP_API_URL + '/api/v1/ticket';
 
+import { formatDate } from "../formatDate";
+
+export const fetchTickets = async (token, setActivities, setHasMore, page) => {
+  try {
+    const response = await axios.get(
+      `${apiUrl}/view-all-tickets`,
+      {
+        params: { page },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    const { data } = response;
+
+    const formattedTickets = data.map((ticket) => ({
+      ...ticket,
+      ticketNumber: ticket.id,
+      assignee: ticket.assigneeFullName || "Unassigned",
+      dateCreated: formatDate(ticket.createdAt),
+    }));
+
+    // console.log("Fetched tickets:", formattedTickets);
+    setActivities(formattedTickets);
+
+    setHasMore(fetchTickets.length > 0);
+  } catch (error) {
+    console.error("Error fetching tickets:", error);
+  }
+};
+
+
+export const fetchFilteredTickets = async (token, page, setTickets, setTotalPages, filters) => {
+  // const apiUrl = base + '/api/v1/ticket/';
+ 
+
+  // Construct query parameters
+  const params = new URLSearchParams();
+  params.append('page', page);
+  
+  // Handle multiple values for filters
+  Object.entries(filters).forEach(([key, values]) => {
+      values.forEach(value => params.append(key, value));
+  });
+
+  try {
+    const response = await axios.get(apiUrl + "/filter-new", {
+      params: params,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+
+    const formattedTickets = response.data.content.map((ticket) => ({
+      ...ticket,
+      ticketNumber: ticket.id,
+      assignee: ticket.assigneeFullName || "Unassigned",
+      dateCreated: formatDate(ticket.createdAt),
+    }));
+    // setTickets(response.data.content);
+    setTickets(formattedTickets);
+    setTotalPages(response.data.totalPages); // Adjust if the actual pagination response differs
+  } catch (error) {
+    console.error('Error fetching tickets', error);
+  }
+};
+
 export const fetchLatestThreeOpenTickets = async (token, setTickets, setLoading, setError,) => {
   setLoading(true);
   try {

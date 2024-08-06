@@ -37,3 +37,9 @@ export const signupSCHEMA = yup.object().shape({
         lastname: yup.string().required("Required"),
         phone: yup.string().nullable(), // Phone number is not required
 });
+
+export const createUserSchema = yup.object().shape({
+    email: yup.string().email("Invalid email format").required("Required"),
+    fullName: yup.string().required("Required"),
+    jobTitle: yup.string().required("Required"),
+})

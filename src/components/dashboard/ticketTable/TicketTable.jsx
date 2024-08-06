@@ -16,7 +16,7 @@ import IMAGES from "../../../assets/index";
  // import url from .env file
  const apiUrl = import.meta.env.VITE_APP_API_URL;
 
-const TicketTable = ({ activities, setActivities, setPage, page }) => {
+const TicketTable = ({ activities, setPage, page }) => {
 
   // Token from local storage
   // const token = localStorage.getItem("token");
@@ -142,7 +142,6 @@ const TicketTable = ({ activities, setActivities, setPage, page }) => {
 
   return (
     <div className={styles.ticketTableContainer}>
-      <h2 className={styles.recentActivitiesHeader}>Recent Activities</h2>
       <table className={`${styles.ticketTable} min-w-full bg-white border border-gray-200`}>
         <thead className='tn_text'>
           <tr className="bg_s_color">
@@ -175,7 +174,6 @@ const TicketTable = ({ activities, setActivities, setPage, page }) => {
             </th>
             <th>Date Created</th>
             <th>Location</th>
-            <th>⋮</th>
           </tr>
         </thead>
         <tbody className='sm_text'>
