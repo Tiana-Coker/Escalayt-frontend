@@ -13,8 +13,6 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import IMAGES from "../../../assets/index";
 
-
-
  // import url from .env file
  const apiUrl = import.meta.env.VITE_APP_API_URL;
 
