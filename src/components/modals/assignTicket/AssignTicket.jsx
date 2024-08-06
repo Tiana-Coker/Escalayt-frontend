@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useFetchEmployList } from "./useFetchEmployList";
 import { useFetchAssign } from "./useFetchAssign";
+import IMAGES from "../../../assets";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const token = localStorage.getItem("token");
-console.log(token);
 //second parameter for setting header
 const option = {
   // method
@@ -173,7 +175,7 @@ const AssignTicket = ({ticketId, onAssignTicketClose}) => {
                     className="form-radio h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
                   />
                   <img
-                    src={`${employee.pictureUrl}`}
+                    src={`${employee.pictureUrl || IMAGES.DEFAULT_PROFILE_PICTURE}`}
                     alt="employeeImage"
                     className="ml-4 w-10 h-10 rounded-full object-cover"
                   />
@@ -187,6 +189,7 @@ const AssignTicket = ({ticketId, onAssignTicketClose}) => {
           )}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
