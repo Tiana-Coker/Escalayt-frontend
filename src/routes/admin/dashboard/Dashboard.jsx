@@ -294,6 +294,11 @@ export default function Dashboard() {
           setProfileDropdown={setProfileDropdown}
           profileDropdown={profileDropdown}
         />
+        
+
+
+
+
 
 
         {/* Sort and Add user row */}
@@ -408,6 +413,7 @@ export default function Dashboard() {
         <CreateUser
           isOpen={openModal === "createUser"}
           onClose={closeModalHandler}
+          // closeOnOutsideClick={true}
         />
 
         <Notification 
@@ -416,6 +422,10 @@ export default function Dashboard() {
             onClose={closeModalHandler}
         />
 
+
+
+        {/* Profile Dropdown */}
+       
       </div>
     </>
   );
