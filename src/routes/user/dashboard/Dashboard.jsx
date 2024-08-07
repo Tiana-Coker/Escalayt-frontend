@@ -16,6 +16,11 @@ import styles from "./Dashboard.module.css";
 import axios from "axios";
 import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
 import UserNotification from "../../../components/modals/notification/UserNotification";
+import ProfileModal from "../../../components/modals/profile/user/ProfileModal";
+
+
+
+
 
 // import url from .env file
 const apiUrl = import.meta.env.VITE_APP_API_URL;
@@ -23,9 +28,11 @@ const apiUrl = import.meta.env.VITE_APP_API_URL;
 export default function Dashboard() {
   const token = localStorage.getItem("token");
 
+  // samuel modal for notification
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
    // samuel modal for notification
-   const [isModalOpen, setIsModalOpen] = useState(false);
+   const [isModalOpen1, setIsModalOpen1] = useState(false);
 
   // State values for profile dropdown
   const [profileDropdown, setProfileDropdown] = useState(false);
@@ -177,6 +184,11 @@ export default function Dashboard() {
     setIsModalOpen(false);
   };
 
+  // notification modal
+  const handleOpenModal1 = () => {
+    setIsModalOpen1(!isModalOpen1);
+  };
+
   return (
     <>
       {/* Navbar */}
@@ -184,13 +196,12 @@ export default function Dashboard() {
         onOpen={handleOpenModal}
         setProfileDropdown={setProfileDropdown}
         profileDropdown={profileDropdown}
+        handleOpenModal1={handleOpenModal1}
       />
 
-      {isModalOpen && (
-        <UserNotification
-          onClose={handleCloseModal}
-        />
-      )}
+      {isModalOpen && <UserNotification onClose={handleCloseModal} />}
+
+      {isModalOpen1 && <ProfileModal onClose={handleOpenModal1} />}
 
       {/* Sort and Add user row */}
       <div className="flex flex-wrap mt-10 mb-20 justify-end">

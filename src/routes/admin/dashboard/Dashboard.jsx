@@ -26,9 +26,10 @@ import styles from "./Dashboard.module.css";
 import axios from "axios";
 import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
 import { useFetchAdmin } from "./useFetchAdmin";
+import AdminProfileEdit from "../../../components/modals/profile/admin/AdminProfileEdit";
+import ProfileForAdminEdit from "../../../components/modals/profile/admin/ProfileForAdminEdit";
 
-
-
+//import ProfileModal from "../../../components/modals/profile/admin/AdminProfileEdit";
 
 //http://localhost:8080/api/v1/admin/get-admin-details
 
@@ -38,10 +39,8 @@ const apiUrl = import.meta.env.VITE_APP_API_URL;
 const adminUrl = `${apiUrl}/api/v1/admin/get-admin-details`;
 
 export default function Dashboard() {
-
   // Token from local storage
   const token = localStorage.getItem("token");
-
 
   // second parameter for setting header
   const option = {
@@ -85,6 +84,12 @@ export default function Dashboard() {
 
   // samuel modal for notification
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // samuel modal for notification
+  const [isModalOpen1, setIsModalOpen1] = useState(false);
+
+  // edit user or admin
+  const [isEditAdmin, setIsEditAdmin] = useState(false);
 
   const { data, isLoading, isError } = useFetchAdmin(adminUrl, option);
 
@@ -197,14 +202,12 @@ export default function Dashboard() {
       setCurrentAdmin({ adminDetails });
       console.log(adminDetails.username, adminDetails.adminId);
     }
-    console.log("Admin Data",data);
-   
+    console.log("Admin Data", data);
+
     // Ensure adminId is defined before calling requestPermission
     // if (adminDetails.adminId) {
     //   requestPermission(adminDetails.adminId);
     // }
-
-    
   }, [data]);
 
   useEffect(() => {
@@ -316,19 +319,48 @@ export default function Dashboard() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
+
+  // notification modal
+  const handleOpenModal1 = () => {
+    setIsModalOpen1(!isModalOpen1);
+  };
+
+  const handleIsEditAdminTrue = () => {
+    setIsEditAdmin(true);
+  };
+
+  const handleIsEditAdminFalse = () => {
+    setIsEditAdmin(false);
+  };
+
   return (
     <>
       <div className="p-2 pt-5 px-24">
         {/* Navbar */}
         <Navbar
           onOpen={handleOpenModal}
-          onClose={handleCloseModal}
           setProfileDropdown={setProfileDropdown}
           profileDropdown={profileDropdown}
         />
 
         {isModalOpen && (
           <Notification adminId={data && data.id} onClose={handleCloseModal} />
+        )}
+
+        {isModalOpen1 && !isEditAdmin && (
+          <AdminProfileEdit onClose={handleOpenModal1} />
+        )}
+
+        {isModalOpen1 && isEditAdmin && (
+          <ProfileForAdminEdit onClose={handleOpenModal1} />
+        )}
+
+        {profileDropdown && (
+          <DropDown
+            handleOpenModal1={handleOpenModal1}
+            isEditAdminTrue={handleIsEditAdminTrue}
+            isEditAdminFalse={handleIsEditAdminFalse}
+          />
         )}
 
         {/* Sort and Add user row */}
@@ -435,8 +467,6 @@ export default function Dashboard() {
           // closeOnOutsideClick={true}
         />
 
-
-
         {/* Profile Dropdown 
        {
         profileDropdown && 
@@ -452,3 +482,42 @@ export default function Dashboard() {
     </>
   );
 }
+
+const DropDown = ({ handleOpenModal1, isEditAdminFalse, isEditAdminTrue }) => {
+  const handleDisplayEdit = () => {
+    handleOpenModal1();
+    isEditAdminTrue();
+  };
+
+  const handleDisplayEditFalse = () => {
+    handleOpenModal1();
+    isEditAdminFalse();
+  };
+
+  return (
+    <>
+      <div
+        className="py-1 w-[150px] fixed right-40 bg-white border"
+        role="menu"
+        aria-orientation="vertical"
+        aria-labelledby="dropdownButton"
+      >
+        <button
+          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          role="menuitem"
+          onClick={() => handleDisplayEdit()}
+        >
+          Edit Profile
+        </button>
+        <div className="border-t border-gray-200"></div>
+        <button
+          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          role="menuitem"
+          onClick={() => handleDisplayEditFalse()}
+        >
+          Edit Employee Profile
+        </button>
+      </div>
+    </>
+  );
+};

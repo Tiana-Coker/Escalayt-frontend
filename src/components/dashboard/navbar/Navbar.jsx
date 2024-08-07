@@ -7,6 +7,7 @@ const Navbar = ({ onOpen, setProfileDropdown, profileDropdown}) => {
 
   const handleProfileDropdown = () => {
     setProfileDropdown(prev => !prev);
+    
   }
   return (
     <nav className="px-16">

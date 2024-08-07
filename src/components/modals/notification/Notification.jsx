@@ -2,18 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useFetchTicket } from "./useFetchTicket";
 import NotificationIcon from "../../../assets/NotificationIcon";
 
-const token = localStorage.getItem("token");
-
-//second parameter for setting header
-const option = {
-  // method
-  method: "GET",
-  // header
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-};
+//const token = localStorage.getItem("token");
 
 const URLS = {
   TICKETS: "http://localhost:8080/api/v1/ticket/get-ticket/created-under",
@@ -42,6 +31,19 @@ const STATUS = {
 
 const Notification = ({ adminId, onClose }) => {
   const [url, setUrl] = useState(`${URLS.TICKETS}/${adminId}`);
+
+  const [token, setToken] = useState(localStorage.getItem("token"));
+
+  //second parameter for setting header
+  const [option, setOption] = useState({
+    // method
+    method: "GET",
+    // header
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   const { data, isLoading, isError } = useFetchTicket(url, option);
 
@@ -172,7 +174,6 @@ const Notification = ({ adminId, onClose }) => {
           </div>
         )}
       </div>
-      
     </>
   );
 };
