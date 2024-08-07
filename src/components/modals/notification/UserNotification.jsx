@@ -41,7 +41,10 @@ const STATUS = {
   RESOLVED: " has been resolved!",
 };
 
-const UserNotification = ({ onClose }) => {
+const UserNotification = ({ isOpen, onClose }) => {
+
+  if (!isOpen) return null;
+
   const [url, setUrl] = useState(`${URLS.TICKETS}`);
 
   const { data, isLoading, isError } = useFetchTicket(url, option);
@@ -173,7 +176,7 @@ const UserNotification = ({ onClose }) => {
                             <span>{ticket.username}!</span>
                           )}
                         </div>
-                        {ticket.ticketStatus == "RESOLVE" && (
+                        {ticket.ticketStatus == "RESOLVED" && (
                           <RateTicketBtn
                             handleRatingModal={() =>
                               handleRatingModal(ticket.ticketId)
@@ -237,7 +240,7 @@ const CustomPTag = ({ status }) => {
     case "IN_PROGRESS":
       displayStatus = STATUS.IN_PROGRESS[0];
       break;
-    case "RESOLVE":
+    case "RESOLVED":
       displayStatus = STATUS.RESOLVED;
       break;
     default:

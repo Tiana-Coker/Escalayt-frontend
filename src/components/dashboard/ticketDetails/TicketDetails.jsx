@@ -6,7 +6,7 @@ import DownloadIcon from "./../../../assets/DownloadIcon";
 import TrashIcon from "./../../../assets/TrashIcon";
 
 export default function TicketDetails({ ticket }) {
-  console.log("ticket here", ticket);
+  // console.log("ticket here", ticket);
 
   const handleDownload = () => {
     const link = document.createElement('a');
@@ -25,54 +25,64 @@ export default function TicketDetails({ ticket }) {
   const formattedDate = formatDate(ticket.createdAt)
 
   return (
-    <div className="flex flex-wrap w-10/12 mx-auto  justify-between no_text">
-      {/* User Details */}
-      <div className="w-full lg:w-6/12">
-        <div className="font-medium mb-4">User Details</div>
-        <div className="flex flex-wrap  gap-6">
-          {/* Details */}
-          <div style={{ color: "#828282" }}>
-            <div>Name</div>
-            <div>Email</div>
-            <div>Role</div>
-            <div>Department</div>
-            <div>Phone Number</div>
+    <div className=" w-10/12 mx-auto">
+      <div className="flex flex-wrap justify-between no_text">
+          {/* User Details */}
+          <div className="w-full lg:w-6/12">
+            <div className="font-medium mb-4">User Details</div>
+            <div className="flex flex-wrap  gap-6">
+              {/* Details */}
+              <div style={{ color: "#828282" }}>
+                <div>Name</div>
+                <div>Email</div>
+                <div>Role</div>
+                <div>Department</div>
+                <div>Phone Number</div>
+              </div>
+              {/* Values */}
+              <div>
+              {
+                ticket.createdByUser && 
+                  <div style={{ color: "#828282" }}>
+                    <div>{ticket.createdByUser.fullName || "null"}</div>
+                    <div>{ticket.createdByUser.email || "null"}</div>
+                    <div>{ticket.createdByUser.jobTitle || "null"}</div>
+                    <div>{ticket.createdByUser.department}</div>
+                    <div>{ticket.createdByUser.phoneNumber}</div>
+                  </div>
+
+              }
+              </div>
+            </div>
           </div>
-          {/* Values */}
-          <div>
-            <div>John Doe</div>
-            <div>johndoe@escalayt.com</div>
-            <div>Senior Manager</div>
-            <div>Finance</div>
-            <div>08036281933</div>
+
+          {/* Ticket Details */}
+          <div className="w-full lg:w-6/12  flex lg:justify-end">
+            <div className="">
+              <div className="font-medium mb-4 ">Ticket Details</div>
+              <div className="flex flex-wrap gap-6">
+                {/* Details */}
+                <div style={{ color: "#828282" }}>
+                  <div>Title</div>
+                  <div>Location</div>
+                  <div>Priority</div>
+                  <div>Category</div>
+                  <div>Description</div>
+                </div>
+                {/* Values */}
+                <div>
+                  <div>{ticket.title || "null"}</div>
+                  <div>{ticket.location || "null"}</div>
+                  <div>{ticket.priority || "null"}</div>
+                  <div>{ticket.ticketCategoryName || "null"}</div>
+                  <div>{ticket.description || "null"}</div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
       </div>
 
-      {/* Ticket Details */}
-      <div className="w-full lg:w-6/12  flex lg:justify-end">
-        <div className="">
-          <div className="font-medium mb-4 ">Ticket Details</div>
-          <div className="flex flex-wrap gap-6">
-            {/* Details */}
-            <div style={{ color: "#828282" }}>
-              <div>Title</div>
-              <div>Location</div>
-              <div>Priority</div>
-              <div>Category</div>
-              <div>Description</div>
-            </div>
-            {/* Values */}
-            <div>
-              <div>{ticket.title}</div>
-              <div>{ticket.location}</div>
-              <div>{ticket.priority}</div>
-              <div>{ticket.ticketCategoryName}</div>
-              <div>{ticket.description}</div>
-            </div>
-          </div>
-        </div>
-      </div>
+
       {/* Attachement */}
       <div className="w-full h-[112px] flex flex-col gap-[16px] mt-[30px]">
         <div className="h-[24px] flex items-center">

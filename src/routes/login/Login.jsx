@@ -126,7 +126,7 @@ export default function Login() {
 
                 </div>
 
-                <Link to = "/forgot-password" className='text-right mb-8 sm_text p_color'>Forgot password</Link>
+               <div className='flex flex-wrap justify-end'> <Link to = "/forgot-password" className='mb-8 sm_text p_color'>Forgot password</Link></div>
                 <div>
                   <button disabled={isSubmitting} type='submit' className='p_btn w-full py-2 sm_text '>Confirm</button>
                 </div>
@@ -134,9 +134,9 @@ export default function Login() {
 
             </form>
 
-            <div className={`${styles.loginImgDiv} hidden md:block md:w-7/12 lg:w-8/12 flex flex-wrap lg:h-[600px] items-center`}>
-                <div className=''>
-                  <img src={IMAGES.LOGIN_IMAGE} className='mx-auto' alt="" />
+            <div className={`${styles.loginImgDiv}  hidden md:flex md:w-7/12 lg:w-8/12 flex-wrap lg:h-[600px] items-center`}>
+                <div className=' mx-auto'>
+                  <img src={IMAGES.LOGIN_IMAGE} className='' alt="" />
                 </div>
 
             </div>

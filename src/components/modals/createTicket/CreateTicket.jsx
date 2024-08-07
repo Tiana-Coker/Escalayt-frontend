@@ -7,7 +7,16 @@ import Confirm from "./Confirm";
 import Dropdown from "./Dropdown";
 import TicketSuccess from "./TicketSuccess";
 
-export default function CreateTicket({ isOpen, onClose }) {
+export default function CreateTicket({
+  isOpen,
+  onClose,
+  fetchFilteredTickets,
+  token,
+  page,
+  setTickets,
+  setTotalPages,
+  filters
+}) {
   if (!isOpen) return null;
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
@@ -104,6 +113,9 @@ export default function CreateTicket({ isOpen, onClose }) {
         // Handle successful response
         setIsConfirmed(true);
         setIsSuccess(true);
+        alert("Ticket created successfully.");
+        // Call fetchFilteredTickets to update the ticket table after successful ticket creation
+        await fetchFilteredTickets(token, page, setTickets, setTotalPages, filters);
       } else {
         // Handle error response
         alert("Failed to create ticket. Please try again.");
@@ -111,6 +123,7 @@ export default function CreateTicket({ isOpen, onClose }) {
     } catch (error) {
       // Handle network error
       alert("An error occurred. Please try again.");
+      console.log(error)
     }
   };
 

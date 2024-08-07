@@ -1,5 +1,8 @@
 /* eslint-disable no-unused-vars */
 
+import { onMessage } from "firebase/messaging";
+import { messaging } from "../../../firebase/firebaseConfig";
+
 // Components
 import Navbar from "../../../components/dashboard/navbar/Navbar";
 import TicketCountCards from "../../../components/dashboard/ticketCount/TicketCountCards";
@@ -9,15 +12,17 @@ import IMAGES from "../../../assets";
 import Notification from "../../../components/modals/notification/Notification";
 
 // import method to request for permission
-// import { requestPermission } from "../../../firebase/utils/notification";
+import { requestPermission } from "../../../firebase/utils/notification";
 
 // utility methods
 import {
   fetchLatestThreeOpenTickets,
   fetchLatestThreeResolvedTickets,
   fetchLatestThreeInprogressTickets,
-  fetchTicketCount,
+  fetchTicketCount, sortTickets
 } from "../../../utils/dashboard-methods/dashboardMethods";
+
+import { formatDate, newFormatDate } from "../../../utils/formatDate";
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -32,28 +37,17 @@ import ProfileForAdminEdit from "../../../components/modals/profile/admin/Profil
 //import ProfileModal from "../../../components/modals/profile/admin/AdminProfileEdit";
 
 //http://localhost:8080/api/v1/admin/get-admin-details
+import { BeatLoader, BounceLoader } from "react-spinners";
+
 
 // import url from .env file
 const apiUrl = import.meta.env.VITE_APP_API_URL;
-
 const adminUrl = `${apiUrl}/api/v1/admin/get-admin-details`;
 
 export default function Dashboard() {
   // Token from local storage
   const token = localStorage.getItem("token");
 
-  // second parameter for setting header
-  const option = {
-    // method
-    method: "GET",
-    // header
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
-  // console.log("dash token", token);
 
   // State values for profile dropdown
   const [profileDropdown, setProfileDropdown] = useState(false);
@@ -72,7 +66,7 @@ export default function Dashboard() {
 
   // state values for tickets card
   const [tickets, setTickets] = useState([]);
-  const [loadingTickets, setLoadingTickets] = useState(true);
+  const [isTicketCardLoading, setIsTicketCardLoading] = useState(false);
   const [ticketsError, setTicketsError] = useState(null);
 
   // State for sorting
@@ -82,16 +76,8 @@ export default function Dashboard() {
   // General loading state
   const [loading, setLoading] = useState(true);
 
-  // samuel modal for notification
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // samuel modal for notification
-  const [isModalOpen1, setIsModalOpen1] = useState(false);
-
   // edit user or admin
   const [isEditAdmin, setIsEditAdmin] = useState(false);
-
-  const { data, isLoading, isError } = useFetchAdmin(adminUrl, option);
 
   const [currentAdmin, setCurrentAdmin] = useState({
     adminId: 1,
@@ -119,8 +105,8 @@ export default function Dashboard() {
     fetchLatestThreeOpenTickets(
       token,
       setTickets,
-      setLoadingTickets,
-      setTicketsError
+      setIsTicketCardLoading,
+      setTicketsError,
     );
     // Update styles and reset others to default
     setButtonStyles({
@@ -134,7 +120,7 @@ export default function Dashboard() {
     fetchLatestThreeInprogressTickets(
       token,
       setTickets,
-      setLoadingTickets,
+      setIsTicketCardLoading,
       setTicketsError
     );
     // Update styles and reset others to default
@@ -149,7 +135,7 @@ export default function Dashboard() {
     fetchLatestThreeResolvedTickets(
       token,
       setTickets,
-      setLoadingTickets,
+      setIsTicketCardLoading,
       setTicketsError
     );
     // Update styles and reset others to default
@@ -160,31 +146,34 @@ export default function Dashboard() {
     });
   };
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const timeDiff = today - date;
-    const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-
-    if (daysDiff === 0) {
-      return "Today";
-    } else if (daysDiff === 1) {
-      return "1 day ago";
-    } else {
-      return `${daysDiff} days ago`;
-    }
-  };
-
-  // Modal State
+  
+  
+  // General Modal State
   const [openModal, setOpenModal] = useState(null);
 
+  // General Modal Open Handler
   const openModalHandler = (modalName) => {
     setOpenModal(modalName);
   };
 
+  // General Modal Close Handler
   const closeModalHandler = () => {
     setOpenModal(null);
   };
+
+   // second parameter for setting header
+   const option = {
+    // method
+    method: "GET",
+    // header
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+   // Fetching Admin Details
+  const { data, isLoading: isAdminLoading, isError: isAdminError } = useFetchAdmin(adminUrl, option);
 
   //useEffect to load admin info
   useEffect(() => {
@@ -205,44 +194,47 @@ export default function Dashboard() {
     console.log("Admin Data", data);
 
     // Ensure adminId is defined before calling requestPermission
-    // if (adminDetails.adminId) {
-    //   requestPermission(adminDetails.adminId);
-    // }
+    if (adminDetails.adminId) {
+      requestPermission(adminDetails.adminId);
+    }
+
+    
   }, [data]);
 
+  const fetchTickets = async () => {
+    try {
+      // console.log("admin-token", token);
+
+      const response = await axios.get(
+        `${apiUrl}/api/v1/ticket/view-all-tickets`,
+        {
+          params: { page },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const { data } = response;
+      // console.log("eje", response)
+
+      const formattedTickets = data.map((ticket) => ({
+        ...ticket,
+        ticketNumber: ticket.id,
+        assignee: ticket.assigneeFullName || "Unassigned",
+        dateCreated: newFormatDate(ticket.createdAt),
+      }));
+
+      console.log("Fetched tickets:", formattedTickets);
+      setActivities(formattedTickets);
+
+      setHasMore(fetchTickets.length > 0);
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        // console.log("admin-token", token);
-
-        const response = await axios.get(
-          `${apiUrl}/api/v1/ticket/view-all-tickets`,
-          {
-            params: { page },
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const { data } = response;
-        // console.log("eje", response)
-
-        const formattedTickets = data.map((ticket) => ({
-          ...ticket,
-          ticketNumber: ticket.id,
-          assignee: ticket.assigneeFullName || "Unassigned",
-          dateCreated: formatDate(ticket.createdAt),
-        }));
-
-        console.log("Fetched tickets:", formattedTickets);
-        setActivities(formattedTickets);
-
-        setHasMore(fetchTickets.length > 0);
-      } catch (error) {
-        console.error("Error fetching tickets:", error);
-      }
-    };
 
     const fetchData = async () => {
       try {
@@ -253,7 +245,7 @@ export default function Dashboard() {
           fetchLatestThreeOpenTickets(
             token,
             setTickets,
-            setLoading,
+            setIsTicketCardLoading,
             setTicketsError
           ),
           fetchTicketCount(
@@ -274,33 +266,10 @@ export default function Dashboard() {
     fetchData();
   }, [page]);
 
-  // Sorting function
-  const sortTickets = (tickets) => {
-    const priorityOrder = ["HIGH", "MEDIUM", "LOW"];
-    const statusOrder = ["OPEN", "IN_PROGRESS", "RESOLVE"];
-
-    return [...tickets].sort((a, b) => {
-      if (sort === "priority") {
-        return (
-          priorityOrder.indexOf(a.priority) - priorityOrder.indexOf(b.priority)
-        );
-      }
-      if (sort === "status") {
-        return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
-      }
-      if (sort === "assigneeId") {
-        return a.assignee.localeCompare(b.assignee);
-      }
-      if (sort === "categoryId") {
-        return a.ticketCategoryName.localeCompare(b.ticketCategoryName);
-      }
-      return 0;
-    });
-  };
-
+ 
   // Sort activities whenever `sort` or `activities` change
   useEffect(() => {
-    setSortedActivities(sortTickets(activities));
+    setSortedActivities(sortTickets(sort, activities));
   }, [sort, activities]);
 
   // Handle sort change
@@ -309,21 +278,16 @@ export default function Dashboard() {
     setSort(value);
   };
 
-  if (loading) {
-    return <div>Loading...</div>; // Add your loading spinner here if you have one
+  // Loading state
+  if (loading || isAdminLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <BounceLoader size={150} color={"#0070FF"} loading={loading} />
+      </div>
+    );
   }
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
 
-  // notification modal
-  const handleOpenModal1 = () => {
-    setIsModalOpen1(!isModalOpen1);
-  };
 
   const handleIsEditAdminTrue = () => {
     setIsEditAdmin(true);
@@ -333,23 +297,35 @@ export default function Dashboard() {
     setIsEditAdmin(false);
   };
 
+  onMessage(messaging, (payload) => {
+    console.log("incoming msg");
+    alert("Ticket created")
+    // toast(<Message notification={payload.notification} />);
+  });
+
   return (
     <>
-      <div className="p-2 pt-5 px-24">
+      <div className="pt-5 pb-32 w-11/12 mx-auto">
         {/* Navbar */}
+
         <Navbar
-          onOpen={handleOpenModal}
+          onOpen={openModalHandler}
+          onClose={closeModalHandler}
           setProfileDropdown={setProfileDropdown}
           profileDropdown={profileDropdown}
         />
+        
 
-        {isModalOpen && (
-          <Notification adminId={data && data.id} onClose={handleCloseModal} />
-        )}
 
-        {isModalOpen1 && !isEditAdmin && (
+
+
+
+
+        {/* {isModalOpen1 && !isEditAdmin && (
           <AdminProfileEdit onClose={handleOpenModal1} />
         )}
+
+    
 
         {isModalOpen1 && isEditAdmin && (
           <ProfileForAdminEdit onClose={handleOpenModal1} />
@@ -361,33 +337,35 @@ export default function Dashboard() {
             isEditAdminTrue={handleIsEditAdminTrue}
             isEditAdminFalse={handleIsEditAdminFalse}
           />
-        )}
+        )} */}
 
         {/* Sort and Add user row */}
         <div className="flex flex-wrap mt-10 mb-10 justify-end">
-          <div className="flex flex-row ">
-            <div className="flex flex-col mr-8">
-              <div className="text-gray-500">Sort by</div>
-              <div>
-                <select
-                  className="px-9 py-1 bg-white border border-blue-500"
-                  value={sort}
-                  onChange={handleSortChange}
-                >
-                  <option value="priority">Priority </option>
-                  <option value="status">Status </option>
-                  <option value="assigneeId">Assignee </option>
-                  <option value="categoryId">Category </option>
-                </select>
-              </div>
+          <div>
+            <div className="text-gray-500">Sort by</div>
+            <div className="flex flex-wrap gap-4">
+                <div>
+                    <select
+                      className="px-9 py-1 bg-white border border-blue-500 h-9"
+                      value={sort}
+                      onChange={handleSortChange}
+                    >
+                      <option value="priority">Priority </option>
+                      <option value="status">Status </option>
+                      <option value="assigneeId">Assignee </option>
+                      <option value="categoryId">Category </option>
+                    </select>
+                </div>
+                <div>
+                    <button
+                    onClick={() => openModalHandler("createUser")}
+                    className="bg-blue-500 text-white px-4 text-sm h-9 mr-20 "
+                  >
+                    Add New User
+                  </button>
+                </div>
+              
             </div>
-
-            <button
-              onClick={() => openModalHandler("createUser")}
-              className="bg-blue-500 text-white px-4 text-sm h-9 mr-20 "
-            >
-              Add New User
-            </button>
           </div>
         </div>
 
@@ -445,11 +423,47 @@ export default function Dashboard() {
           </div>
         </div>
         {/* Ticket Cards */}
-        <div className="flex flex-wrap mb-8 justify-around">
-          {tickets.map((ticket) => {
-            return <TicketCard key={ticket.id} ticket={ticket} button={true} />;
-          })}
+        <div className={`${tickets.length > 2 ? "justify-between" : "justify-start gap-10"} flex flex-wrap mb-8`}>
+          {
+            
+          isTicketCardLoading ? (
+            <div className="flex min-w-full justify-center items-center transition-opacity duration-500 ease-in-out">
+              <BeatLoader size={15} color={"#0070FF"} loading={isTicketCardLoading} />
+            </div>
+          ) :
+          tickets.map((ticket) => {
+            return <TicketCard 
+            
+              key={ticket.id} 
+              ticket={ticket} 
+              button={true} 
+              
+              // Fetch Tickets
+              fetchTickets={fetchTickets}
+              setActivities={setActivities}
+              setHasMore={setHasMore}
+              page={page}
+
+              // Fetch Latest Three Open/Inprogress/Resolved Tickets
+              fetchLatestThreeOpenTickets={fetchLatestThreeOpenTickets}
+              fetchLatestThreeInprogressTickets={fetchLatestThreeInprogressTickets}
+              fetchLatestThreeResolvedTickets={fetchLatestThreeResolvedTickets}
+              setTickets={setTickets}
+              setIsTicketCardLoading={setIsTicketCardLoading}
+              setTicketsError={setTicketsError}
+
+              // Fetch Ticket Count
+              fetchTicketCount={fetchTicketCount}
+              setTicketTotalCount={setTicketTotalCount}
+              setOpenTicketCount={setOpenTicketCount}
+              setResolvedTicketCount={setResolvedTicketCount}
+              setOngoingTicketCount={setOngoingTicketCount}
+            />;
+          })
+          
+          }
         </div>
+       
 
         {/* Ticket Table */}
         <TicketTable
@@ -478,6 +492,16 @@ export default function Dashboard() {
             <div className='mb-4' style={{color:"#1F2937"}} >Logout</div>
          </div>
       }*/}
+        <Notification 
+            adminId={data && data.id}
+            isOpen={openModal === "notification"}
+            onClose={closeModalHandler}
+        />
+
+
+
+        {/* Profile Dropdown */}
+       
       </div>
     </>
   );

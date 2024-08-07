@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useFetchEmployList } from "./useFetchEmployList";
 import { useFetchAssign } from "./useFetchAssign";
+import IMAGES from "../../../assets";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const token = localStorage.getItem("token");
-
 //second parameter for setting header
 const option = {
   // method
@@ -33,10 +35,28 @@ const INTIAL_USER_OBJ = {
 // we will pass assignId as props
 // and also we will pass
 // ticket id ass props
-const AssignTicket = ({ticketId, onAssignTicketClose}) => {
+const AssignTicket = ({
+  ticket, 
+  fetchTickets, 
+  setActivities, 
+  setHasMore, 
+  page,
+  fetchLatestThreeOpenTickets, 
+  fetchLatestThreeInprogressTickets, 
+  fetchLatestThreeResolvedTickets, 
+  setTickets, 
+  setIsTicketCardLoading, 
+  setTicketsError,
+  fetchTicketCount, 
+  setTicketTotalCount, 
+  setOpenTicketCount, 
+  setResolvedTicketCount, 
+  setOngoingTicketCount,
+  ticketId, onAssignTicketClose}) => {
+   
   const { data, isLoading, isError } = useFetchEmployList(
     URLS.EMPLOYEES,
-    option
+    option,
   );
 
   const [option1, setOption1] = useState({
@@ -50,7 +70,10 @@ const AssignTicket = ({ticketId, onAssignTicketClose}) => {
 
   const [url, seturl] = useState("");
 
-  const { data1, isLoading1, isError1 } = useFetchAssign(
+
+  option1.body == null
+
+  const { data1, isLoading1, isError1, done } = useFetchAssign(
     url,
     option1.body == null ? null : option1
   );
@@ -61,6 +84,44 @@ const AssignTicket = ({ticketId, onAssignTicketClose}) => {
 
   //filter employee name
   const [filterName, setFilterName] = useState("");
+
+  useEffect(()=>{
+    console.log("we etching data", done);
+    if(done){
+      console.log("we actually etching data", done);
+      const fetchDatas = async () => {
+        await fetchTicketCount(
+          token,
+          setTicketTotalCount,
+          setOpenTicketCount,
+          setResolvedTicketCount,
+          setOngoingTicketCount
+        )
+        
+        await fetchLatestThreeInprogressTickets(
+          token,
+          setTickets,
+          setIsTicketCardLoading,
+          setTicketsError
+        );
+        await fetchLatestThreeResolvedTickets(
+          token,
+          setTickets,
+          setIsTicketCardLoading,
+          setTicketsError
+        );
+        await fetchLatestThreeOpenTickets(
+          token,
+          setTickets,
+          setIsTicketCardLoading,
+          setTicketsError,
+        );
+        await fetchTickets(token, setActivities, setHasMore, page);
+      
+      }
+      fetchDatas();
+    }
+  }, [[data1, isLoading1, isError1]])
 
   useEffect(() => {
     // const something = data ? data : "something wrong";
@@ -173,7 +234,7 @@ const AssignTicket = ({ticketId, onAssignTicketClose}) => {
                     className="form-radio h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
                   />
                   <img
-                    src={`${employee.pictureUrl}`}
+                    src={`${employee.pictureUrl || IMAGES.DEFAULT_PROFILE_PICTURE}`}
                     alt="employeeImage"
                     className="ml-4 w-10 h-10 rounded-full object-cover"
                   />
@@ -187,6 +248,7 @@ const AssignTicket = ({ticketId, onAssignTicketClose}) => {
           )}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };

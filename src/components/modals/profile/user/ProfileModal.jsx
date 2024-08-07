@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useFetchUser } from "./useFetchUser";
 import { useFetchPut } from "./useFetchPut";
 
-const ProfileModal = ({ onClose }) => {
+const ProfileModal = ({onOpen, onClose }) => {
+  if (!isOpen) return null;
   const [token, setToken] = useState(localStorage.getItem("token"));
 
   const [url, setUrl] = useState(

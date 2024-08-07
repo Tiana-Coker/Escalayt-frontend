@@ -16,6 +16,7 @@ import UserDashboard from "./routes/user/dashboard/Dashboard";
 import UserTicket from "./routes/user/tickets/Ticket";
 
 import TicketTable from "./components/dashboard/ticketTable/TicketTable";
+import EmailConfirmation from "./routes/emailConfirmation/EmailConfirmation";
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 // import axios from 'axios'
@@ -39,7 +40,7 @@ function App() {
         <Route path="/user/dashboard" element={<UserDashboard />} />
         <Route path="/user/tickets" element={<UserTicket />} />
 
-        <Route path="/tick-table" element={<TicketTable />} />
+        <Route path="/confirm-email" element={<EmailConfirmation />} />  
       </Routes>
 
       

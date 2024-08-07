@@ -29,7 +29,8 @@ const STATUS = {
   RESOLVED: "resolved",
 };
 
-const Notification = ({ adminId, onClose }) => {
+const Notification = ({isOpen, adminId, onClose }) => {
+  if (!isOpen) return null;
   const [url, setUrl] = useState(`${URLS.TICKETS}/${adminId}`);
 
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -214,7 +215,7 @@ const CustomPTag = ({ status }) => {
     case "IN_PROGRESS":
       displayStatus = STATUS.IN_PROGRESS[0];
       break;
-    case "RESOLVE":
+    case "RESOLVED":
       displayStatus = STATUS.RESOLVED;
       break;
     default:
