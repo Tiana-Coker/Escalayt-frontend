@@ -42,7 +42,6 @@ export function useFetchAssign(url, options = {},
           if (url) {
             toast.success("Ticket assigned successfully");
             setDone(true);
-            
           }
           const data = await res.json()
           setData1(data)

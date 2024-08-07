@@ -26,7 +26,7 @@ const Dropdown = ({ options, selectedValue, onSelect }) => {
   }, []);
 
   return (
-    <div ref={dropdownRef} className="relative w-[400px]">
+    <div ref={dropdownRef} className="relative w-full">
       <div
         className="h-[48px] flex items-center px-4 border border-[#0070FF] cursor-pointer"
         onClick={() => setIsOpen(!isOpen)}
