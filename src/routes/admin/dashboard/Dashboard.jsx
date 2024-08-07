@@ -22,7 +22,7 @@ import {
   fetchTicketCount, sortTickets
 } from "../../../utils/dashboard-methods/dashboardMethods";
 
-import { formatDate } from "../../../utils/formatDate";
+import { formatDate, newFormatDate } from "../../../utils/formatDate";
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -193,39 +193,40 @@ export default function Dashboard() {
     
   }, [data]);
 
+  const fetchTickets = async () => {
+    try {
+      // console.log("admin-token", token);
+
+      const response = await axios.get(
+        `${apiUrl}/api/v1/ticket/view-all-tickets`,
+        {
+          params: { page },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const { data } = response;
+      // console.log("eje", response)
+
+      const formattedTickets = data.map((ticket) => ({
+        ...ticket,
+        ticketNumber: ticket.id,
+        assignee: ticket.assigneeFullName || "Unassigned",
+        dateCreated: newFormatDate(ticket.createdAt),
+      }));
+
+      console.log("Fetched tickets:", formattedTickets);
+      setActivities(formattedTickets);
+
+      setHasMore(fetchTickets.length > 0);
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+    }
+  };
+
   useEffect(() => {
-    const fetchTickets = async () => {
-      try {
-        // console.log("admin-token", token);
-
-        const response = await axios.get(
-          `${apiUrl}/api/v1/ticket/view-all-tickets`,
-          {
-            params: { page },
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const { data } = response;
-        // console.log("eje", response)
-
-        const formattedTickets = data.map((ticket) => ({
-          ...ticket,
-          ticketNumber: ticket.id,
-          assignee: ticket.assigneeFullName || "Unassigned",
-          dateCreated: formatDate(ticket.createdAt),
-        }));
-
-        console.log("Fetched tickets:", formattedTickets);
-        setActivities(formattedTickets);
-
-        setHasMore(fetchTickets.length > 0);
-      } catch (error) {
-        console.error("Error fetching tickets:", error);
-      }
-    };
 
     const fetchData = async () => {
       try {
@@ -285,7 +286,7 @@ export default function Dashboard() {
   });
   return (
     <>
-      <div className="pt-5 w-11/12 mx-auto">
+      <div className="pt-5 pb-32 w-11/12 mx-auto">
         {/* Navbar */}
 
         <Navbar
@@ -385,7 +386,7 @@ export default function Dashboard() {
           </div>
         </div>
         {/* Ticket Cards */}
-        <div className="flex flex-wrap mb-8 gap-10">
+        <div className={`${tickets.length > 2 ? "justify-between" : "justify-start gap-10"} flex flex-wrap mb-8`}>
           {
             
           isTicketCardLoading ? (
@@ -394,11 +395,38 @@ export default function Dashboard() {
             </div>
           ) :
           tickets.map((ticket) => {
-            return <TicketCard key={ticket.id} ticket={ticket} button={true} />;
+            return <TicketCard 
+            
+              key={ticket.id} 
+              ticket={ticket} 
+              button={true} 
+              
+              // Fetch Tickets
+              fetchTickets={fetchTickets}
+              setActivities={setActivities}
+              setHasMore={setHasMore}
+              page={page}
+
+              // Fetch Latest Three Open/Inprogress/Resolved Tickets
+              fetchLatestThreeOpenTickets={fetchLatestThreeOpenTickets}
+              fetchLatestThreeInprogressTickets={fetchLatestThreeInprogressTickets}
+              fetchLatestThreeResolvedTickets={fetchLatestThreeResolvedTickets}
+              setTickets={setTickets}
+              setIsTicketCardLoading={setIsTicketCardLoading}
+              setTicketsError={setTicketsError}
+
+              // Fetch Ticket Count
+              fetchTicketCount={fetchTicketCount}
+              setTicketTotalCount={setTicketTotalCount}
+              setOpenTicketCount={setOpenTicketCount}
+              setResolvedTicketCount={setResolvedTicketCount}
+              setOngoingTicketCount={setOngoingTicketCount}
+            />;
           })
           
           }
         </div>
+       
 
         {/* Ticket Table */}
         <TicketTable

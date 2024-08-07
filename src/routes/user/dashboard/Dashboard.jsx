@@ -133,7 +133,7 @@ export default function Dashboard() {
   // Sorting function
   const sortTickets = (tickets) => {
     const priorityOrder = ["HIGH", "MEDIUM", "LOW"];
-    const statusOrder = ["OPEN", "IN_PROGRESS", "RESOLVE"];
+    const statusOrder = ["OPEN", "IN_PROGRESS", "RESOLVED"];
 
     return [...tickets].sort((a, b) => {
       if (sort === "priority") {
@@ -170,13 +170,12 @@ export default function Dashboard() {
   }
 
   onMessage(messaging, (payload) => {
-    console.log("incoming msg");
     alert("Ticket assigned")
     // toast(<Message notification={payload.notification} />);
   });
 
   return (
-    <div className="pt-5 w-11/12 mx-auto">
+    <div className="pt-5 pb-32 w-11/12 mx-auto">
       {/* Navbar */}
       <UserNavbar 
             onOpen={openModalHandler}

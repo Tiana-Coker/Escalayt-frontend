@@ -3,9 +3,28 @@ import AssignTicket from '../../modals/assignTicket/AssignTicket';
 import styles from './TicketCard.module.css';
 import { formatDate, newFormatDate } from '../../../utils/formatDate';
 
-const TicketCard = ({ticket, button}) => {
+const TicketCard = ({
+  ticket, 
+  button, 
+  fetchTickets, 
+  setActivities, 
+  setHasMore, 
+  page,
+  fetchLatestThreeOpenTickets, 
+  fetchLatestThreeInprogressTickets, 
+  fetchLatestThreeResolvedTickets, 
+  token, 
+  setTickets, 
+  setIsTicketCardLoading, 
+  setTicketsError,
+  fetchTicketCount, 
+  setTicketTotalCount, 
+  setOpenTicketCount, 
+  setResolvedTicketCount, 
+  setOngoingTicketCount
+}) => {
 
-  console.log("ticket card", ticket);
+  // console.log("ticket card", ticket);
 
 
   const [isAssignTicketModalOpen, setIsAssignTicketModalOpen] = useState(false);
@@ -26,7 +45,8 @@ const TicketCard = ({ticket, button}) => {
   };
 
   return (
-    <div className={`bg-gray-100 p-4 rounded-lg shadow-md max-w-xs`}>
+    <div className={`bg-gray-100 shadow-md h-[220px] flex items-center w-[30%]`}>
+      <div className=' w-full p-6'>
       <div className="flex flex-wrap justify-between items-center mb-2">
         <span className="font-medium sm_text">Ticket #{ticket.id}</span>
         <span className="sm_text" style={{color:'#828282'}}>{newFormatDate(ticket.createdAt)}</span>
@@ -38,8 +58,8 @@ const TicketCard = ({ticket, button}) => {
                 <p className="sm_text mb-4 text-center">
                   "{ticket.createdByAdmin ? ticket.createdByAdmin : ticket.createdByUser} created a new ticket #{ticket.id} - {ticket.title}."
                 </p>
-                <div className='flex justify-center border'>
-                    <button style = {{color:"#344054"}} className="bg-white w-full hover:bg-gray-100 no_text font-semibold py-2 rounded"
+                <div className='flex justify-center '>
+                    <button style = {{color:"#344054"}} className="bg-white w-full hover:opacity-50 no_text font-semibold py-2 rounded"
                     onClick={handleAssignTicketOpenModal}
                     >
                         Assign
@@ -52,15 +72,8 @@ const TicketCard = ({ticket, button}) => {
             <>
                 <h2 className="no_text font-medium mb-2 text-center">{ticket.title}</h2>
                 <p className="sm_text mb-4 text-center">
-                  "{ticket.createdByAdmin ? ticket.createdByAdmin : ticket.createdByUser} created a new ticket #{ticket.id} - {ticket.title}."
+                  "{ticket.assignedByAdmin ? ticket.assignedByAdmin : ticket.assignedByAdmin} updated ticket #{ticket.id} - {ticket.title} to In-progress."
                 </p>
-                <div className='flex justify-center border'>
-                    <button style = {{color:"#344054"}} className="bg-white w-full hover:bg-gray-100 no_text font-semibold py-2 rounded"
-                    onClick={handleAssignTicketOpenModal}
-                    >
-                        Assign
-                    </button>
-                </div>
             </>
           ) :
 
@@ -71,19 +84,36 @@ const TicketCard = ({ticket, button}) => {
                   "{ticket.resolvedByAdmin ? ticket.resolvedByAdmin : ticket.resolvedByUser} resolved ticket #{ticket.id} - {ticket.title}."
                 </p>
                 <div className='flex justify-center border'>
-                    <button style = {{color:"#344054"}} className="bg-white w-full hover:bg-gray-100 no_text font-semibold py-2 rounded"
-                    onClick={handleAssignTicketOpenModal}
-                    >
+                    <div style = {{color:"#344054"}} className="bg-white w-full text-center hover:bg-gray-100 no_text font-semibold py-2 rounded">
                         Completed
-                    </button>
+                    </div>
                 </div>
             </>
           )
         
       }
+      </div>
 
      {isAssignTicketModalOpen && (
-          <AssignTicket onAssignTicketClose={handleAssignTicketCloseModal} ticketId={ticket.id} />
+          <AssignTicket
+          ticket={ticket}
+          fetchTickets={fetchTickets}
+          setActivities={setActivities}
+          setHasMore={setHasMore}
+          page={page}
+          fetchLatestThreeOpenTickets={fetchLatestThreeOpenTickets}
+          fetchLatestThreeInprogressTickets={fetchLatestThreeInprogressTickets}
+          fetchLatestThreeResolvedTickets={fetchLatestThreeResolvedTickets}
+          setTickets={setTickets}
+          setIsTicketCardLoading={setIsTicketCardLoading}
+          setTicketsError={setTicketsError}
+          fetchTicketCount={fetchTicketCount}
+          setTicketTotalCount={setTicketTotalCount}
+          setOpenTicketCount={setOpenTicketCount}
+          setResolvedTicketCount={setResolvedTicketCount}
+          setOngoingTicketCount={setOngoingTicketCount}
+          onAssignTicketClose={handleAssignTicketCloseModal} 
+          ticketId={ticket.id} />
         )}
     </div>
   );
