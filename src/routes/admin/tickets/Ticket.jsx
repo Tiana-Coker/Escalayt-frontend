@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import CreateCategory from "../../../components/modals/createCategory/CreateTicketCategory";
 import CreateDepartment from "../../../components/modals/createDepartment/CreateDepartment";
-import { formatDate } from "../../../utils/formatDate";
+import { formatDate, newFormatDate } from "../../../utils/formatDate";
 import { useFetchAdmin } from "../dashboard/useFetchAdmin";
 
 import styles from  "./ticket.module.css";
@@ -133,7 +133,7 @@ export default function Ticket() {
         ...ticket,
         ticketNumber: ticket.id,
         assignee: ticket.assigneeFullName || "Unassigned",
-        dateCreated: formatDate(ticket.createdAt),
+        dateCreated: newFormatDate(ticket.createdAt),
       }));
       // setTickets(response.data.content);
       setTickets(formattedTickets);
@@ -145,7 +145,7 @@ export default function Ticket() {
 
   const sortTickets = (tickets) => {
     const priorityOrder = ["HIGH", "MEDIUM", "LOW"];
-    const statusOrder = ["OPEN", "IN_PROGRESS", "RESOLVE"];
+    const statusOrder = ["OPEN", "IN_PROGRESS", "RESOLVED"];
 
     // Create a new array from tickets before sorting
     return [...tickets].sort((a, b) => {
@@ -193,7 +193,8 @@ export default function Ticket() {
 
   return (
     <>
-      {/* Navbar */}
+      <div className="w-11/12 mx-auto">
+        {/* Navbar */}
       <Navbar
           onOpen={openModalHandler}
           onClose={closeModalHandler}
@@ -201,7 +202,7 @@ export default function Ticket() {
           profileDropdown={profileDropdown}
         />
 
-      <div className="flex flex-wrap w-11/12 mx-auto  mt-8">
+      <div className="flex flex-wrap mt-8">
         <div className="pl-4 bg-[#F2F2F280] w-2/12 pt-4">
              {/* Render filter UI here */}
               <div className="font-medium text-[18px] mb-4">Filters</div>
@@ -273,7 +274,7 @@ export default function Ticket() {
                   <input
                     type="checkbox"
                     name="status"
-                    value="RESOLVE"
+                    value="RESOLVED"
                     onChange={handleFilterChange}
                   />
                   Resolved
@@ -346,10 +347,10 @@ export default function Ticket() {
               </div>
         </div>
 
-        <div className="pl-8">
+        <div className="pl-8 w-10/12">
                   <div className="h-[24px] flex items-center mb-8 ">
                     <span className="text-[20px] font-medium leading-[24px] text-left">
-                      Tickets
+                      Tickets ({sortedTickets.length})
                     </span>
                   </div>
                   <div className=" flex gap-[22px] mb-8 ">
@@ -421,6 +422,7 @@ export default function Ticket() {
             </div>
           </div>
         )}
+      </div>
       </div>
     </>
   );

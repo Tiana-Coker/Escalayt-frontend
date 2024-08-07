@@ -35,10 +35,28 @@ const INTIAL_USER_OBJ = {
 // we will pass assignId as props
 // and also we will pass
 // ticket id ass props
-const AssignTicket = ({ticketId, onAssignTicketClose}) => {
+const AssignTicket = ({
+  ticket, 
+  fetchTickets, 
+  setActivities, 
+  setHasMore, 
+  page,
+  fetchLatestThreeOpenTickets, 
+  fetchLatestThreeInprogressTickets, 
+  fetchLatestThreeResolvedTickets, 
+  setTickets, 
+  setIsTicketCardLoading, 
+  setTicketsError,
+  fetchTicketCount, 
+  setTicketTotalCount, 
+  setOpenTicketCount, 
+  setResolvedTicketCount, 
+  setOngoingTicketCount,
+  ticketId, onAssignTicketClose}) => {
+   
   const { data, isLoading, isError } = useFetchEmployList(
     URLS.EMPLOYEES,
-    option
+    option,
   );
 
   const [option1, setOption1] = useState({
@@ -55,7 +73,7 @@ const AssignTicket = ({ticketId, onAssignTicketClose}) => {
 
   option1.body == null
 
-  const { data1, isLoading1, isError1 } = useFetchAssign(
+  const { data1, isLoading1, isError1, done } = useFetchAssign(
     url,
     option1.body == null ? null : option1
   );
@@ -66,6 +84,44 @@ const AssignTicket = ({ticketId, onAssignTicketClose}) => {
 
   //filter employee name
   const [filterName, setFilterName] = useState("");
+
+  useEffect(()=>{
+    console.log("we etching data", done);
+    if(done){
+      console.log("we actually etching data", done);
+      const fetchDatas = async () => {
+        await fetchTicketCount(
+          token,
+          setTicketTotalCount,
+          setOpenTicketCount,
+          setResolvedTicketCount,
+          setOngoingTicketCount
+        )
+        
+        await fetchLatestThreeInprogressTickets(
+          token,
+          setTickets,
+          setIsTicketCardLoading,
+          setTicketsError
+        );
+        await fetchLatestThreeResolvedTickets(
+          token,
+          setTickets,
+          setIsTicketCardLoading,
+          setTicketsError
+        );
+        await fetchLatestThreeOpenTickets(
+          token,
+          setTickets,
+          setIsTicketCardLoading,
+          setTicketsError,
+        );
+        await fetchTickets(token, setActivities, setHasMore, page);
+      
+      }
+      fetchDatas();
+    }
+  }, [[data1, isLoading1, isError1]])
 
   useEffect(() => {
     // const something = data ? data : "something wrong";

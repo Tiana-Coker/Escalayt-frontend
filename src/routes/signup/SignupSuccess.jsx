@@ -48,7 +48,7 @@ function SignupSuccess({ onClose }) {
             onClick={onClose} // Ensure this function closes the modal
             className="bg-custom-blue text-white text-[20px] font-semibold leading-[24px] py-2 px-4 w-full h-full border border-custom-blue"
           >
-            Login
+            Check Email
           </button>
         </div>
       </div>

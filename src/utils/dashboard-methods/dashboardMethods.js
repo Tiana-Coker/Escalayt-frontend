@@ -2,7 +2,7 @@ import axios from "axios";
 
 const apiUrl = import.meta.env.VITE_APP_API_URL + '/api/v1/ticket';
 
-import { formatDate } from "../formatDate";
+import { formatDate, newFormatDate } from "../formatDate";
 
 export const fetchTickets = async (token, setActivities, setHasMore, page) => {
   try {
@@ -22,7 +22,7 @@ export const fetchTickets = async (token, setActivities, setHasMore, page) => {
       ...ticket,
       ticketNumber: ticket.id,
       assignee: ticket.assigneeFullName || "Unassigned",
-      dateCreated: formatDate(ticket.createdAt),
+      dateCreated: newFormatDate(ticket.createdAt),
     }));
 
     // console.log("Fetched tickets:", formattedTickets);
@@ -62,7 +62,7 @@ export const fetchFilteredTickets = async (token, page, setTickets, setTotalPage
       ...ticket,
       ticketNumber: ticket.id,
       assignee: ticket.assigneeFullName || "Unassigned",
-      dateCreated: formatDate(ticket.createdAt),
+      dateCreated: newFormatDate(ticket.createdAt),
     }));
     // setTickets(response.data.content);
     setTickets(formattedTickets);
@@ -102,7 +102,7 @@ export const fetchLatestThreeResolvedTickets = async (token, setTickets, setLoad
     });
 
     setTickets(response.data);
-    console.log(response);
+    console.log("resolved ",response);
   } catch (error) {
     console.error('Error fetching latest three open tickets:', error);
     setError(error);
@@ -122,7 +122,8 @@ export const fetchLatestThreeInprogressTickets = async (token, setTickets, setLo
     });
 
     setTickets(response.data);
-    console.log(response);
+    console.log("in progress ",response);
+
   } catch (error) {
     console.error('Error fetching latest three open tickets:', error);
     setError(error);
@@ -156,7 +157,7 @@ export const fetchTicketCount = async (token, setTicketTotalCount, setOpenTicket
  // Sorting function
 export const sortTickets = (sort, tickets) => {
   const priorityOrder = ["HIGH", "MEDIUM", "LOW"];
-  const statusOrder = ["OPEN", "IN_PROGRESS", "RESOLVE"];
+  const statusOrder = ["OPEN", "IN_PROGRESS", "RESOLVED"];
 
   return [...tickets].sort((a, b) => {
     if (sort === "priority") {

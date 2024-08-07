@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import CreateCategory from "../../../components/modals/createCategory/CreateTicketCategory";
-import CreateDepartment from "../../../components/modals/createDepartment/CreateDepartment";
+
+import styles from "../../admin/tickets/ticket.module.css";
 
 
 import "./ticket.css";
@@ -87,7 +87,7 @@ export default function Ticket() {
 
   const sortTickets = (tickets) => {
     const priorityOrder = ['HIGH', 'MEDIUM', 'LOW'];
-    const statusOrder = ['OPEN', 'IN_PROGRESS', 'RESOLVE'];
+    const statusOrder = ['OPEN', 'IN_PROGRESS', 'RESOLVED'];
     
       
   // Create a new array from tickets before sorting
@@ -137,147 +137,218 @@ export default function Ticket() {
     {/* Navbar */}
     {/* <Navbar setProfileDropdown={setProfileDropdown} profileDropdown={profileDropdown}/> */}
 
-        <UserNavbar 
-              onOpen={openModalHandler}
-              setProfileDropdown={setProfileDropdown}
-              profileDropdown={profileDropdown}
+       <div className='w-11/12 mx-auto'>
+          <UserNavbar 
+                  onOpen={openModalHandler}
+                  setProfileDropdown={setProfileDropdown}
+                  profileDropdown={profileDropdown}
+                />
+
+            <UserNotification 
+              isOpen={openModal === "notification"}
+              onClose={closeModalHandler}
             />
 
-        <UserNotification 
-          isOpen={openModal === "notification"}
-          onClose={closeModalHandler}
-        />
+          <div className="flex flex-wrap mt-8">
+              <div className="pl-4 bg-[#F2F2F280] w-2/12 pt-4">
+                      {/* Render filter UI here */}
+                        <div className="font-medium text-[18px] mb-4">Filters</div>
+                        {/* Sort By */}
+                        <div className={`${styles.filter_component}`}>
+                          <div>Sort By</div>
+                          <select value={sort} onChange={handleSortChange}>
+                            <option value="priority">Priority</option>
+                            <option value="status">Status</option>
+                            <option value="assigneeId">Assignee</option>
+                            <option value="categoryId">Category</option>
+                          </select>
+                        </div>
 
-    <div className="flex flex-wrap">
-          <div className="filters">
-            <h3>Filters</h3>
-            {/* Render filter UI here */}
-            <div>
-              <h4>Priority</h4>
-              <label>
-                <input type="checkbox" name="priority" value="HIGH" onChange={handleFilterChange} />
-                High
-              </label>
-              <label>
-                <input type="checkbox" name="priority" value="MEDIUM" onChange={handleFilterChange} />
-                Medium
-              </label>
-              <label>
-                <input type="checkbox" name="priority" value="LOW" onChange={handleFilterChange} />
-                Low
-              </label>
-            </div>
-            <div>
-              <h4>Status</h4>
-              <label>
-                <input type="checkbox" name="status" value="OPEN" onChange={handleFilterChange} />
-                Open
-              </label>
-              <label>
-                <input type="checkbox" name="status" value="IN_PROGRESS" onChange={handleFilterChange} />
-                In Progress
-              </label>
-              <label>
-                <input type="checkbox" name="status" value="RESOLVE" onChange={handleFilterChange} />
-                Resolved
-              </label>
-            </div>
-            <div>
-              <h4>Assignee</h4>
-              {/* Replace with dynamic assignees */}
-              <label>
-                <input type="checkbox" name="assigneeId" value="1" onChange={handleFilterChange} />
-                Abdul Ahmed
-              </label>
-              <label>
-                <input type="checkbox" name="assigneeId" value="2" onChange={handleFilterChange} />
-                Tayo Ade
-              </label>
-              <label>
-                <input type="checkbox" name="assigneeId" value="3" onChange={handleFilterChange} />
-                Chizzy Jack
-              </label>
-            </div>
-            <div>
-              <h4>Category</h4>
-              <label>
-                <input type="checkbox" name="categoryId" value="1" onChange={handleFilterChange} />
-                Plumbing
-              </label>
-              <label>
-                <input type="checkbox" name="categoryId" value="2" onChange={handleFilterChange} />
-                Electrical
-              </label>
-              <label>
-                <input type="checkbox" name="categoryId" value="3" onChange={handleFilterChange} />
-                HVAC
-              </label>
-            </div>
-            <div>
-              <h4>Sort By</h4>
-              <select value={sort} onChange={handleSortChange}>
-                <option value="priority">Priority</option>
-                <option value="status">Status</option>
-                <option value="assigneeId">Assignee</option>
-                <option value="categoryId">Category</option>
-              </select>
-            </div>
-          </div>
+                        {/* Priority */}
+                        <div className={`${styles.filter_component}`}>
+                          <div className={`${styles.filter_component_title}`}>Priority</div>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="priority"
+                              value="HIGH"
+                              onChange={handleFilterChange}
+                            />
+                            High
+                          </label>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="priority"
+                              value="MEDIUM"
+                              onChange={handleFilterChange}
+                            />
+                            Medium
+                          </label>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="priority"
+                              value="LOW"
+                              onChange={handleFilterChange}
+                            />
+                            Low
+                          </label>
+                        </div>
 
-          <div className="w-[1000px] h-[800px] flex flex-col gap-[32px]">
-                  <div className="h-[24px] flex items-center">
-                    <span className="text-[20px] font-medium leading-[24px] text-left">
-                      Tickets
-                    </span>
-                  </div>
-                  <div className=" flex gap-[22px]">
-                  <button onClick={() => openModalHandler('createTicket')} className="bg-blue-500 text-white px-4 py-2 rounded">
-                        Create Ticket
-                  </button>
-                    
-                  </div>
-    
-                  <div className="h-[auto] ">
-                  <TicketTable activities={sortedTickets} setActivities = {setTickets} setPage = {setPage} page={page}/>
-             
+                        {/* Status */}
+                        <div className={`${styles.filter_component}`}>
+                          <div className={`${styles.filter_component_title}`}>Status</div>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="status"
+                              value="OPEN"
+                              onChange={handleFilterChange}
+                            />
+                            Open
+                          </label>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="status"
+                              value="IN_PROGRESS"
+                              onChange={handleFilterChange}
+                            />
+                            In Progress
+                          </label>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="status"
+                              value="RESOLVED"
+                              onChange={handleFilterChange}
+                            />
+                            Resolved
+                          </label>
+                        </div>
+
+                        {/* Assignee */}
+                        <div className={`${styles.filter_component}`}>
+                          <div className={`${styles.filter_component_title}`}>Assignee</div>
+                          {/* Replace with dynamic assignees */}
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="assigneeId"
+                              value="1"
+                              onChange={handleFilterChange}
+                            />
+                            Abdul Ahmed
+                          </label>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="assigneeId"
+                              value="2"
+                              onChange={handleFilterChange}
+                            />
+                            Tayo Ade
+                          </label>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="assigneeId"
+                              value="3"
+                              onChange={handleFilterChange}
+                            />
+                            Chizzy Jack
+                          </label>
+                        </div>
+
+                        {/* Category */}
+                        <div className={`${styles.filter_component}`}>
+                          <div className={`${styles.filter_component_title}`}>Category</div>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="categoryId"
+                              value="1"
+                              onChange={handleFilterChange}
+                            />
+                            Plumbing
+                          </label>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="categoryId"
+                              value="2"
+                              onChange={handleFilterChange}
+                            />
+                            Electrical
+                          </label>
+                          <label>
+                            <input
+                              type="checkbox"
+                              name="categoryId"
+                              value="3"
+                              onChange={handleFilterChange}
+                            />
+                            HVAC
+                          </label>
+                        </div>
+              </div>
+
+                <div className="pl-8 w-10/12">
+                        <div className="h-[24px] flex items-center mb-6">
+                          <span className="text-[20px] font-medium leading-[24px] text-left">
+                            Tickets ({sortedTickets.length})
+                          </span>
+                        </div>
+                        <div className=" flex gap-[22px] mb-6">
+                        <button onClick={() => openModalHandler('createTicket')} className="bg-blue-500 text-white px-4 py-2 rounded">
+                              Create Ticket
+                        </button>
+                          
+                        </div>
+          
+                        <div className="h-[auto] ">
+                        <TicketTable activities={sortedTickets} setActivities = {setTickets} setPage = {setPage} page={page}/>
                   
+                        
+                        </div>
+                </div>
+
+              {/* Modals */}
+
+              <CreateTicket
+                isOpen={openModal === 'createTicket'}
+                onClose={closeModalHandler}
+                // closeOnOutsideClick={true}
+              />
+
+
+              <CreateTicket
+                isOpen={openModal === "createTicket"}
+                onClose={closeModalHandler}
+                // Fetch filtered ticket values
+                  fetchFilteredTickets={fetchFilteredTickets}
+                  token={token}
+                  page={page}
+                  setTickets={setTickets}
+                  setTotalPages={setTotalPages}
+                  filters={filters}
+              />
+
+                {/* Profile Dropdown */}
+            {
+              profileDropdown && 
+              <div className='position-absolute sm_text bg-white border w-40'>
+                  <div className='mb-4'>
+                    <div>Notification</div>
                   </div>
+                  <div className='mb-4' style={{color:"#1F2937"}}>Profile</div>
+                  <div className='mb-4' style={{color:"#1F2937"}} >Logout</div>
+              </div>
+            }
           </div>
-
-        {/* Modals */}
-
-        <CreateTicket
-          isOpen={openModal === 'createTicket'}
-          onClose={closeModalHandler}
-          // closeOnOutsideClick={true}
-        />
-
-
-        <CreateTicket
-          isOpen={openModal === "createTicket"}
-          onClose={closeModalHandler}
-          // Fetch filtered ticket values
-            fetchFilteredTickets={fetchFilteredTickets}
-            token={token}
-            page={page}
-            setTickets={setTickets}
-            setTotalPages={setTotalPages}
-            filters={filters}
-        />
-
-          {/* Profile Dropdown */}
-       {
-        profileDropdown && 
-         <div className='position-absolute sm_text bg-white border w-40'>
-            <div className='mb-4'>
-              <div>Notification</div>
-            </div>
-            <div className='mb-4' style={{color:"#1F2937"}}>Profile</div>
-            <div className='mb-4' style={{color:"#1F2937"}} >Logout</div>
-         </div>
-      }
-    </div>
     
+       </div>
     </>
   );
 }

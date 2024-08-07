@@ -91,14 +91,15 @@ const TicketTable = ({ activities, setPage, page }) => {
   const handleResolveMultiple = async () => {
     const token = localStorage.getItem('token');
     const ticketIds = activities.filter(ticket => ticket.checked).map(ticket => ticket.id);
+    console.log('Ticket IDs to resolve:', selectedTickets);
 
-    if (ticketIds.length === 0) {
+    if (selectedTickets.length === 0) {
       toast.error('No tickets selected for resolving');
       return;
     }
 
     try {
-      const response = await axios.post(`${apiUrl}/api/v1/ticket/resolve`, ticketIds, {
+      const response = await axios.post(`${apiUrl}/api/v1/ticket/resolve`, selectedTickets, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -142,7 +143,9 @@ const TicketTable = ({ activities, setPage, page }) => {
 
   return (
     <div className={styles.ticketTableContainer}>
-      <table className={`${styles.ticketTable} min-w-full bg-white border border-gray-200`}>
+      {
+        activities.length > 0 ?
+        <table className={`${styles.ticketTable} min-w-full bg-white border border-gray-200`}>
         <thead className='tn_text'>
           <tr className="bg_s_color">
             <th><img src={thcell} alt="Checkbox" /></th>
@@ -216,7 +219,7 @@ const TicketTable = ({ activities, setPage, page }) => {
                       <div className='mb-1 hover:bg-gray-100 p-3  pl-4' style={{ color: 'gray', cursor: 'not-allowed' }}>View</div>
                     )}
                     {selectedTickets.length > 1 ? (
-                      <div className='mb-1 hover:bg-gray-100 p-3  pl-4' style={{ cursor: 'pointer' }} onClick={handleResolveAll}>Resolve All</div>
+                      <div className='mb-1 hover:bg-gray-100 p-3  pl-4' style={{ cursor: 'pointer' }} onClick={handleResolveMultiple}>Resolve All</div>
                     ) : (
                       <div className='mb-1 hover:bg-gray-100 p-3  pl-4' style={{ cursor: 'pointer' }} onClick={() => handleResolve(ticket.id)}>Resolve</div>
                     )}
@@ -231,7 +234,8 @@ const TicketTable = ({ activities, setPage, page }) => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> : <div className='text-center'>No tickets found</div>
+      }
       {/* 
       <div className={styles.pagination}>
         <button onClick={handlePreviousPage} disabled={page === 0}>
