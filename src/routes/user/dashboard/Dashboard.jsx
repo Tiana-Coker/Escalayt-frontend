@@ -26,6 +26,11 @@ import axios from "axios";
 import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
 import { useFetchUser } from "./useFetchUser";
 import UserNotification from "../../../components/modals/notification/UserNotification";
+import ProfileModal from "../../../components/modals/profile/user/ProfileModal";
+
+
+
+
 
  // import url from .env file
  const apiUrl = import.meta.env.VITE_APP_API_URL;
@@ -36,6 +41,8 @@ import UserNotification from "../../../components/modals/notification/UserNotifi
 export default function Dashboard() {
   const token = localStorage.getItem("token");
 
+  // samuel modal for notification
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
     // second parameter for setting header
   const option = {
@@ -174,9 +181,21 @@ export default function Dashboard() {
     // toast(<Message notification={payload.notification} />);
   });
 
+
+
   return (
     <div className="pt-5 pb-32 w-11/12 mx-auto">
       {/* Navbar */}
+
+      {/* {isModalOpen1 && <ProfileModal onClose={handleOpenModal1} />} */}
+
+      <ProfileModal 
+          onOpen={openModalHandler}
+          onClose={closeModalHandler}
+
+          />
+
+      {/* Sort and Add user row */}
       <UserNavbar 
             onOpen={openModalHandler}
             setProfileDropdown={setProfileDropdown}

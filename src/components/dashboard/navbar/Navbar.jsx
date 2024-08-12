@@ -11,6 +11,7 @@ const Navbar = ({ onOpen, setProfileDropdown, profileDropdown, user}) => {
 
   const handleProfileDropdown = () => {
     setProfileDropdown(prev => !prev);
+    
   }
 
   const handleLogout = () => {

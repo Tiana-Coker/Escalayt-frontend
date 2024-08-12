@@ -31,6 +31,12 @@ import styles from "./Dashboard.module.css";
 import axios from "axios";
 import TicketTable from "../../../components/dashboard/ticketTable/TicketTable";
 import { useFetchAdmin } from "./useFetchAdmin";
+import AdminProfileEdit from "../../../components/modals/profile/admin/AdminProfileEdit";
+import ProfileForAdminEdit from "../../../components/modals/profile/admin/ProfileForAdminEdit";
+
+//import ProfileModal from "../../../components/modals/profile/admin/AdminProfileEdit";
+
+//http://localhost:8080/api/v1/admin/get-admin-details
 import { BeatLoader, BounceLoader } from "react-spinners";
 
 
@@ -39,7 +45,6 @@ const apiUrl = import.meta.env.VITE_APP_API_URL;
 const adminUrl = `${apiUrl}/api/v1/admin/get-admin-details`;
 
 export default function Dashboard() {
-
   // Token from local storage
   const token = localStorage.getItem("token");
 
@@ -70,6 +75,9 @@ export default function Dashboard() {
 
   // General loading state
   const [loading, setLoading] = useState(true);
+
+  // edit user or admin
+  const [isEditAdmin, setIsEditAdmin] = useState(false);
 
   const [currentAdmin, setCurrentAdmin] = useState({
     adminId: 1,
@@ -183,8 +191,8 @@ export default function Dashboard() {
       setCurrentAdmin({ adminDetails });
       console.log(adminDetails.username, adminDetails.adminId);
     }
-    console.log("Admin Data",data);
-   
+    console.log("Admin Data", data);
+
     // Ensure adminId is defined before calling requestPermission
     if (adminDetails.adminId) {
       requestPermission(adminDetails.adminId);
@@ -279,11 +287,22 @@ export default function Dashboard() {
     );
   }
 
+
+
+  const handleIsEditAdminTrue = () => {
+    setIsEditAdmin(true);
+  };
+
+  const handleIsEditAdminFalse = () => {
+    setIsEditAdmin(false);
+  };
+
   onMessage(messaging, (payload) => {
     console.log("incoming msg");
     alert("Ticket created")
     // toast(<Message notification={payload.notification} />);
   });
+
   return (
     <>
       <div className="pt-5 pb-32 w-11/12 mx-auto">
@@ -301,6 +320,24 @@ export default function Dashboard() {
 
 
 
+
+        {/* {isModalOpen1 && !isEditAdmin && (
+          <AdminProfileEdit onClose={handleOpenModal1} />
+        )}
+
+    
+
+        {isModalOpen1 && isEditAdmin && (
+          <ProfileForAdminEdit onClose={handleOpenModal1} />
+        )}
+
+        {profileDropdown && (
+          <DropDown
+            handleOpenModal1={handleOpenModal1}
+            isEditAdminTrue={handleIsEditAdminTrue}
+            isEditAdminFalse={handleIsEditAdminFalse}
+          />
+        )} */}
 
         {/* Sort and Add user row */}
         <div className="flex flex-wrap mt-10 mb-10 justify-end">
@@ -463,6 +500,17 @@ export default function Dashboard() {
           // closeOnOutsideClick={true}
         />
 
+        {/* Profile Dropdown 
+       {
+        profileDropdown && 
+         <div className='position-absolute sm_text bg-white border w-40'>
+            <div className='mb-4'>
+              <div>Notification</div>
+            </div>
+            <div className='mb-4' style={{color:"#1F2937"}}>Profile</div>
+            <div className='mb-4' style={{color:"#1F2937"}} >Logout</div>
+         </div>
+      }*/}
         <Notification 
             adminId={data && data.id}
             isOpen={openModal === "notification"}
@@ -477,3 +525,42 @@ export default function Dashboard() {
     </>
   );
 }
+
+const DropDown = ({ handleOpenModal1, isEditAdminFalse, isEditAdminTrue }) => {
+  const handleDisplayEdit = () => {
+    handleOpenModal1();
+    isEditAdminTrue();
+  };
+
+  const handleDisplayEditFalse = () => {
+    handleOpenModal1();
+    isEditAdminFalse();
+  };
+
+  return (
+    <>
+      <div
+        className="py-1 w-[150px] fixed right-40 bg-white border"
+        role="menu"
+        aria-orientation="vertical"
+        aria-labelledby="dropdownButton"
+      >
+        <button
+          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          role="menuitem"
+          onClick={() => handleDisplayEdit()}
+        >
+          Edit Profile
+        </button>
+        <div className="border-t border-gray-200"></div>
+        <button
+          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          role="menuitem"
+          onClick={() => handleDisplayEditFalse()}
+        >
+          Edit Employee Profile
+        </button>
+      </div>
+    </>
+  );
+};
