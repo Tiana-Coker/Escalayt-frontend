@@ -225,7 +225,7 @@ export default function Dashboard() {
         dateCreated: newFormatDate(ticket.createdAt),
       }));
 
-      console.log("Fetched tickets:", formattedTickets);
+      // console.log("Fetched tickets:", formattedTickets);
       setActivities(formattedTickets);
 
       setHasMore(fetchTickets.length > 0);
@@ -471,6 +471,25 @@ export default function Dashboard() {
           setActivities={setActivities}
           setPage={setPage}
           page={page}
+
+          // Fetch Tickets
+          fetchTickets={fetchTickets}
+          setHasMore={setHasMore}
+
+          // Fetch Latest Three Open/Inprogress/Resolved Tickets
+          fetchLatestThreeOpenTickets={fetchLatestThreeOpenTickets}
+          fetchLatestThreeInprogressTickets={fetchLatestThreeInprogressTickets}
+          fetchLatestThreeResolvedTickets={fetchLatestThreeResolvedTickets}
+          setTickets={setTickets}
+          setIsTicketCardLoading={setIsTicketCardLoading}
+          setTicketsError={setTicketsError}
+
+          // Fetch Ticket Count
+          fetchTicketCount={fetchTicketCount}
+          setTicketTotalCount={setTicketTotalCount}
+          setOpenTicketCount={setOpenTicketCount}
+          setResolvedTicketCount={setResolvedTicketCount}
+          setOngoingTicketCount={setOngoingTicketCount}
         />
 
         {/* Modals */}

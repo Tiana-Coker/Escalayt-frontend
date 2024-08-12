@@ -16,10 +16,58 @@ import IMAGES from "../../../assets/index";
  // import url from .env file
  const apiUrl = import.meta.env.VITE_APP_API_URL;
 
-const TicketTable = ({ activities, setPage, page }) => {
+const TicketTable = ({ activities, setPage, page ,
 
-  // Token from local storage
-  // const token = localStorage.getItem("token");
+  fetchTickets,
+  setActivities, 
+  setHasMore, 
+  fetchLatestThreeOpenTickets, 
+  fetchLatestThreeInprogressTickets, 
+  fetchLatestThreeResolvedTickets, 
+  setTickets, 
+  setIsTicketCardLoading, 
+  setTicketsError,
+  fetchTicketCount, 
+  setTicketTotalCount, 
+  setOpenTicketCount, 
+  setResolvedTicketCount, 
+  setOngoingTicketCount
+}) => {
+
+ // Token from local storage
+  const token = localStorage.getItem("token");
+  const fetchDatas = async () => {
+    await fetchTicketCount(
+      token,
+      setTicketTotalCount,
+      setOpenTicketCount,
+      setResolvedTicketCount,
+      setOngoingTicketCount
+    )
+    
+    await fetchLatestThreeInprogressTickets(
+      token,
+      setTickets,
+      setIsTicketCardLoading,
+      setTicketsError
+    );
+    await fetchLatestThreeResolvedTickets(
+      token,
+      setTickets,
+      setIsTicketCardLoading,
+      setTicketsError
+    );
+    await fetchLatestThreeOpenTickets(
+      token,
+      setTickets,
+      setIsTicketCardLoading,
+      setTicketsError,
+    );
+    await fetchTickets(token, setActivities, setHasMore, page);
+  
+  }
+
+ 
 
   // State to track which dropdown is open
   const [openDropdownId, setOpenDropdownId] = useState(null);
@@ -35,7 +83,7 @@ const TicketTable = ({ activities, setPage, page }) => {
         return [...prevSelected, id];
       }
     });
-    console.log(selectedTickets);
+    // console.log(selectedTickets);
   };
 
 
@@ -56,6 +104,26 @@ const TicketTable = ({ activities, setPage, page }) => {
     setOpenDropdownId(openDropdownId === id ? null : id);
   };
 
+  const handleDelete = async (ticketId) => {
+    const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
+
+    try {
+      const response = await axios.delete(`${apiUrl}/api/v1/ticket/category/ticket/${ticketId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // console.log('Ticket deleted successfully:', response.data);
+      // alert(response.data.responseMessage); // Notify the user about the deletion
+      toast.success('Ticket deleted successfully');
+      fetchDatas();
+    } catch (error) {
+      console.error('Error deleting ticket:', error.response ? error.response.data : error.message);
+      // alert('Error deleting ticket');
+      toast.error('Error deleting ticket');
+    }
+  }
+
   const handleResolve = async (ticketId) => {
     const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
   
@@ -68,7 +136,7 @@ const TicketTable = ({ activities, setPage, page }) => {
   
       console.log('Ticket resolved successfully:', response.data);
       toast.success('Ticket resolved successfully');
-      // Handle the success scenario, e.g., updating the UI or notifying the user
+      fetchDatas();
     } catch (error) {
       console.error('Error resolving ticket:', error.response ? error.response.data : error.message);
       toast.error('Error resolving ticket');
@@ -76,22 +144,8 @@ const TicketTable = ({ activities, setPage, page }) => {
     }
   };
 
-  // const handleDelete = async (ticketId) => {}
-
-  const handleResolveAll = (id) => {
-    console.log("Resolve ticket", id);
-    
-    // Your logic for resolving the ticket
-  };
-
-  const handleDeleteAll = (id) => { }
-
-
-
   const handleResolveMultiple = async () => {
     const token = localStorage.getItem('token');
-    const ticketIds = activities.filter(ticket => ticket.checked).map(ticket => ticket.id);
-    console.log('Ticket IDs to resolve:', selectedTickets);
 
     if (selectedTickets.length === 0) {
       toast.error('No tickets selected for resolving');
@@ -107,6 +161,7 @@ const TicketTable = ({ activities, setPage, page }) => {
 
       console.log('Tickets resolved successfully:', response.data);
       toast.success('Tickets resolved successfully');
+      fetchDatas();
       // Optionally update UI here
     } catch (error) {
       console.error('Error resolving tickets:', error.response ? error.response.data : error.message);
@@ -116,16 +171,12 @@ const TicketTable = ({ activities, setPage, page }) => {
 
   const handleDeleteMultiple = async () => {
     const token = localStorage.getItem('token');
-    const ticketIds = activities.filter(ticket => ticket.checked).map(ticket => ticket.id);
 
-    if (ticketIds.length === 0) {
-      toast.error('No tickets selected for deletion');
-      return;
-    }
+    console.log(selectedTickets);
 
     try {
       const response = await axios.delete(`${apiUrl}/api/v1/ticket/delete`, {
-        data: ticketIds,
+        data: selectedTickets,
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -133,7 +184,8 @@ const TicketTable = ({ activities, setPage, page }) => {
 
       console.log('Tickets deleted successfully:', response.data);
       toast.success('Tickets deleted successfully');
-      setActivities(activities.filter(ticket => !ticket.checked));
+      fetchDatas();
+     
     } catch (error) {
       console.error('Error deleting tickets:', error.response ? error.response.data : error.message);
       toast.error('Error deleting tickets');
@@ -224,7 +276,7 @@ const TicketTable = ({ activities, setPage, page }) => {
                       <div className='mb-1 hover:bg-gray-100 p-3  pl-4' style={{ cursor: 'pointer' }} onClick={() => handleResolve(ticket.id)}>Resolve</div>
                     )}
                     {selectedTickets.length > 1 ? (
-                      <div className='mb-1 hover:bg-gray-100 p-3  pl-4' style={{ cursor: 'pointer' }} onClick={handleDeleteAll}>Delete All</div>
+                      <div className='mb-1 hover:bg-gray-100 p-3  pl-4' style={{ cursor: 'pointer' }} onClick={handleDeleteMultiple}>Delete All</div>
                     ) : (
                       <div className='mb-1 hover:bg-gray-100 p-3  pl-4' style={{ cursor: 'pointer' }} onClick={() => handleDelete(ticket.id)}>Delete</div>
                     )}

@@ -75,25 +75,32 @@ export const fetchFilteredTickets = async (token, page, setTickets, setTotalPage
 export const fetchLatestThreeOpenTickets = async (token, setTickets, setLoading, setError,) => {
   setLoading(true);
   try {
+    const delay = 200; // Adjust delay in milliseconds (2 seconds here)
+    await new Promise((resolve) => setTimeout(resolve, delay));
     const response = await axios.get(`${apiUrl}/admin/open-tickets`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
-
+  
     setTickets(response.data);
+    console.log(response.data);
   } catch (error) {
     console.error('Error fetching latest three open tickets:', error);
+    console.log("error",error);
     setError(error);
   } finally {
     setLoading(false);
+    
   }
 };
 
 export const fetchLatestThreeResolvedTickets = async (token, setTickets, setLoading, setError) => {
   setLoading(true);
   try {
+    const delay = 700; // Adjust delay in milliseconds (2 seconds here)
+    await new Promise((resolve) => setTimeout(resolve, delay));
     const response = await axios.get(`${apiUrl}/admin/resolved-tickets`, {
       headers: {
         'Content-Type': 'application/json',
@@ -114,6 +121,8 @@ export const fetchLatestThreeResolvedTickets = async (token, setTickets, setLoad
 export const fetchLatestThreeInprogressTickets = async (token, setTickets, setLoading, setError) => {
   setLoading(true);
   try {
+    const delay = 700; // Adjust delay in milliseconds (2 seconds here)
+    await new Promise((resolve) => setTimeout(resolve, delay));
     const response = await axios.get(`${apiUrl}/admin/inprogres-tickets`, {
       headers: {
         'Content-Type': 'application/json',
@@ -134,6 +143,7 @@ export const fetchLatestThreeInprogressTickets = async (token, setTickets, setLo
 
 export const fetchTicketCount = async (token, setTicketTotalCount, setOpenTicketCount, setResolvedTicketCount, setOngoingTicketCount) => {
   try {
+
     const response = await axios.get(`${apiUrl}/count`, {
       headers: {
         'Content-Type': 'application/json',

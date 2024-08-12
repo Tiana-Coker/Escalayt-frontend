@@ -29,6 +29,8 @@ export default function CreateTicket({
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [categoryOptions, setCategoryOptions] = useState([]);
 
+  const [isTicketCardLoading, setIsTicketCardLoading] = useState(false); // Loader for ticket card
+
   // import url from .env file
   const apiUrl = import.meta.env.VITE_APP_API_URL;
 
@@ -75,13 +77,7 @@ export default function CreateTicket({
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission behavior
-
-    // const requestBody = {
-    //   title,
-    //   location,
-    //   priority,
-    //   description,
-    // };
+    setIsTicketCardLoading(true);
 
     const formData = new FormData(); // Create a new FormData object
     formData.append("title", title);
@@ -112,8 +108,8 @@ export default function CreateTicket({
       if (response.ok) {
         // Handle successful response
         setIsConfirmed(true);
-        setIsSuccess(true);
-        alert("Ticket created successfully.");
+        // setIsSuccess(true);
+        // alert("Ticket created successfully.");
         // Call fetchFilteredTickets to update the ticket table after successful ticket creation
         await fetchFilteredTickets(token, page, setTickets, setTotalPages, filters);
       } else {
@@ -124,6 +120,8 @@ export default function CreateTicket({
       // Handle network error
       alert("An error occurred. Please try again.");
       console.log(error)
+    } finally{
+      setIsTicketCardLoading(false);
     }
   };
 
@@ -143,7 +141,7 @@ export default function CreateTicket({
         {isConfirmed ? (
           <TicketSuccess onClose={() => setIsConfirmed(false)} /> // Render confirmation modal
         ) : (
-          <div className="bg-white w-[448px] h-[100vh] rounded-lg shadow-custom p-6 relative overflow-y-auto">
+          <div className="bg-white  w-[500px] h-[100vh] rounded-lg shadow-custom p-6 relative overflow-y-auto">
             <div className="w-[400px] h-[116px] mb-[20px] flex flex-col items-center justify-center">
               <div className="flex justify-between items-center w-full mb-4 px-[24px] pr-[24px]">
                 <CreateTicketIcon
@@ -212,8 +210,8 @@ export default function CreateTicket({
                   </div>
                 </div>
 
-                <div className="h-[80px] flex flex-col">
-                  <div className=" h-[32px] flex items-center">
+                <div className="h-[80px] flex flex-col ">
+                  <div className=" h-[32px] flex items-center ">
                     <span className="text-[18px] font-medium leading-[24px] text-lg text-left h-[24px] w-[73px] px-4 py-0">
                       Category
                       <span className="text-[#DA1414]">*</span>
@@ -257,7 +255,7 @@ export default function CreateTicket({
                   </div>
                 </div>
 
-                <div className="w-[400px] h-[129px] flex items-center justify-center mb-2 p-10 pt-10 border-dashed border-2 border-gray-300 rounded-[8px] relative">
+                <div className="  w-full h-[129px] flex items-center justify-center  mt-2 mb-2 p-10 pt-10 border-dashed border-2 border-gray-300 rounded-[8px] relative">
                   <div className="flex flex-col w-[235px] h-[49px]">
                     <div className="flex items-center gap-1">
                       <div className="w-[172px] h-[24px] text-base-medium text-gray-900">
@@ -283,7 +281,13 @@ export default function CreateTicket({
                   </div>
                 </div>
               </div>
-              <Confirm />
+
+              {/* SUBMIT BTN */}
+              <div className="">
+                  <button disabled={isTicketCardLoading} type="submit" className="text-white text-md-semibold bg-custom-blue p-4 rounded h-[44px] w-full flex items-center justify-center mt-10">
+                    Confirm
+                  </button>
+                </div>
             </form>
           </div>
         )}
